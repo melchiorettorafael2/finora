@@ -143,25 +143,10 @@ body {
 .logo-mark {
     position: relative;
     z-index: 1;
-    width: 32px;
-    height: 32px;
+    width: 38px;
+    height: 38px;
     flex-shrink: 0;
-    display: grid;
-    place-items: center;
-    border-radius: 9px;
-    /* Borda em degradê: fundo escuro no padding-box, degradê no border-box */
-    border: 1.5px solid transparent;
-    background:
-        linear-gradient(#0d2035, #0d2035) padding-box,
-        linear-gradient(45deg, var(--brand-blue), var(--brand-cyan), var(--brand-lime)) border-box;
-}
-
-.logo-mark i {
-    font-size: 15px;
-    background: linear-gradient(45deg, var(--brand-blue), var(--brand-cyan) 55%, var(--brand-lime));
-    color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
+    filter: drop-shadow(0 4px 10px rgba(0, 213, 255, 0.18));
 }
 
 /* A largura do bloco é definida pelo título; o subtítulo se estica até ela */
@@ -173,18 +158,17 @@ body {
 }
 
 .logo-wordmark {
-    font-family: 'Montserrat', 'Inter', sans-serif;
-    font-size: 28px;
-    line-height: 0.9;
-    font-weight: 900;
+    font-size: 38px;
+    line-height: 0.88;
+    font-weight: 850;
     font-style: italic;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.06em;
     text-transform: uppercase;
     white-space: nowrap;
 }
 
 .logo-wordmark .f {
-    padding-right: 2px; /* evita cortar a ponta do itálico no background-clip */
+    padding-right: 3px; /* evita cortar a ponta do itálico no background-clip */
     background: linear-gradient(135deg, var(--brand-blue), var(--brand-cyan));
     color: transparent;
     -webkit-background-clip: text;
@@ -196,10 +180,10 @@ body {
 }
 
 .logo-tagline {
-    margin-top: 5px;
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    margin-top: 6px;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
     line-height: 1;
     white-space: nowrap;
     text-align: justify;
@@ -554,6 +538,10 @@ body {
     color: var(--danger);
 }
 
+.form-hint-error {
+    color: var(--danger);
+}
+
 .form-actions {
     display: flex;
     gap: 10px;
@@ -618,11 +606,6 @@ body {
 
     .logo-text {
         display: none;
-    }
-
-    /* O ícone também é um span, mas deve continuar visível */
-    .sidebar .logo-mark {
-        display: grid;
     }
 
     .menu-item {

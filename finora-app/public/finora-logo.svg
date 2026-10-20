@@ -1,0 +1,20 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Mesmo desenho do finora-logo.html, com borda mais grossa para ficar nítido em tamanhos pequenos -->
+  <defs>
+    <linearGradient id="finoraEdge" x1="10" y1="110" x2="108" y2="8" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0d95ff"/>
+      <stop offset=".52" stop-color="#00d5ff"/>
+      <stop offset="1" stop-color="#a6ff70"/>
+    </linearGradient>
+    <linearGradient id="finoraGlass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <path d="M30 4H96L116 24V90L86 116H20L4 100V30Z" fill="#0d2035" stroke="url(#finoraEdge)" stroke-width="5"/>
+  <path d="M30 4H96L116 24V90L86 116H20L4 100V30Z" fill="url(#finoraGlass)"/>
+  <path d="M23 81V94H38V81M47 64V94H62V64M71 45V94H86V45" fill="url(#finoraEdge)" opacity=".85"/>
+  <path d="M17 66 43 43 57 53 91 20" fill="none" stroke="#f5fbff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M70 20H91V41" fill="none" stroke="#a6ff70" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13 16H32" stroke="#a6ff70" stroke-width="4" stroke-linecap="round"/>
+</svg>

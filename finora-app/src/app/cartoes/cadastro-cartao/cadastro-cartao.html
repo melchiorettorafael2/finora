@@ -1,0 +1,42 @@
+<header class="header">
+    <h1>Cadastro de Cartões</h1>
+
+    <div class="user-area">
+        <span class="user-name">Olá, Usuário</span>
+        <i class="fa-solid fa-circle-user"></i>
+    </div>
+</header>
+
+<main class="content">
+    <div class="card">
+        <h2>Novo Cartão</h2>
+        <form [formGroup]="form" (ngSubmit)="handleSubmit()" class="form"> 
+            <div class="form-group">
+                <label for="nome">Nome do Cartão: *</label>
+                <input formControlName="nome" type="text" id="nome" name="nome" placeholder="Ex: Nome do Cartão" />
+                @if(form.controls.nome.hasError('required') && form.controls.nome.touched){
+                    <span class="form-hint form-hint-error">O nome do Cartão é obrigatório.</span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="bandeira">Bandeira: *</label>
+                <select formControlName="bandeira" id="bandeira" name="bandeira">
+                    <option value="">Selecione a bandeira</option>
+                    <option value="VISA">Visa</option>
+                    <option value="MASTER_CARD">Mastercard</option>
+                    <option value="AMEX">American Express</option>
+                    <option value="DINERS">Diners</option>
+                    <option value="ELO">Elo</option>
+                </select>
+               @if(form.controls.bandeira.hasError('required') && form.controls.bandeira.touched){
+                    <span class="form-hint form-hint-error">A bandeira do Cartão é obrigatória.</span>
+                }
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <button type="button" class="btn btn-secondary">Cancelar</button>
+           </div>     
+        </form>
+   </div>
+</main>

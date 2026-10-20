@@ -1,20 +1,18 @@
 <div class="app-container">
     <aside class="sidebar">
         <div class="sidebar-logo">
-            <span class="logo-mark" aria-hidden="true">
-                <i class="fa-solid fa-arrow-trend-up"></i>
-            </span>
+            <img class="logo-mark" src="finora-logo.svg" alt="" />
             <div class="logo-text">
                 <span class="logo-wordmark"><span class="f">F</span><span class="ora">inora</span></span>
-                <span class="logo-tagline">Inteligência <span>para investir</span></span>
+                <span class="logo-tagline">Inteligência <span>para finanças</span></span>
             </div>
         </div>
-       <nav class="sidebar-menu">
-            <a class="menu-item active">
+       <nav class="sidebar-menu" >
+            <a class="menu-item" routerLink="/paginas" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                 <i class="fa-solid fa-chart-line"></i>
                 <span>Dashboard</span>
             </a>
-            <a class="menu-item">
+            <a class="menu-item" routerLink="/paginas/cadastro-cartoes" routerLinkActive="active">
                 <i class="fa-solid fa-credit-card"></i>
                 <span>Cartões</span>
             </a>
@@ -37,15 +35,7 @@
         </nav>
     </aside>
     <div class="main-content">
-        <header class="header">
-            <div class="header-left">
-                <i class="fa-solid fa-bars"></i>
-            </div>
-            <div class="header-right">
-                <i class="fa-solid fa-bell"></i>
-                <i class="fa-solid fa-user"></i>
-            </div>
-        </header>
+       
         <main class="main-content">
             <router-outlet></router-outlet>
         </main>

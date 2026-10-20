@@ -16,7 +16,7 @@ public class Sandbox implements CommandLineRunner {
     public void salvarCartao(){
         CartaoEntity cartao = new CartaoEntity();
         cartao.setNome("Itau Personalite");
-        cartao.setBandeira(BandeiraCartao.AMERICAN_EXPRESS);
+        cartao.setBandeira(BandeiraCartao.AMEX);
 
         repository.save(cartao);
     }
