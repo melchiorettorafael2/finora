@@ -1,0 +1,77 @@
+Finora - finance controller
+
+Visão Geral da Arquitetura
+
+* Controller - Camada da API que recebe as requisições e manda as respostas 
+* Service - Camada que tem as regras de negócio, aplica as lógicas e manda os dados para a repository
+* Repository - Camada que faz a persistência com o banco de dados
+* Entity - Representação dos dados da tabela 
+* DTOs (Forms e Detalhes) - Camada que representa os objetos JSON da API
+
+Controller -> Service -> Entity -> DTOs
+
+CRUD
+
+* Salvar
+* Atualizar
+* Deletar
+* Buscar
+* Buscar por ID
+* Listar
+
+Pacote
+
+- common: pacote que tem registros comuns a todos, utilitários, tudo que é reutilizável 
+	- exceptions
+	- útil
+	- validation
+
+- domínio: toda estrutura de domínios de negócio
+	- cartão
+		- dto
+		- mapper
+		- model	
+	- categoria
+
+- infra: configurações, segurança, toda a parte de infraestrutura.
+	- config
+	- handlers
+	- security
+
+* Importante cada página ter um controlador em uma API Back to Front
+
+* ddl data definition language (create table, create column, drop table)
+
+* dml data manipulating language (insert, delete)
+
+repository interface extends JpaRepository<ClasseEntity, Id> - Spring injeta automaticamente as implementações de JPA
+
+Sandbox - classe de experimento
+
+repository.save - salva e executa o flush
+
+@Autowired - pega um componente na instância do spring e faz a injeção das dependências automaticamente
+
+App -> Requisição JSON -> RestController (View) -> Dados Form -> Service -> Validar -> Mapear
+-> Entidade -> Repository -> Persiste/Lê -> BD
+
+- Todo DTO é criado como record, classe que apenas recebe dados
+
+- Record objeto de transferência de dados
+
+- DTO: Data Access Object, representa o objeto JSON, só possui os atributos que o usuário digita
+
+- Separar a camada de persistência da camada de representação
+
+- Mapper: classe que isola a lógica de montar entidade a partir de dados do formulário
+
+- Lógica para criar um objeto: validar -> mapear -> salvar -> envia para o controller 
+
+- Ideal criar 2 controllers
+	- 1 para fazer o crud
+	- outro para fazer a parte de pesquisa (consultar informações)
+
+
+- Na classe ExceptionHandler listamos as exceções que devem ser mostradas na front da API
+
+- Por padrão o Spring lança as exceptions no console
