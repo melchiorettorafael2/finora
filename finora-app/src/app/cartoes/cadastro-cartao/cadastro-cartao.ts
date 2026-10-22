@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CartaoService } from '../cartao-service';
 import { DadosCartaoForm, DetalhesCartao } from '../dados-cartao';
-import { ValidationErroResponse } from '../../commons/validation/validation-error-model';
+import { ValidationErroResponse } from '../../commons/validation/validation-error-models';
 import {CommonModule} from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 

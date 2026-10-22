@@ -9,6 +9,8 @@ import io.github.melchiorettorafael2.finora_api.dominio.cartao.model.CartaoEntit
 import io.github.melchiorettorafael2.finora_api.dominio.cartao.model.CartaoValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -50,6 +52,10 @@ public class CartaoService {
         }
 
         mapper.update(entity, dadosAtualizacao);
+    }
+
+    public Page<CartaoDetalhes> listar(PageRequest pageRequest) {
+        return repository.findAll(pageRequest).map(mapper::toDetalhes);
 
     }
 }
