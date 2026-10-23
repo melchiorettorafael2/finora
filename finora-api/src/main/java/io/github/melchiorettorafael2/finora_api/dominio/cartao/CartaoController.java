@@ -40,11 +40,16 @@ public class CartaoController {
 
     @GetMapping
     public Page<CartaoDetalhes> listar(@RequestParam(value = "page", defaultValue = "0") int page,
-                                       @RequestParam(value="size", defaultValue = "10") int size){
+                                       @RequestParam(value="size", defaultValue = "5") int size){
 
         var pageRequest = PageRequest.of(page, size);
         return service.listar(pageRequest);
+    }
 
+    @PatchMapping("{id}/status")
+    public ResponseEntity<Void> mudarStatus(@PathVariable UUID id){
+        service.mudarStatus(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

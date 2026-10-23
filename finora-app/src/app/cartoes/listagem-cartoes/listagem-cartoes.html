@@ -9,6 +9,10 @@
 
 <main class="content">
     <div class="card-full">
+        <button class="btn btn-primary" (click)="router.navigate(['/paginas/cadastro-cartoes'])">
+            <i class="fa-solid fa-plus"></i> 
+            Cadastrar Novo
+        </button>
         <div class="table-card">
             @if (listagem$ | async; as listagem) {
                 <table class="datatable">
@@ -26,22 +30,54 @@
                           <td>{{ cartao.nome }}</td>
                           <td>{{ cartao.bandeira }}</td>
                           <td>
-                            <span class="badge badge-warnig">Inativo</span>
+                            <span class="badge" [ngClass]="cartao.ativo ? 'badge-success' : 'badge-danger'">
+                              {{ cartao.ativo ? 'ATIVO' : 'INATIVO' }}
+                            </span>
                   
                           </td>
                           <td class="text-center">
-                            <button class="icon-btn">
+                            <button class="icon-btn success" title="Editar" (click)="prepararEdicao(cartao.id)">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
 
-                              <button class="icon-btn danger">
-                                <i class="fa-solid fa-ban"></i>
+                              <button class="icon-btn" 
+                              [ngClass]="cartao.ativo ? 'danger' : 'success'" 
+                              [attr.title]="cartao.ativo ? 'Desativar' : 'Ativar'" 
+                              (click)="mudarStatus(cartao.id)">
+                                <i class="fa-solid" 
+                                [ngClass]="cartao.ativo ? 'fa-ban' : 'fa-check'">
+                                </i>
                             </button>
                           </td>
                         </tr>
                       }
                     </tbody>
                 </table>
+                <!--Paginação-->
+                <div class="table-footer">
+                    <span class="pagination-info">Exibindo {{ listagem.numberOfElements }} de {{ listagem.totalElements }}
+                        registros</span>
+                    <div class="pagination">
+                        <button class="page-btn"
+                                [disabled]="listagem.first"
+                                (click)="navegarAnterior(listagem);">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+
+                        @for (pagina of paginas(listagem); track pagina) {
+                            <button class="page-btn"
+                                    [class.active]="pagina === listagem.number"
+                                    (click)="navegar(pagina);">{{ pagina + 1 }}</button>
+                        }
+
+                        <button class="page-btn"
+                                [disabled]="listagem.last"
+                                (click)="navegarProximo(listagem);">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button> 
+                
+                    </div>
+                </div>
             }
         </div>
     </div>

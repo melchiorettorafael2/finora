@@ -435,6 +435,11 @@ body {
     color: var(--danger);
 }
 
+.icon-btn.success:hover {
+    background-color: var(--success-bg);
+    color: var(--success);
+}
+
 /* ========================= */
 /* ====== PAGINAÇÃO ======== */
 /* ========================= */

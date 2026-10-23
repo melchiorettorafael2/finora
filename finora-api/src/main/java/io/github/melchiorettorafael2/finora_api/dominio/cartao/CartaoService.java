@@ -56,6 +56,11 @@ public class CartaoService {
 
     public Page<CartaoDetalhes> listar(PageRequest pageRequest) {
         return repository.findAll(pageRequest).map(mapper::toDetalhes);
+    }
 
+    @Transactional
+    public void mudarStatus(UUID id){
+        var cartao = repository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
+        cartao.setAtivo(!cartao.getAtivo());
     }
 }

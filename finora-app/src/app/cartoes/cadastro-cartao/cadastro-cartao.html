@@ -9,7 +9,7 @@
 
 <main class="content">
     <div class="card">
-        <h2>Novo Cartão</h2>
+        <h2>{{ idCartaoParaEdicao ? 'Editar Cartão' : 'Novo Cartão' }}</h2>
         <form [formGroup]="form" (ngSubmit)="handleSubmit()" class="form"> 
             <div class="form-group">
                 <label for="nome">Nome do Cartão: *</label>
@@ -24,7 +24,7 @@
                 <select formControlName="bandeira" id="bandeira" name="bandeira">
                     <option value="">Selecione a bandeira</option>
                     <option value="VISA">Visa</option>
-                    <option value="MASTER_CARD">Mastercard</option>
+                    <option value="MASTERCARD">Mastercard</option>
                     <option value="AMEX">American Express</option>
                     <option value="DINERS">Diners</option>
                     <option value="ELO">Elo</option>
@@ -34,8 +34,8 @@
                 }
             </div>
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Salvar</button>
-                <button type="button" class="btn btn-secondary">Cancelar</button>
+            <button type="submit" class="btn btn-primary">{{ idCartaoParaEdicao ? 'Atualizar' : 'Salvar' }}</button>
+                <button type="button" class="btn btn-secondary" (click)="router.navigate(['/paginas/listagem-cartoes'])">Cancelar</button>
            </div>     
         </form>
    </div>
