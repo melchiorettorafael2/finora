@@ -17,7 +17,7 @@ interface CadastroCartaoForm{
 
 @Component({
   selector: 'app-cadastro-cartao',
-  imports: [ReactiveFormsModule, RouterLink, Header],
+  imports: [ReactiveFormsModule, Header],
   templateUrl: './cadastro-cartao.html',
   styleUrl: './cadastro-cartao.scss',
 

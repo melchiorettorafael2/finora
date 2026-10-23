@@ -1,0 +1,42 @@
+<app-header titulo="Cadastro de Categoria"></app-header>
+
+<main class="content">
+    <div class="card">
+        <div class="form-header">
+            <div class="form-header-icon">
+                <i class="fa-solid fa-icons"></i>
+            </div>
+            <div>
+                <h2>{{ idCategoriaParaEdicao ? 'Editar Categoria' : 'Nova Categoria' }}</h2>
+                <p class="form-subtitle">
+                    {{ idCategoriaParaEdicao ? 'Altere os dados da categoria e salve.' : 'Preencha os dados para cadastrar uma nova categoria.' }}
+                </p>
+            </div>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="handleSubmit()" class="form form-card">
+            <div class="form-group">
+                <label for="nome">Nome da Categoria <span class="required">*</span></label>
+                <div class="input-icon">
+                    <i class="fa-solid fa-tag"></i>
+                    <input formControlName="nome" type="text" id="nome" name="nome" placeholder="Ex: Alimentação" />
+                </div>
+                @if(form.controls.nome.hasError('required') && form.controls.nome.touched){
+                    <span class="form-hint form-hint-error">
+                        <i class="fa-solid fa-circle-exclamation"></i> O nome da Categoria é obrigatório.
+                    </span>
+                }
+            </div>
+
+        
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" (click)="router.navigate(['/paginas/listagem-categorias'])">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-check"></i>
+                    {{ idCategoriaParaEdicao ? 'Atualizar' : 'Salvar' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
