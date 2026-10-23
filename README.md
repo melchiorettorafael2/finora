@@ -42,9 +42,9 @@ O projeto também serve como estudo prático de boas práticas de desenvolviment
 | Cadastro de cartões (nome e bandeira) | ✅ Implementado |
 | Consulta e atualização de cartões | ✅ Implementado |
 | Validação de dados e tratamento de erros | ✅ Implementado |
-| Cadastro de categorias de gastos | 🚧 Em desenvolvimento |
-| Lançamento de despesas e receitas | 📋 Planejado |
-| Dashboard com resumo mensal | 📋 Planejado |
+| Cadastro de categorias de gastos | ✅ Implementado |
+| Lançamento de despesas e receitas | ✅ Implementado |
+| Dashboard com resumo mensal | 🚧 Em desenvolvimento  |
 | Autenticação de usuários | 📋 Planejado |
 
 ---
