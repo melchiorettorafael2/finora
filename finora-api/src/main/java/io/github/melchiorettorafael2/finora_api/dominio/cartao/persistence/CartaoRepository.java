@@ -1,4 +1,4 @@
-package io.github.melchiorettorafael2.finora_api.dominio.cartao;
+package io.github.melchiorettorafael2.finora_api.dominio.cartao.persistence;
 
 import io.github.melchiorettorafael2.finora_api.dominio.cartao.model.CartaoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

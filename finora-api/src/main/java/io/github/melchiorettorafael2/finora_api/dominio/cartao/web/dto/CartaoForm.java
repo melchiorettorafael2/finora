@@ -1,4 +1,4 @@
-package io.github.melchiorettorafael2.finora_api.dominio.cartao.dto;
+package io.github.melchiorettorafael2.finora_api.dominio.cartao.web.dto;
 
 import io.github.melchiorettorafael2.finora_api.dominio.cartao.model.BandeiraCartao;
 import jakarta.validation.constraints.NotBlank;

@@ -1,6 +1,6 @@
-package io.github.melchiorettorafael2.finora_api.infra;
+package io.github.melchiorettorafael2.finora_api;
 
-import io.github.melchiorettorafael2.finora_api.dominio.cartao.CartaoRepository;
+import io.github.melchiorettorafael2.finora_api.dominio.cartao.persistence.CartaoRepository;
 import io.github.melchiorettorafael2.finora_api.dominio.cartao.model.BandeiraCartao;
 import io.github.melchiorettorafael2.finora_api.dominio.cartao.model.CartaoEntity;
 import org.springframework.beans.factory.annotation.Autowired;

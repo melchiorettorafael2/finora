@@ -7,10 +7,11 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
+import { Header } from '../../../../common/components/header/header';
 
 @Component({
   selector: 'app-listagem-cartoes',
-  imports: [CommonModule],
+  imports: [CommonModule, Header],
   templateUrl: './listagem-cartoes.html',
   styleUrl: './listagem-cartoes.scss',
 })

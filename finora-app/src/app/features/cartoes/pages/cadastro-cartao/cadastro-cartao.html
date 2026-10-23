@@ -1,42 +1,60 @@
-<header class="header">
-    <h1>Cadastro de Cartões</h1>
-
-    <div class="user-area">
-        <span class="user-name">Olá, Usuário</span>
-        <i class="fa-solid fa-circle-user"></i>
-    </div>
-</header>
+<app-header titulo="Cadastro de Cartões"></app-header>
 
 <main class="content">
     <div class="card">
-        <h2>{{ idCartaoParaEdicao ? 'Editar Cartão' : 'Novo Cartão' }}</h2>
-        <form [formGroup]="form" (ngSubmit)="handleSubmit()" class="form"> 
+        <div class="form-header">
+            <div class="form-header-icon">
+                <i class="fa-solid fa-credit-card"></i>
+            </div>
+            <div>
+                <h2>{{ idCartaoParaEdicao ? 'Editar Cartão' : 'Novo Cartão' }}</h2>
+                <p class="form-subtitle">
+                    {{ idCartaoParaEdicao ? 'Altere os dados do cartão e salve.' : 'Preencha os dados para cadastrar um novo cartão.' }}
+                </p>
+            </div>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="handleSubmit()" class="form form-card">
             <div class="form-group">
-                <label for="nome">Nome do Cartão: *</label>
-                <input formControlName="nome" type="text" id="nome" name="nome" placeholder="Ex: Nome do Cartão" />
+                <label for="nome">Nome do Cartão <span class="required">*</span></label>
+                <div class="input-icon">
+                    <i class="fa-solid fa-tag"></i>
+                    <input formControlName="nome" type="text" id="nome" name="nome" placeholder="Ex: Nubank Platinum" />
+                </div>
                 @if(form.controls.nome.hasError('required') && form.controls.nome.touched){
-                    <span class="form-hint form-hint-error">O nome do Cartão é obrigatório.</span>
+                    <span class="form-hint form-hint-error">
+                        <i class="fa-solid fa-circle-exclamation"></i> O nome do Cartão é obrigatório.
+                    </span>
                 }
             </div>
 
             <div class="form-group">
-                <label for="bandeira">Bandeira: *</label>
-                <select formControlName="bandeira" id="bandeira" name="bandeira">
-                    <option value="">Selecione a bandeira</option>
-                    <option value="VISA">Visa</option>
-                    <option value="MASTERCARD">Mastercard</option>
-                    <option value="AMEX">American Express</option>
-                    <option value="DINERS">Diners</option>
-                    <option value="ELO">Elo</option>
-                </select>
-               @if(form.controls.bandeira.hasError('required') && form.controls.bandeira.touched){
-                    <span class="form-hint form-hint-error">A bandeira do Cartão é obrigatória.</span>
+                <label for="bandeira">Bandeira <span class="required">*</span></label>
+                <div class="input-icon">
+                    <i class="fa-regular fa-flag"></i>
+                    <select formControlName="bandeira" id="bandeira" name="bandeira">
+                        <option value="">Selecione a bandeira</option>
+                        <option value="VISA">Visa</option>
+                        <option value="MASTERCARD">Mastercard</option>
+                        <option value="AMEX">American Express</option>
+                        <option value="DINERS">Diners</option>
+                        <option value="ELO">Elo</option>
+                    </select>
+                </div>
+                @if(form.controls.bandeira.hasError('required') && form.controls.bandeira.touched){
+                    <span class="form-hint form-hint-error">
+                        <i class="fa-solid fa-circle-exclamation"></i> A bandeira do Cartão é obrigatória.
+                    </span>
                 }
             </div>
+
             <div class="form-actions">
-            <button type="submit" class="btn btn-primary">{{ idCartaoParaEdicao ? 'Atualizar' : 'Salvar' }}</button>
                 <button type="button" class="btn btn-secondary" (click)="router.navigate(['/paginas/listagem-cartoes'])">Cancelar</button>
-           </div>     
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-check"></i>
+                    {{ idCartaoParaEdicao ? 'Atualizar' : 'Salvar' }}
+                </button>
+            </div>
         </form>
-   </div>
+    </div>
 </main>

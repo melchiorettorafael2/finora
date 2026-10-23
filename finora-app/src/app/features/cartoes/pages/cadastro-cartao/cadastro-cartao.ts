@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { Header } from '../../../../common/components/header/header';
 
 interface CadastroCartaoForm{
   nome: FormControl<string>;
@@ -16,9 +17,10 @@ interface CadastroCartaoForm{
 
 @Component({
   selector: 'app-cadastro-cartao',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Header],
   templateUrl: './cadastro-cartao.html',
   styleUrl: './cadastro-cartao.scss',
+
 })
 export class CadastroCartao {
 

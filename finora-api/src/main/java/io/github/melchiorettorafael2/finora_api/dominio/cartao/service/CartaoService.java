@@ -1,12 +1,13 @@
-package io.github.melchiorettorafael2.finora_api.dominio.cartao;
+package io.github.melchiorettorafael2.finora_api.dominio.cartao.service;
+
+import io.github.melchiorettorafael2.finora_api.dominio.cartao.persistence.CartaoRepository;
 
 import io.github.melchiorettorafael2.finora_api.common.exceptions.RegistroNaoEncontradoException;
 import io.github.melchiorettorafael2.finora_api.common.exceptions.ValidationException;
-import io.github.melchiorettorafael2.finora_api.dominio.cartao.dto.CartaoDetalhes;
-import io.github.melchiorettorafael2.finora_api.dominio.cartao.dto.CartaoForm;
-import io.github.melchiorettorafael2.finora_api.dominio.cartao.mapper.CartaoMapper;
+import io.github.melchiorettorafael2.finora_api.dominio.cartao.web.dto.CartaoDetalhes;
+import io.github.melchiorettorafael2.finora_api.dominio.cartao.web.dto.CartaoForm;
+import io.github.melchiorettorafael2.finora_api.dominio.cartao.web.mapper.CartaoMapper;
 import io.github.melchiorettorafael2.finora_api.dominio.cartao.model.CartaoEntity;
-import io.github.melchiorettorafael2.finora_api.dominio.cartao.model.CartaoValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

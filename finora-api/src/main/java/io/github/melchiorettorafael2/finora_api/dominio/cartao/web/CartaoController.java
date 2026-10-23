@@ -1,7 +1,9 @@
-package io.github.melchiorettorafael2.finora_api.dominio.cartao;
+package io.github.melchiorettorafael2.finora_api.dominio.cartao.web;
 
-import io.github.melchiorettorafael2.finora_api.dominio.cartao.dto.CartaoDetalhes;
-import io.github.melchiorettorafael2.finora_api.dominio.cartao.dto.CartaoForm;
+import io.github.melchiorettorafael2.finora_api.dominio.cartao.service.CartaoService;
+
+import io.github.melchiorettorafael2.finora_api.dominio.cartao.web.dto.CartaoDetalhes;
+import io.github.melchiorettorafael2.finora_api.dominio.cartao.web.dto.CartaoForm;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,7 +42,7 @@ public class CartaoController {
 
     @GetMapping
     public Page<CartaoDetalhes> listar(@RequestParam(value = "page", defaultValue = "0") int page,
-                                       @RequestParam(value="size", defaultValue = "5") int size){
+                                       @RequestParam(value="size", defaultValue = "10") int size){
 
         var pageRequest = PageRequest.of(page, size);
         return service.listar(pageRequest);

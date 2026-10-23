@@ -11,21 +11,22 @@
     --bg-sidebar-header: #333333; /* activity bar */
     --bg-surface: #252526;      /* cards */
     --bg-elevated: #2d2d2d;     /* cabeçalho de tabela, botões neutros */
+    --bg-table: #17181a;        /* fundo da área da tabela */
     --bg-input: #3c3c3c;
     --bg-hover: #2a2d2e;        /* list.hoverBackground */
     --bg-active: #37373d;       /* list.inactiveSelectionBackground */
 
     /* Marca Finora (mesmas cores do logo) */
-    --brand-night: #0b192b;
+    --brand-night: #0e1622;
     --brand-white: #f4f8ff;
     --brand-muted: #9aacc3;
-    --brand-blue: #0d95ff;
-    --brand-cyan: #00d5ff;
-    --brand-lime: #a6ff70;
-    --brand-gradient: linear-gradient(180deg, var(--brand-blue), var(--brand-lime));
-    --brand-hover-bg: linear-gradient(90deg, rgba(13, 149, 255, 0.16), rgba(166, 255, 112, 0.06));
-    --brand-active-bg: linear-gradient(90deg, rgba(13, 149, 255, 0.24), rgba(166, 255, 112, 0.1));
-    --brand-active-hover-bg: linear-gradient(90deg, rgba(13, 149, 255, 0.32), rgba(166, 255, 112, 0.16));
+    --brand-blue: #3a8ae0;
+    --brand-cyan: #4fd0de;
+    --brand-green: #34d3a3;
+    --brand-gradient: linear-gradient(180deg, var(--brand-blue), var(--brand-green));
+    --brand-hover-bg: linear-gradient(90deg, rgba(58, 138, 224, 0.16), rgba(52, 211, 163, 0.06));
+    --brand-active-bg: linear-gradient(90deg, rgba(58, 138, 224, 0.24), rgba(52, 211, 163, 0.1));
+    --brand-active-hover-bg: linear-gradient(90deg, rgba(58, 138, 224, 0.32), rgba(52, 211, 163, 0.16));
 
     /* Bordas */
     --border: #3c3c3c;
@@ -37,17 +38,17 @@
     --text-muted: #858585;
 
     /* Destaques */
-    --accent: #007acc;          /* azul da status bar */
-    --accent-btn: #0e639c;      /* button.background */
-    --accent-btn-hover: #1177bb;
-    --focus: #007fd4;           /* focusBorder */
-    --success: #89d185;
-    --success-bg: rgba(137, 209, 133, 0.12);
+    --accent: #2f80d8;          /* azul do logo */
+    --accent-btn: #1f6fc4;      /* button.background */
+    --accent-btn-hover: #2a80d8;
+    --focus: #3a8ae0;           /* focusBorder */
+    --success: #4fd6a8;         /* verde-água do logo */
+    --success-bg: rgba(79, 214, 168, 0.12);
     --warning: #cca700;
     --warning-bg: rgba(204, 167, 0, 0.14);
     --danger: #f14c4c;
     --danger-bg: rgba(241, 76, 76, 0.15);
-    --teal: #4ec9b0;            /* cor dos tipos no Dark+ */
+    --teal: #5ed4c8;            /* entre o ciano e o verde do logo */
 
     --radius: 6px;
     --radius-lg: 8px;
@@ -98,102 +99,23 @@ body {
     flex-direction: column;
 }
 
-/* Logo completo do finora-logo.html, em escala de sidebar */
 .sidebar-logo {
-    position: relative;
     overflow: hidden;
     height: 56px; /* mesma altura do header */
-    padding: 0 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--brand-white);
-    background:
-        radial-gradient(ellipse at 25% 45%, rgba(0, 213, 255, 0.12), transparent 60%),
-        radial-gradient(ellipse at 75% 58%, rgba(50, 230, 161, 0.09), transparent 55%),
-        linear-gradient(135deg, #112540, var(--brand-night));
+    background-color: var(--brand-night);
     border-bottom: 1px solid rgba(149, 190, 224, 0.13);
 }
 
-/* Linhas diagonais decorativas do fundo */
-.sidebar-logo::before,
-.sidebar-logo::after {
-    content: '';
-    position: absolute;
-    pointer-events: none;
-    transform: rotate(-24deg);
-    border: 1px solid rgba(0, 213, 255, 0.12);
-}
-
-.sidebar-logo::before {
-    width: 120px;
-    height: 200px;
-    right: -40px;
-    top: -60px;
-}
-
-.sidebar-logo::after {
-    width: 80px;
-    height: 170px;
-    right: -6px;
-    top: -45px;
-    border-color: rgba(166, 255, 112, 0.12);
-}
-
-.logo-mark {
-    position: relative;
-    z-index: 1;
-    width: 38px;
-    height: 38px;
-    flex-shrink: 0;
-    filter: drop-shadow(0 4px 10px rgba(0, 213, 255, 0.18));
-}
-
-/* A largura do bloco é definida pelo título; o subtítulo se estica até ela */
-.logo-text {
-    position: relative;
-    z-index: 1;
-    display: inline-flex;
-    flex-direction: column;
-}
-
-.logo-wordmark {
-    font-size: 38px;
-    line-height: 0.88;
-    font-weight: 850;
-    font-style: italic;
-    letter-spacing: -0.06em;
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-
-.logo-wordmark .f {
-    padding-right: 3px; /* evita cortar a ponta do itálico no background-clip */
-    background: linear-gradient(135deg, var(--brand-blue), var(--brand-cyan));
-    color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
-}
-
-.logo-wordmark .ora {
-    color: var(--brand-white);
-}
-
-.logo-tagline {
-    margin-top: 6px;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    line-height: 1;
-    white-space: nowrap;
-    text-align: justify;
-    text-align-last: justify;
-    text-transform: uppercase;
-    color: var(--brand-muted);
-}
-
-.logo-tagline span {
-    color: var(--brand-lime);
+/* finora-logo-sidebar@2x/@3x.png: recorte do finora-logo.png já reduzido
+   para 240x56 (reduzir o original no navegador deixava o logo serrilhado) */
+.logo-img {
+    display: block;
+    /* O hexágono fica a ~51px da borda da imagem; puxa 31px para começar
+       na mesma coluna dos ícones do menu (padding de 20px) */
+    margin-left: -31px;
+    width: calc(100% + 31px);
+    height: 100%;
+    object-fit: cover;
 }
 
 .sidebar-menu {
@@ -243,7 +165,7 @@ body {
 }
 
 .menu-item.active:hover i {
-    color: var(--brand-lime);
+    color: var(--brand-green);
 }
 
 .menu-item.active::before {
@@ -310,7 +232,7 @@ body {
 }
 
 .card {
-    max-width: 500px;
+    max-width: 560px;
 }
 
 .card h2,
@@ -325,8 +247,51 @@ body {
 /* ====== TABELA =========== */
 /* ========================= */
 
+/* Painel mais escuro que o card para destacar tabela e formulário */
+.table-card,
+.form-card {
+    background-color: var(--bg-table);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+
 .table-card {
     margin-top: 20px;
+    overflow: hidden;
+}
+
+.form-card {
+    padding: 24px;
+}
+
+/* Cabeçalho do formulário: ícone + título + subtítulo */
+.form-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.form-header h2 {
+    margin-bottom: 2px;
+}
+
+.form-header-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    font-size: 18px;
+    color: var(--brand-blue);
+    background-color: rgba(58, 138, 224, 0.14);
+    border: 1px solid rgba(58, 138, 224, 0.3);
+}
+
+.form-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
 }
 
 .datatable {
@@ -346,13 +311,18 @@ body {
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: var(--text-muted);
+    color: var(--text-strong);
     border-bottom: 1px solid var(--border);
+}
+
+/* Precisa vencer o text-align: left acima para alinhar com o conteúdo da coluna */
+.datatable th.text-center {
+    text-align: center;
 }
 
 .datatable tbody td {
     padding: 12px 16px;
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border);
 }
 
 .datatable tbody tr {
@@ -445,7 +415,7 @@ body {
 /* ========================= */
 
 .table-footer {
-    margin-top: 20px;
+    padding: 14px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -494,29 +464,55 @@ body {
 /* ========================= */
 
 .form-group {
-    margin-bottom: 16px;
+    margin-bottom: 18px;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
+    font-weight: 600;
+    color: var(--text-strong);
+}
+
+.required {
+    color: var(--danger);
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 9px 10px;
+    height: 42px;
+    padding: 0 12px;
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    background-color: var(--bg-input);
+    background-color: var(--bg-surface);
     color: var(--text-strong);
     font-size: 14px;
     font-family: inherit;
-    transition: border-color var(--transition);
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.form-group textarea {
+    height: auto;
+    padding: 10px 12px;
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+    border-color: #4a4d52;
+}
+
+/* Seta própria no select, no lugar da nativa */
+.form-group select {
+    appearance: none;
+    padding-right: 36px;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23858585' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
 }
 
 .form-group input::placeholder,
@@ -529,6 +525,32 @@ body {
 .form-group textarea:focus {
     outline: none;
     border-color: var(--focus);
+    box-shadow: 0 0 0 3px rgba(58, 138, 224, 0.22);
+}
+
+/* Campo com ícone à esquerda */
+.input-icon {
+    position: relative;
+}
+
+.input-icon > i {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: var(--text-muted);
+    pointer-events: none;
+    transition: color var(--transition);
+}
+
+.input-icon:focus-within > i {
+    color: var(--brand-blue);
+}
+
+.form-group .input-icon input,
+.form-group .input-icon select {
+    padding-left: 38px;
 }
 
 /* Campo inválido (útil com as classes do Angular Forms) */
@@ -543,18 +565,32 @@ body {
     color: var(--danger);
 }
 
+.form-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-size: 12px;
+}
+
 .form-hint-error {
     color: var(--danger);
 }
 
 .form-actions {
     display: flex;
+    justify-content: flex-end;
     gap: 10px;
-    margin-top: 20px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
 }
 
 .btn-primary,
 .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     border: 1px solid transparent;
     padding: 9px 18px;
     border-radius: var(--radius);
@@ -604,13 +640,11 @@ body {
         display: none;
     }
 
-    .sidebar-logo {
-        justify-content: center;
-        padding: 18px 0;
-    }
-
-    .logo-text {
-        display: none;
+    /* Na barra estreita mostra só o ícone do PNG */
+    .logo-img {
+        margin-left: 0;
+        width: 100%;
+        object-position: 18% center;
     }
 
     .menu-item {
