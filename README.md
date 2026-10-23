@@ -200,9 +200,9 @@ Content-Type: application/json
 - [x] Estrutura inicial da API em camadas
 - [x] CRUD de cartões com validação
 - [x] Tratamento global de exceções
-- [ ] CRUD de categorias
-- [ ] Lançamentos (despesas e receitas)
-- [ ] Telas do frontend em Angular
+- [x] CRUD de categorias
+- [x] Lançamentos (despesas e receitas)
+- [x] Telas do frontend em Angular
 - [ ] Dashboard com gráficos de gastos por categoria
 - [ ] Autenticação com Spring Security + JWT
 - [ ] Migrar para PostgreSQL e versionar o banco com Flyway
