@@ -1,8 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CartaoService } from '../cartao-service';
-import { DadosCartaoForm, DetalhesCartao } from '../dados-cartao';
-import { ValidationErroResponse } from '../../commons/validation/validation-error-models';
+import { CartaoService } from '../../services/cartao-service';
+import { DadosCartaoForm, DetalhesCartao } from '../../models/dados-cartao';
+import { ValidationErroResponse } from '../../../../shared/models/validation-error-models';
 import {CommonModule} from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute, RouterLink } from '@angular/router';

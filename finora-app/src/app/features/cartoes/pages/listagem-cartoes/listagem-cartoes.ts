@@ -1,8 +1,8 @@
 import { Component, OnInit, inject} from '@angular/core';
-import { CartaoService } from '../cartao-service';
+import { CartaoService } from '../../services/cartao-service';
 import { Observable } from 'rxjs';
-import { DetalhesCartao } from '../dados-cartao';
-import { PageResult } from '../../commons/pagination/page-result';
+import { DetalhesCartao } from '../../models/dados-cartao';
+import { PageResult } from '../../../../shared/models/page-result';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -21,7 +21,7 @@ export class ListagemCartoes implements OnInit {
   toast = inject(ToastrService);
   listagem$!: Observable<PageResult<DetalhesCartao>>; 
   paginaAtual = 0;
-  tamanhoPagina = 5;
+  tamanhoPagina = 10;
 
   ngOnInit(): void {
     this.listarCartoes();

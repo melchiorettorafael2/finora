@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {DadosCartaoForm, DetalhesCartao} from './dados-cartao';
+import {DadosCartaoForm, DetalhesCartao} from '../models/dados-cartao';
 import { Observable } from 'rxjs';
-import { PageResult } from '../commons/pagination/page-result';
+import { PageResult } from '../../../shared/models/page-result';
 
 @Injectable({
   providedIn: 'root',

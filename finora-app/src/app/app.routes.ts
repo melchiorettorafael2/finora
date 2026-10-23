@@ -1,21 +1,13 @@
 import { Routes } from '@angular/router';
-import { Template } from './template/template';
-import { CadastroCartao } from './cartoes/cadastro-cartao/cadastro-cartao';
-import { ListagemCartoes } from './cartoes/listagem-cartoes/listagem-cartoes';
+import { Template } from './layout/template/template';
+import { CARTOES_ROUTES } from './features/cartoes/cartoes.routes';
 
 export const routes: Routes = [
     {
         path: 'paginas',
         component: Template,
         children: [
-            {
-                path: 'cadastro-cartoes',
-                component: CadastroCartao
-            },
-            {
-                path: 'listagem-cartoes',
-                component: ListagemCartoes
-            }
+            ...CARTOES_ROUTES
         ]
     }
 ];
