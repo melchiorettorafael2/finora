@@ -42,9 +42,9 @@ O projeto também serve como estudo prático de boas práticas de desenvolviment
 | Cadastro de cartões (nome e bandeira) | ✅ Implementado |
 | Consulta e atualização de cartões | ✅ Implementado |
 | Validação de dados e tratamento de erros | ✅ Implementado |
-| Cadastro de categorias de gastos | 🚧 Em desenvolvimento |
-| Lançamento de despesas e receitas | 📋 Planejado |
-| Dashboard com resumo mensal | 📋 Planejado |
+| Cadastro de categorias de gastos | ✅ Implementado |
+| Lançamento de despesas e receitas | ✅ Implementado |
+| Dashboard com resumo mensal | 🚧 Em desenvolvimento  |
 | Autenticação de usuários | 📋 Planejado |
 
 ---
@@ -200,9 +200,9 @@ Content-Type: application/json
 - [x] Estrutura inicial da API em camadas
 - [x] CRUD de cartões com validação
 - [x] Tratamento global de exceções
-- [ ] CRUD de categorias
-- [ ] Lançamentos (despesas e receitas)
-- [ ] Telas do frontend em Angular
+- [x] CRUD de categorias
+- [x] Lançamentos (despesas e receitas)
+- [x] Telas do frontend em Angular
 - [ ] Dashboard com gráficos de gastos por categoria
 - [ ] Autenticação com Spring Security + JWT
 - [ ] Migrar para PostgreSQL e versionar o banco com Flyway
