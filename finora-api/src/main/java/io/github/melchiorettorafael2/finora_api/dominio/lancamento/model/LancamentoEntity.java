@@ -32,7 +32,7 @@ public class LancamentoEntity {
 
     @ManyToOne
     @JoinColumn(name = "cartao_id")
-    private CartaoEntity cartaoEntity;
+    private CartaoEntity cartao;
 
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal valor;

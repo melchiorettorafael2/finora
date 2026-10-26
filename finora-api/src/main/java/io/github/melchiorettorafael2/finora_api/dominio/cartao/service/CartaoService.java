@@ -38,6 +38,12 @@ public class CartaoService {
         return mapper.toDetalhes(entity);
     }
 
+    @Transactional
+    public void deletar(UUID id){
+        var cartao = repository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
+        repository.delete(cartao);
+    }
+
     public CartaoDetalhes obterDetalhes(UUID id) {
         return repository.findById(id).map(mapper::toDetalhes).orElseThrow(() -> new RegistroNaoEncontradoException());
     }

@@ -1,0 +1,38 @@
+<div class="dialog-overlay" (click)="cancelar.emit()">
+    <div class="dialog" role="alertdialog" aria-modal="true" [attr.aria-label]="titulo()" (click)="$event.stopPropagation()">
+        <header class="dialog-header">
+            <div class="dialog-icone">
+                <i class="fa-solid" [class]="icone()"></i>
+            </div>
+            <div class="dialog-cabecalho-texto">
+                <h3 class="dialog-titulo">{{ titulo() }}</h3>
+                <p class="dialog-mensagem">{{ mensagem() }}</p>
+            </div>
+            <button class="dialog-fechar" title="Fechar" aria-label="Fechar" (click)="cancelar.emit()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </header>
+
+        @if (destaque()) {
+            <div class="dialog-destaque">
+                <i class="fa-solid fa-credit-card"></i>
+                <span>{{ destaque() }}</span>
+            </div>
+        }
+
+        @if (aviso()) {
+            <div class="dialog-aviso">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>{{ aviso() }}</span>
+            </div>
+        }
+
+        <footer class="dialog-acoes">
+            <button class="btn-secondary" (click)="cancelar.emit()">{{ textoCancelar() }}</button>
+            <button class="btn-danger" (click)="confirmar.emit()" autofocus>
+                <i class="fa-solid" [class]="icone()"></i>
+                {{ textoConfirmar() }}
+            </button>
+        </footer>
+    </div>
+</div>

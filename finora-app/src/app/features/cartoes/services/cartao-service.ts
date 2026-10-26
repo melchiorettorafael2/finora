@@ -29,5 +29,9 @@ export class CartaoService {
 
   mudarStatus(id: string): Observable<void> {
     return this.http.patch<void>(`${this.baseUrl}/${id}/status`, null);
-  } 
+  }
+
+  deletar(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
 }

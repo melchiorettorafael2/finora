@@ -1,0 +1,189 @@
+.dialog-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background-color: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(4px);
+    animation: overlay-entrada 0.15s ease;
+}
+
+.dialog {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 460px;
+    padding: 24px;
+    background-color: #2f3033;
+    border: 1px solid #45474b;
+    border-top: 4px solid var(--danger);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 20px 50px rgba(0, 0, 0, 0.7);
+    animation: dialog-entrada 0.18s ease;
+}
+
+/* ===== Cabeçalho ===== */
+.dialog-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.dialog-icone {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: rgba(241, 76, 76, 0.22);
+    border: 1px solid rgba(241, 76, 76, 0.6);
+    color: #ff6b6b;
+    font-size: 20px;
+}
+
+.dialog-cabecalho-texto {
+    flex: 1;
+    min-width: 0;
+    padding-top: 2px;
+}
+
+.dialog-titulo {
+    margin-bottom: 6px;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.dialog-mensagem {
+    color: #e7e7e7;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.dialog-fechar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin: -6px -6px 0 0;
+    border: none;
+    border-radius: var(--radius);
+    background-color: transparent;
+    color: #b5b5b5;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.dialog-fechar:hover {
+    background-color: #45474b;
+    color: #ffffff;
+}
+
+/* ===== Corpo ===== */
+.dialog-destaque {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid #45474b;
+    border-radius: var(--radius);
+    background-color: #232427;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.dialog-destaque i {
+    color: var(--brand-cyan);
+}
+
+.dialog-destaque span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dialog-aviso {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-left: 3px solid var(--danger);
+    border-radius: var(--radius);
+    background-color: rgba(241, 76, 76, 0.14);
+    color: #ffb3b3;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* ===== Rodapé ===== */
+.dialog-acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid #45474b;
+}
+
+.dialog-acoes .btn-secondary {
+    background-color: #4a4d52;
+    border-color: #5c6066;
+    color: #ffffff;
+}
+
+.dialog-acoes .btn-secondary:hover {
+    background-color: #575b61;
+}
+
+.btn-danger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #ff6b6b;
+    padding: 9px 18px;
+    border-radius: var(--radius);
+    background-color: #e03131;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color var(--transition);
+}
+
+.btn-danger:hover {
+    background-color: #c92a2a;
+}
+
+@media (max-width: 480px) {
+    .dialog {
+        padding: 20px 16px 16px;
+    }
+
+    .dialog-acoes {
+        flex-direction: column-reverse;
+    }
+
+    .dialog-acoes button {
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+@keyframes overlay-entrada {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes dialog-entrada {
+    from { opacity: 0; transform: translateY(8px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
