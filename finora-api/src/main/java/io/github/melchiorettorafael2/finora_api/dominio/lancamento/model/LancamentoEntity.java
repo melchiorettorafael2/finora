@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "lacamento")
+@Table(name = "lancamento")
 @Getter@Setter
 public class LancamentoEntity {
 

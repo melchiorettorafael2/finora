@@ -17,6 +17,7 @@ public record LancamentoForm(
         @NotNull(message = "Campo obrigatorio")
         @DecimalMin(value = "0.01", message = "Valor deve ser maior que zero.")
         BigDecimal valor,
+        @NotNull(message = "Campo obrigatorio")
         UUID cartaoId
 ) {
 }
