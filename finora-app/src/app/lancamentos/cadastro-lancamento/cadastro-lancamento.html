@@ -1,0 +1,103 @@
+<app-header titulo="Cadastro de Lançamentos"></app-header>
+
+<main class="content">
+    <div class="card">
+        <div class="form-header">
+            <div class="form-header-icon">
+                <i class="fa-solid fa-money-bill-transfer"></i>
+            </div>
+            <div>
+                <h2>Novo Lançamento</h2>
+                <p class="form-subtitle">Preencha os dados para cadastrar um novo lançamento.</p>
+            </div>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="handleSubmit()" class="form form-card">
+
+            <div class="form-group">
+                <label for="tipo">Tipo <span class="required">*</span></label>
+                <div class="input-icon">
+                    <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                    <select formControlName="tipo" id="tipo" name="tipo" (change)="handleTipoChange()">
+                        <option value="">Selecione o tipo</option>
+                        <option value="RECEITA">Receita</option>
+                        <option value="DESPESA">Despesa</option>
+                    </select>
+                </div>
+                @if(form.controls.tipo.hasError('required') && form.controls.tipo.touched){
+                    <span class="form-hint form-hint-error">
+                        <i class="fa-solid fa-circle-exclamation"></i> O tipo do Lançamento é obrigatório.
+                    </span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="categoriaId">Categoria <span class="required">*</span></label>
+                <div class="input-icon">
+                    <i class="fa-solid fa-icons"></i>
+                    <select formControlName="categoriaId" id="categoriaId" name="categoriaId">
+                        <option value="">Selecione a categoria</option>
+                        @for (categoria of categoriasAtivas(); track categoria.id) {
+                            <option [value]="categoria.id">{{ categoria.nome }}</option>
+                        }
+                    </select>
+                </div>
+                @if(form.controls.categoriaId.hasError('required') && form.controls.categoriaId.touched){
+                    <span class="form-hint form-hint-error">
+                        <i class="fa-solid fa-circle-exclamation"></i> A categoria do Lançamento é obrigatória.
+                    </span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="data">Data <span class="required">*</span></label>
+                <div class="input-icon">
+                <i class="fa-solid fa-calendar-days"></i>                
+                <input id="data" name="data" formControlName="data" type="date"/>
+               </div> 
+                 @if(form.controls.tipo.hasError('required') && form.controls.tipo.touched){
+                    <span class="form-hint form-hint-error">
+                        <i class="fa-solid fa-circle-exclamation"></i> A data do Lançamento é obrigatória.
+                    </span>
+                }
+            </div>
+            
+            <div class="form-group">
+                <label for="valor">Valor <span class="required">*</span></label>
+                <div class="input-icon">
+                <i class="fa-solid fa-money-check-dollar"></i>                
+                <input id="valor" name="valor" formControlName="valor" type="text" mask="separator.2" thousandSeparator="." decimalMarker=","/>
+               </div> 
+                 @if(form.controls.tipo.hasError('required') && form.controls.tipo.touched){
+                    <span class="form-hint form-hint-error">
+                        <i class="fa-solid fa-circle-exclamation"></i> O valor do Lançamento é obrigatório.
+                    </span>
+                }
+            </div>  
+
+            @if(isDespesa()) { 
+               <div class="form-group">
+                <label for="cartaoId">Cartão </label>
+                <div class="input-icon">
+                    <i class="fa-solid fa-credit-card"></i>
+                    <select formControlName="cartaoId" id="cartaoId" name="cartaoId">
+                        <option value="">Selecione o cartão</option>
+                        @for (cartao of cartoesAtivos(); track cartao.id) {
+                            <option [value]="cartao.id">{{ cartao.nome }}</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        }
+            
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" (click)="form.reset()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-check"></i>
+                    Salvar
+                </button>
+            </div>
+        </form>
+    </div>
+</main>

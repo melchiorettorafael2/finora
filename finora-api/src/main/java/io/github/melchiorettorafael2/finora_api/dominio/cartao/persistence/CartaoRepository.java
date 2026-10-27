@@ -1,6 +1,7 @@
 package io.github.melchiorettorafael2.finora_api.dominio.cartao.persistence;
 
 import io.github.melchiorettorafael2.finora_api.dominio.cartao.model.CartaoEntity;
+import io.github.melchiorettorafael2.finora_api.dominio.categoria.web.dto.CategoriaDetalhes;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +22,5 @@ public interface CartaoRepository extends JpaRepository<CartaoEntity, UUID>{
     List<CartaoEntity> findByNomeAndNotId(
             @Param("nome") String nome, @Param("id") UUID id);
 
+    List<CartaoEntity> findByAtivoTrue();
 }

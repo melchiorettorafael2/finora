@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
+import { provideEnvironmentNgxMask } from 'ngx-mask';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,6 +16,13 @@ export const appConfig: ApplicationConfig = {
       timeOut: 5000,
       closeButton: true,
       progressBar: true
+    }),
+
+    provideEnvironmentNgxMask({
+        thousandSeparator: '.', //1.000,00
+        decimalMarker: ',',
+        dropSpecialCharacters: false
     })
+
   ]
 };

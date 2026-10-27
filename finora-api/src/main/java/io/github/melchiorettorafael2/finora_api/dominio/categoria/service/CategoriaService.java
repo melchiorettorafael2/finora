@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -55,5 +56,9 @@ public class CategoriaService {
 
         categoria.setAtivo(!categoria.getAtivo());
         repository.save(categoria);
+    }
+
+    public List<CategoriaDetalhes> listarAtivas() {
+        return repository.findByAtivoTrue().stream().map(mapper::toDetalhes).toList();
     }
 }
