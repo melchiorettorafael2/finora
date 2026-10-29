@@ -1,0 +1,28 @@
+.filtros {
+    margin-top: 20px;
+    padding: 18px 20px;
+}
+
+.filtros-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.filtros-grid .form-group {
+    margin-bottom: 0;
+}
+
+/* Botões na linha de baixo, sob o campo Mês */
+.filtros-actions {
+    grid-column: 1;
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+@media (max-width: 900px) {
+    .filtros-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -5,13 +5,23 @@ import io.github.melchiorettorafael2.finora_api.dominio.cartao.model.CartaoEntit
 import io.github.melchiorettorafael2.finora_api.dominio.cartao.persistence.CartaoRepository;
 import io.github.melchiorettorafael2.finora_api.dominio.categoria.model.CategoriaEntity;
 import io.github.melchiorettorafael2.finora_api.dominio.categoria.repository.CategoriaRepository;
+import io.github.melchiorettorafael2.finora_api.dominio.lancamento.LancamentoSpecs;
 import io.github.melchiorettorafael2.finora_api.dominio.lancamento.model.LancamentoEntity;
+import io.github.melchiorettorafael2.finora_api.dominio.lancamento.model.TipoLancamento;
 import io.github.melchiorettorafael2.finora_api.dominio.lancamento.repository.LancamentoRepository;
 import io.github.melchiorettorafael2.finora_api.dominio.lancamento.web.dto.LancamentoDetalhes;
 import io.github.melchiorettorafael2.finora_api.dominio.lancamento.web.dto.LancamentoForm;
 import io.github.melchiorettorafael2.finora_api.dominio.lancamento.web.mapper.LancamentoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.time.YearMonth;
+import java.util.UUID;
+
+import static io.github.melchiorettorafael2.finora_api.dominio.lancamento.LancamentoSpecs.*;
 
 @Service
 public class LancamentoService {
@@ -48,5 +58,25 @@ public class LancamentoService {
 
     }
 
+    public Page<LancamentoDetalhes> listar(PageRequest pageRequest, YearMonth mes, TipoLancamento tipo, UUID categoriaId){
+
+        Specification<LancamentoEntity> spec = Specification.unrestricted();
+
+        if(tipo != null){
+            spec = spec.and(tipoEqual(tipo));
+        }
+
+        if(categoriaId != null){
+            spec = spec.and(categoriaEqual(categoriaId));
+        }
+
+        if(mes != null){
+            spec = spec.and(mesEqual(mes));
+        }
+
+        var resultado = repository.findAll(spec, pageRequest);
+
+        return  resultado.map(mapper::toDetalhes);
+    }
 
 }

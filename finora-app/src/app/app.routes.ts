@@ -2,7 +2,8 @@ import { Routes } from '@angular/router';
 import { Template } from './layout/template/template';
 import { CARTOES_ROUTES } from './features/cartoes/cartoes.routes';
 import { CATEGORIAS_ROUTES } from './features/categorias/categorias.routes';
-import { CADASTROLANCAMENTO_ROUTES } from './lancamentos/cadastroLancamento.route';
+import { CADASTROLANCAMENTO_ROUTES } from './lancamentos/cadastroLancamento.routes';
+import { LISTAGEMLANCAMENTO_ROUTES } from './lancamentos/listagem-lancamentos/listagemLancamento.routes';
 
 export const routes: Routes = [
     {
@@ -11,7 +12,8 @@ export const routes: Routes = [
         children: [
             ...CARTOES_ROUTES,
             ...CATEGORIAS_ROUTES, 
-            ...CADASTROLANCAMENTO_ROUTES
+            ...CADASTROLANCAMENTO_ROUTES,
+            ...LISTAGEMLANCAMENTO_ROUTES
         ]
     }
 ];

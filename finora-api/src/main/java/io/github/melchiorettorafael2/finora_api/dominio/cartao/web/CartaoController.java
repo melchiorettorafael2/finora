@@ -16,7 +16,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("cartoes")
-@CrossOrigin("*")
 public class CartaoController {
 
     @Autowired

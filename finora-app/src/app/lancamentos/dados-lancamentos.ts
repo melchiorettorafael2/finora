@@ -1,6 +1,6 @@
 export type TipoLancamento = 'RECEITA' | 'DESPESA';
 
-export class DadosLancamentos {
+export class DadosLancamentoForm {
     categoriaId!: string;
     data!: string;
     valor!: string;
@@ -10,12 +10,22 @@ export class DadosLancamentos {
 
 export class DetalhesLancamento {
     id!: string;
+    descricao!: string;
     categoriaId!: string;
+    categoriaNome!: string;
     data!: string;
     valor!: string;
     tipo!: TipoLancamento;
     cartaoId?: string | null;
     cartaoNome?: string;
+}
+
+export class DadosLancamentos {
+    id!: string;
+    tipo!: TipoLancamento;
+    data!: string;
+    valor!: string;
+    cartaoId?: string | null; 
 }
 
 export interface FiltroLancamento {

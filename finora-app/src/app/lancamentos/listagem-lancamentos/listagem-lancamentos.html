@@ -1,0 +1,118 @@
+<app-header titulo="Meus Lançamentos"></app-header>
+
+<main class="content">
+    <div class="card-full">
+        <button class="btn btn-primary" type="button" (click)="router.navigate(['/paginas/cadastro-lancamentos'])">
+            <i class="fa-solid fa-plus"></i>
+            Novo Lançamento
+        </button>
+
+        <form [formGroup]="form" (ngSubmit)="aplicarFiltros()" class="form form-card filtros">
+            <div class="filtros-grid">
+                <div class="form-group">
+                    <label for="mes">Mês</label>
+                    <div class="input-icon">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <input type="month" id="mes" name="mes" formControlName="mes" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipo">Tipo</label>
+                    <div class="input-icon">
+                        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                        <select id="tipo" name="tipo" formControlName="tipo">
+                            <option value="">Todos</option>
+                            <option value="RECEITA">Receita</option>
+                            <option value="DESPESA">Despesa</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="categoriaId">Categoria</label>
+                    <div class="input-icon">
+                        <i class="fa-solid fa-tag"></i>
+                        <select id="categoriaId" name="categoriaId" formControlName="categoriaId">
+                            <option value="">Todas</option>
+                            @for (categoria of categorias(); track categoria.id) {
+                                <option [value]="categoria.id">{{ categoria.nome }}</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filtros-actions">
+                    <button type="button" class="btn btn-secondary" (click)="limparFiltros()">Limpar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-filter"></i>
+                        Filtrar
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="table-card">
+            @if (listagem$ | async; as listagem) {
+                <table class="datatable">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Categoria</th>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                            <th>Valor</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      @for (lancamento of listagem.content; track lancamento.id) {
+                        <tr>
+                          <td>{{ lancamento.data | date: 'dd/MM/yyyy' }}</td>
+                          <td>{{ lancamento.categoriaNome }}</td>
+                          <td>{{ lancamento.tipo === 'RECEITA' ? 'Receita' : 'Despesa' }}</td>
+                          <td>{{ lancamento.descricao }}</td>
+                          <td>{{ lancamento.valor | currency: 'BRL' }}</td>
+   
+                          <td class="text-center">
+                            <button class="icon-btn danger" title="Excluir">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      } @empty {
+                        <tr>
+                          <td colspan="6" class="text-center">Nenhum lançamento encontrado.</td>
+                        </tr>
+                      }
+                    </tbody>
+                </table>
+                <!--Paginação-->
+                <div class="table-footer">
+                    <span class="pagination-info">Exibindo {{ listagem.numberOfElements }} de {{ listagem.totalElements }}
+                        registros</span>
+                    <div class="pagination">
+                        <button class="page-btn"
+                                [disabled]="listagem.first"
+                                (click)="navegarAnterior(listagem);">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+
+                        @for (pagina of paginas(listagem); track pagina) {
+                            <button class="page-btn"
+                                    [class.active]="pagina === listagem.number"
+                                    (click)="navegar(pagina);">{{ pagina + 1 }}</button>
+                        }
+
+                        <button class="page-btn"
+                                [disabled]="listagem.last"
+                                (click)="navegarProximo(listagem);">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</main>

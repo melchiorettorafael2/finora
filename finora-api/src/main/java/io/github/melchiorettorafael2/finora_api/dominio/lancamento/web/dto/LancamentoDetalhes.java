@@ -13,6 +13,7 @@ public record LancamentoDetalhes(
         String categoriaId,
         String categoriaNome,
         String cartaoId,
-        String cartaoNome
+        String cartaoNome,
+        String descricao
 ) {
 }

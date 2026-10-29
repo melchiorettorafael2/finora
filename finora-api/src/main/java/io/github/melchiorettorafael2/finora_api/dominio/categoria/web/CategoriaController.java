@@ -15,7 +15,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("categorias")
-@CrossOrigin("*")
 public class CategoriaController {
 
     @Autowired

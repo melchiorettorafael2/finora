@@ -23,6 +23,9 @@ public class LancamentoEntity {
     @JoinColumn(name = "categoria_id", nullable = false)
     private CategoriaEntity categoria;
 
+    @Column(nullable = false)
+    private String descricao;
+
     @Column
     @Enumerated(EnumType.STRING)
     private TipoLancamento tipo;
