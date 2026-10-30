@@ -6,8 +6,7 @@
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0-6DB33F?logo=springboot)
 ![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)
-![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
-
+![Status](https://img.shields.io/badge/status-desenvolvimento%20conclu%C3%ADdo-brightgreen)
 ---
 
 ## Sumário
