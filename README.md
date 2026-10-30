@@ -202,14 +202,14 @@ Content-Type: application/json
 - [x] CRUD de categorias
 - [x] Lançamentos (despesas e receitas)
 - [x] Telas do frontend em Angular
-- [ ] Dashboard com gráficos de gastos por categoria
-- [ ] Autenticação com Spring Security + JWT
-- [ ] Migrar para PostgreSQL e versionar o banco com Flyway
-- [ ] Documentação da API com Swagger / OpenAPI
-- [ ] Testes unitários e de integração
-- [ ] Docker Compose para subir tudo com um comando
-- [ ] Pipeline de CI/CD com GitHub Actions
-- [ ] Deploy na AWS
+- [x] Dashboard com gráficos de gastos por categoria
+- [x] Autenticação com Spring Security + JWT
+- [x] Migrar para PostgreSQL e versionar o banco com Flyway
+- [x] Documentação da API com Swagger / OpenAPI
+- [x] Testes unitários e de integração
+- [x] Docker Compose para subir tudo com um comando
+- [x] Pipeline de CI/CD com GitHub Actions
+- [x] Deploy na AWS
 
 ---
 
