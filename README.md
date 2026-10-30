@@ -44,8 +44,8 @@ O projeto também serve como estudo prático de boas práticas de desenvolviment
 | Validação de dados e tratamento de erros | ✅ Implementado |
 | Cadastro de categorias de gastos | ✅ Implementado |
 | Lançamento de despesas e receitas | ✅ Implementado |
-| Dashboard com resumo mensal | 🚧 Em desenvolvimento  |
-| Autenticação de usuários | 📋 Planejado |
+| Dashboard com resumo mensal | ✅ Implementado  |
+| Autenticação de usuários | ✅ Implementado |
 
 ---
 
