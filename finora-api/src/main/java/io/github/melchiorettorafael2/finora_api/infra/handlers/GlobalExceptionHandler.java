@@ -1,6 +1,7 @@
 package io.github.melchiorettorafael2.finora_api.infra.handlers;
 
 import io.github.melchiorettorafael2.finora_api.common.exceptions.RegistroNaoEncontradoException;
+import io.github.melchiorettorafael2.finora_api.common.exceptions.UnauthorizedException;
 import io.github.melchiorettorafael2.finora_api.common.exceptions.ValidationException;
 import io.github.melchiorettorafael2.finora_api.common.validation.CampoInvalido;
 import org.springframework.http.HttpStatus;
@@ -68,6 +69,20 @@ public class GlobalExceptionHandler {
                 .body(Map.of(
                         "timestamp", LocalDateTime.now(),
                         "status", e.getStatusCode(),
+                        "error", e.getMessage(),
+                        "message", e.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<?> handleUnauthorizedException(UnauthorizedException e){
+
+        var status = HttpStatus.UNAUTHORIZED;
+
+        return ResponseEntity.status(status)
+                .body(Map.of(
+                        "timestamp", LocalDateTime.now(),
+                        "status", status.value(),
                         "error", e.getMessage(),
                         "message", e.getMessage()
                 ));
