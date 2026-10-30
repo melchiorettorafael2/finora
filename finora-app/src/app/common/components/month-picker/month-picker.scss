@@ -1,0 +1,178 @@
+:host {
+    display: block;
+    position: relative;
+}
+
+button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+}
+
+button:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: -2px;
+}
+
+/* Campo: ‹ Outubro de 2026 › */
+.month-picker {
+    display: flex;
+    align-items: stretch;
+    height: 42px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--bg-surface);
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.month-picker:hover {
+    border-color: #4a4d52;
+}
+
+.month-picker:focus-within,
+.month-picker.aberto {
+    border-color: var(--focus);
+    box-shadow: 0 0 0 3px rgba(58, 138, 224, 0.22);
+}
+
+.month-picker.desabilitado {
+    opacity: 0.6;
+}
+
+.mp-seta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-radius: var(--radius);
+    transition: color var(--transition), background-color var(--transition);
+}
+
+.mp-seta:hover:not(:disabled) {
+    color: var(--text-strong);
+    background-color: var(--bg-hover);
+}
+
+.mp-rotulo {
+    flex: 1;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-strong);
+}
+
+.mp-rotulo i {
+    font-size: 14px;
+    color: var(--text-muted);
+    transition: color var(--transition);
+}
+
+.month-picker:focus-within .mp-rotulo i,
+.month-picker.aberto .mp-rotulo i {
+    color: var(--brand-blue);
+}
+
+.mp-rotulo span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Painel de seleção */
+.mp-painel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    min-width: 260px;
+    z-index: 20;
+    padding: 12px;
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+}
+
+.mp-painel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.mp-painel-header .mp-seta {
+    width: 32px;
+    height: 32px;
+}
+
+.mp-painel-header strong {
+    font-size: 14px;
+    color: var(--text-strong);
+}
+
+.mp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.mp-mes {
+    height: 36px;
+    font-size: 13px;
+    color: var(--text);
+    border-radius: var(--radius);
+    transition: color var(--transition), background-color var(--transition);
+}
+
+.mp-mes:hover {
+    color: var(--text-strong);
+    background-color: var(--bg-hover);
+}
+
+.mp-mes.atual {
+    color: var(--brand-cyan);
+    box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.mp-mes.selecionado {
+    font-weight: 600;
+    color: #fff;
+    background-color: var(--accent-btn);
+    box-shadow: none;
+}
+
+.mp-mes.selecionado:hover {
+    background-color: var(--accent-btn-hover);
+}
+
+.mp-painel-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.mp-link {
+    padding: 4px 6px;
+    font-size: 13px;
+    color: var(--brand-blue);
+    border-radius: var(--radius);
+    transition: background-color var(--transition);
+}
+
+.mp-link:hover {
+    background-color: var(--bg-hover);
+}

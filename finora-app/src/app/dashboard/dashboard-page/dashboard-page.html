@@ -1,0 +1,116 @@
+<app-header titulo="Dashboard"></app-header>
+
+<main class="content">
+    @if(dashboard$ | async; as dashboard ){
+    <section class="dashboard-grid">
+        <div class="metric-card metric-card-balance" [ngClass]="dashboard.resumo.saldo > 0 ? 'metric-income' : 'metric-expense'">
+            <div class="metric-body">
+                <div class="metric-header">
+                    <span class="metric-icon"><i class="fa-solid fa-wallet"></i></span>
+                    <span class="metric-label">Saldo Atual</span>
+                </div>
+                <strong class="metric-value">{{ dashboard.resumo.saldo | currency }}</strong>
+                <small><i class="fa-regular fa-calendar"></i> {{ dashboard.mes + '-01' | date: 'MMMM yyyy' }}</small>
+            </div>
+        </div>
+        <div class="metric-card metric-income">
+            <div class="metric-body">
+                <div class="metric-header">
+                    <span class="metric-icon"><i class="fa-solid fa-arrow-trend-up"></i></span>
+                    <span class="metric-label">Receitas</span>
+                </div>
+                <strong class="metric-value">{{ dashboard.resumo.receitas | currency }}</strong>
+                <small><i class="fa-regular fa-calendar"></i> Mês Atual</small>
+            </div>
+        </div>
+        <div class="metric-card metric-expense">
+            <div class="metric-body">
+                <div class="metric-header">
+                    <span class="metric-icon"><i class="fa-solid fa-arrow-trend-down"></i></span>
+                    <span class="metric-label">Despesas</span>
+                </div>
+                <strong class="metric-value">{{ dashboard.resumo.despesas | currency }}</strong>
+                <small><i class="fa-regular fa-calendar"></i> Mês Atual</small>
+            </div>
+        </div>
+    </section>
+    <section class="charts-grid">
+        <div class="chart-panel">
+            <div class="chart-body">
+                <div class="chart-header">
+                    <span class="chart-icon"><i class="fa-solid fa-chart-simple"></i></span>
+                    <div class="chart-title">
+                        <h2>Receitas x Despesas</h2>
+                        <span><i class="fa-regular fa-calendar"></i> {{ dashboard.mes + '-01' | date: 'MMMM yyyy' }}</span>
+                    </div>
+                </div>
+                <div class="comparison-chart">
+                    <div class="comparison-row">
+                        <div class="comparison-label">
+                            <span><i class="fa-solid fa-arrow-trend-up income"></i> Receitas</span>
+                            <strong>{{ dashboard.resumo.receitas | currency }}</strong>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill income"
+                            [style.width.%]="percentual(dashboard.resumo.receitas,
+                            dashboard.resumo.receitas + dashboard.resumo.despesas)"
+                            ></div>
+                        </div>
+                        <small>{{ percentual(dashboard.resumo.receitas, dashboard.resumo.receitas + dashboard.resumo.despesas) }}% do movimentado</small>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-label">
+                            <span><i class="fa-solid fa-arrow-trend-down expense"></i> Despesas</span>
+                            <strong>{{ dashboard.resumo.despesas | currency }}</strong>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill expense"
+                            [style.width.%]="percentual(dashboard.resumo.despesas,
+                            dashboard.resumo.receitas + dashboard.resumo.despesas)"
+                            ></div>
+                        </div>
+                        <small>{{ percentual(dashboard.resumo.despesas, dashboard.resumo.receitas + dashboard.resumo.despesas) }}% do movimentado</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="chart-panel">
+            <div class="chart-body">
+                <div class="chart-header">
+                    <span class="chart-icon"><i class="fa-solid fa-chart-pie"></i></span>
+                    <div class="chart-title">
+                        <h2>Gastos por Categoria</h2>
+                        <span><i class="fa-regular fa-calendar"></i> {{ dashboard.mes + '-01' | date: 'MMMM yyyy' }}</span>
+                    </div>
+                </div>
+                @if(dashboard.despesasPorCategoria.length){
+                    <div class="category-chart">
+                        @for (despesa of dashboard.despesasPorCategoria; track despesa.categoria) {
+                            <div class="category-row">
+                                <div class="category-label">
+                                    <span><i class="fa-solid fa-tag"></i> {{ despesa.categoria }}</span>
+                                    <strong>{{ despesa.valor | currency }}</strong>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-fill category"
+                                    [style.width.%]="percentual(despesa.valor,
+                                    maiorDespesaCategoria(dashboard.despesasPorCategoria))"
+                                    ></div>
+                                </div>
+                                <small>{{ percentual(despesa.valor, dashboard.resumo.despesas) }}% das despesas</small>
+                            </div>
+                        }
+                    </div>
+                } @else {
+                    <div class="empty-state">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Nenhuma despesa registrada neste mês</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+
+    }
+</main>

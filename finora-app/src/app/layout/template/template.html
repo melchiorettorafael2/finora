@@ -4,12 +4,16 @@
             <img class="logo-img" src="finora-logo-sidebar@2x.png" srcset="finora-logo-sidebar@2x.png 2x, finora-logo-sidebar@3x.png 3x" alt="Finora" />
         </div>
        <nav class="sidebar-menu" >
+            <a class="menu-item" routerLink="/paginas/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
             <a class="menu-item" routerLink="/paginas/listagem-cartoes" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                 <i class="fa-solid fa-credit-card"></i>
                 <span>Meus Cartões</span>
             </a>
             <a class="menu-item" routerLink="/paginas/listagem-categorias" routerLinkActive="active">
-                <i class="fa-solid fa-icons"></i>
+                <i class="fa-solid fa-tags"></i>
                 <span>Categorias</span>
             </a>
             <a class="menu-item" routerLink="/paginas/listagem-lancamentos" routerLinkActive="active">

@@ -1,0 +1,47 @@
+<div class="month-picker" [class.aberto]="aberto()" [class.desabilitado]="desabilitado()">
+    <button type="button" class="mp-seta" title="Mês anterior" aria-label="Mês anterior"
+        [disabled]="desabilitado()" (click)="anterior()">
+        <i class="fa-solid fa-chevron-left"></i>
+    </button>
+
+    <button type="button" class="mp-rotulo" [id]="inputId()" aria-haspopup="dialog"
+        [attr.aria-expanded]="aberto()" [disabled]="desabilitado()" (click)="alternarPainel()">
+        <i class="fa-solid fa-calendar-days"></i>
+        <span>{{ rotulo() }}</span>
+    </button>
+
+    <button type="button" class="mp-seta" title="Próximo mês" aria-label="Próximo mês"
+        [disabled]="desabilitado()" (click)="proximo()">
+        <i class="fa-solid fa-chevron-right"></i>
+    </button>
+</div>
+
+@if (aberto()) {
+    <div class="mp-painel" role="dialog" aria-label="Selecionar mês">
+        <div class="mp-painel-header">
+            <button type="button" class="mp-seta" aria-label="Ano anterior" (click)="mudarAnoPainel(-1)">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <strong>{{ anoPainel() }}</strong>
+            <button type="button" class="mp-seta" aria-label="Próximo ano" (click)="mudarAnoPainel(1)">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <div class="mp-grid">
+            @for (mes of meses; track $index) {
+                <button type="button" class="mp-mes"
+                    [class.selecionado]="mesSelecionado($index)"
+                    [class.atual]="mesAtual($index)"
+                    (click)="selecionarMes($index)">
+                    {{ mes }}
+                </button>
+            }
+        </div>
+
+        <div class="mp-painel-footer">
+            <button type="button" class="mp-link" (click)="limpar()">Todos os meses</button>
+            <button type="button" class="mp-link" (click)="selecionarMesAtual()">Mês atual</button>
+        </div>
+    </div>
+}

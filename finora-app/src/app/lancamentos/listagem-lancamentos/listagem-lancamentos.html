@@ -11,10 +11,7 @@
             <div class="filtros-grid">
                 <div class="form-group">
                     <label for="mes">Mês</label>
-                    <div class="input-icon">
-                        <i class="fa-solid fa-calendar-days"></i>
-                        <input type="month" id="mes" name="mes" formControlName="mes" />
-                    </div>
+                    <app-month-picker inputId="mes" formControlName="mes" (alterado)="aplicarFiltros()" />
                 </div>
 
                 <div class="form-group">
@@ -75,7 +72,7 @@
                           <td>{{ lancamento.valor | currency: 'BRL' }}</td>
    
                           <td class="text-center">
-                            <button class="icon-btn danger" title="Excluir">
+                            <button class="icon-btn danger" title="Excluir" (click)="deletar(lancamento.id, listagem)">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                           </td>

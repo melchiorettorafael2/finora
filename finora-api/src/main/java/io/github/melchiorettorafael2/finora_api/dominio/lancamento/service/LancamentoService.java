@@ -1,5 +1,6 @@
 package io.github.melchiorettorafael2.finora_api.dominio.lancamento.service;
 
+import io.github.melchiorettorafael2.finora_api.common.exceptions.RegistroNaoEncontradoException;
 import io.github.melchiorettorafael2.finora_api.common.exceptions.ValidationException;
 import io.github.melchiorettorafael2.finora_api.dominio.cartao.model.CartaoEntity;
 import io.github.melchiorettorafael2.finora_api.dominio.cartao.persistence.CartaoRepository;
@@ -77,6 +78,11 @@ public class LancamentoService {
         var resultado = repository.findAll(spec, pageRequest);
 
         return  resultado.map(mapper::toDetalhes);
+    }
+
+    public void deletar(UUID id){
+        var lancamento = repository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
+        repository.delete(lancamento);
     }
 
 }

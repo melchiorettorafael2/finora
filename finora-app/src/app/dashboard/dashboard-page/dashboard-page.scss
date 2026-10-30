@@ -1,0 +1,302 @@
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+/* Moldura compartilhada: card externo + painel interno mais escuro, como em .card-full > .form-card */
+.metric-card,
+.chart-panel {
+    padding: 6px;
+    display: flex;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    transition: border-color var(--transition);
+}
+
+/* Cor de destaque de cada card, consumida pelo ícone, valor, gradiente e faixa superior */
+.metric-card {
+    --metric-color: var(--brand-blue);
+    --metric-rgb: 58, 138, 224;
+    --metric-text: #6aaef0;
+}
+
+.metric-income {
+    --metric-color: var(--success);
+    --metric-rgb: 79, 214, 168;
+    --metric-text: #6ee6be;
+}
+
+.metric-expense {
+    --metric-color: var(--danger);
+    --metric-rgb: 241, 76, 76;
+    --metric-text: var(--danger);
+}
+
+.metric-card:hover {
+    border-color: rgba(var(--metric-rgb), 0.35);
+}
+
+.metric-body {
+    position: relative;
+    flex: 1;
+    min-height: 150px;
+    padding: 22px 24px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+    overflow: hidden;
+    background:
+        linear-gradient(135deg, rgba(var(--metric-rgb), 0.13) 0%, rgba(var(--metric-rgb), 0.04) 55%, transparent 100%),
+        var(--bg-table);
+    border: 1px solid rgba(var(--metric-rgb), 0.18);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+}
+
+/* Faixa de destaque no topo do painel */
+.metric-body::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--metric-color), transparent);
+}
+
+.metric-header {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.metric-label {
+    color: #f0f0f0;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+}
+
+.metric-icon {
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    font-size: 18px;
+    color: var(--metric-text);
+    background-color: rgba(var(--metric-rgb), 0.18);
+    border: 1px solid rgba(var(--metric-rgb), 0.32);
+}
+
+.metric-value {
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.75px;
+    font-variant-numeric: tabular-nums;
+    color: var(--metric-text);
+    text-shadow: 0 2px 8px rgba(var(--metric-rgb), 0.15);
+}
+
+.metric-card small {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #a8adb5;
+    font-size: 14px;
+    text-transform: capitalize;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 18px;
+}
+
+.chart-panel:hover {
+    border-color: var(--border);
+}
+
+.chart-body {
+    flex: 1;
+    min-height: 320px;
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-table);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+/* Cabeçalho no padrão do .form-header: ícone + título + subtítulo */
+.chart-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 18px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chart-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    font-size: 18px;
+    color: var(--brand-blue);
+    background-color: rgba(58, 138, 224, 0.14);
+    border: 1px solid rgba(58, 138, 224, 0.3);
+}
+
+.chart-title {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.chart-title h2 {
+    color: var(--teal);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.chart-title span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    font-size: 13px;
+    text-transform: capitalize;
+}
+
+.comparison-chart,
+.category-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.comparison-row,
+.category-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.comparison-label,
+.category-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+}
+
+.comparison-label span,
+.category-label span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+    font-weight: 600;
+}
+
+.comparison-label i.income {
+    color: var(--success);
+}
+
+.comparison-label i.expense {
+    color: var(--danger);
+}
+
+.comparison-label strong,
+.category-label strong {
+    color: var(--text-strong);
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+}
+
+.comparison-row small,
+.category-row small {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.category-label i {
+    color: var(--brand-blue);
+    font-size: 12px;
+}
+
+.bar-track {
+    width: 100%;
+    height: 14px;
+    border-radius: 999px;
+    background-color: var(--bg-input);
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    min-width: 2px;
+    border-radius: inherit;
+    transition: width 0.4s ease;
+}
+
+.bar-fill.income {
+    background: linear-gradient(90deg, rgba(79, 214, 168, 0.6), var(--success));
+    box-shadow: 0 0 10px rgba(79, 214, 168, 0.35);
+}
+
+.bar-fill.expense {
+    background: linear-gradient(90deg, rgba(241, 76, 76, 0.6), var(--danger));
+    box-shadow: 0 0 10px rgba(241, 76, 76, 0.35);
+}
+
+.bar-fill.category {
+    background: linear-gradient(90deg, rgba(58, 138, 224, 0.6), var(--brand-blue));
+    box-shadow: 0 0 10px rgba(58, 138, 224, 0.35);
+}
+
+.empty-state {
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.empty-state i {
+    color: var(--teal);
+    font-size: 32px;
+}
+
+@media (max-width: 992px) {
+    .dashboard-grid,
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .metric-card strong {
+        font-size: 28px;
+    }
+
+    .comparison-label,
+    .category-label {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

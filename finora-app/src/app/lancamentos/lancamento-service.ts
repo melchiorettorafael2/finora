@@ -50,8 +50,11 @@ export class LancamentoService {
 
      params = params.set('page', page).set('size', size);
 
-     return this.http.get<PageResult<DetalhesLancamento>>(this.baseUrl, {params : params})
-     
+     return this.http.get<PageResult<DetalhesLancamento>>(this.baseUrl, {params : params}) 
+  }
+
+  deletar(id: string){
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 
 }

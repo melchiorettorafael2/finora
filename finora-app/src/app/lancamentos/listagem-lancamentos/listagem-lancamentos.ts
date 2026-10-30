@@ -4,6 +4,7 @@ import { DetalhesLancamento, TipoLancamento } from '../dados-lancamentos';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Header } from '../../common/components/header/header';
+import { MonthPicker } from '../../common/components/month-picker/month-picker';
 import { LancamentoService } from '../lancamento-service';
 import { ToastrService } from 'ngx-toastr';
 import { PageResult } from '../../shared/models/page-result';
@@ -19,7 +20,7 @@ interface FiltrosForm{
 
 @Component({
   selector: 'app-listagem-lancamentos',
-  imports: [CommonModule, ReactiveFormsModule, Header],
+  imports: [CommonModule, ReactiveFormsModule, Header, MonthPicker],
   templateUrl: './listagem-lancamentos.html',
   styleUrl: './listagem-lancamentos.scss',
 })
@@ -99,6 +100,21 @@ export class ListagemLancamentos implements OnInit {
 
   paginas(listagem: PageResult<DetalhesLancamento>){
     return Array.from({ length: listagem.totalPages }, (_, i) => i);
+  }
+
+  deletar(id: string, listagem: PageResult<DetalhesLancamento>) : void {
+    this.service.deletar(id).subscribe({
+      next: () =>{
+        this.toast.success('Lançamento excluído com sucesso!');
+
+        if(listagem.content.length === 1 && !listagem.first){
+          this.paginaAtual = listagem.number - 1;
+        }
+
+        this.listarLancamentos();
+      },
+      error: () => this.toast.error('Erro ao excluir lançamento.')
+    });
   }
 
 }
