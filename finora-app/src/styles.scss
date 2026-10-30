@@ -5,16 +5,17 @@
 :root {
     color-scheme: dark;
 
-    /* Superfícies */
-    --bg-app: #1e1e1e;          /* área do editor */
-    --bg-sidebar: #252526;      /* explorer */
-    --bg-sidebar-header: #333333; /* activity bar */
-    --bg-surface: #252526;      /* cards */
-    --bg-elevated: #2d2d2d;     /* cabeçalho de tabela, botões neutros */
-    --bg-table: #17181a;        /* fundo da área da tabela */
-    --bg-input: #3c3c3c;
-    --bg-hover: #2a2d2e;        /* list.hoverBackground */
-    --bg-active: #37373d;       /* list.inactiveSelectionBackground */
+    /* Superfícies — tons azul-ardósia, da mesma família do --brand-night
+       da sidebar/header, mantendo a hierarquia página < card < elevado */
+    --bg-app: #141b26;          /* fundo das páginas */
+    --bg-sidebar: #1a2230;
+    --bg-sidebar-header: #263042;
+    --bg-surface: #1b2330;      /* cards */
+    --bg-elevated: #243042;     /* cabeçalho de tabela, botões neutros */
+    --bg-table: #10161f;        /* fundo da área da tabela */
+    --bg-input: #2a3547;
+    --bg-hover: #212b3a;
+    --bg-active: #2b374a;
 
     /* Marca Finora (mesmas cores do logo) */
     --brand-night: #0e1622;
@@ -24,18 +25,25 @@
     --brand-cyan: #4fd0de;
     --brand-green: #34d3a3;
     --brand-gradient: linear-gradient(180deg, var(--brand-blue), var(--brand-green));
-    --brand-hover-bg: linear-gradient(90deg, rgba(58, 138, 224, 0.16), rgba(52, 211, 163, 0.06));
-    --brand-active-bg: linear-gradient(90deg, rgba(58, 138, 224, 0.24), rgba(52, 211, 163, 0.1));
-    --brand-active-hover-bg: linear-gradient(90deg, rgba(58, 138, 224, 0.32), rgba(52, 211, 163, 0.16));
+    /* Camada clara por baixo do azul: só azul translúcido some sobre o fundo azul-noite da sidebar */
+    --brand-hover-bg:
+        linear-gradient(90deg, rgba(58, 138, 224, 0.42), rgba(52, 211, 163, 0.16) 85%),
+        rgba(255, 255, 255, 0.07);
+    --brand-active-bg:
+        linear-gradient(90deg, rgba(58, 138, 224, 0.55), rgba(52, 211, 163, 0.22) 85%),
+        rgba(255, 255, 255, 0.08);
+    --brand-active-hover-bg:
+        linear-gradient(90deg, rgba(58, 138, 224, 0.68), rgba(52, 211, 163, 0.30) 85%),
+        rgba(255, 255, 255, 0.10);
 
     /* Bordas */
-    --border: #3c3c3c;
-    --border-subtle: #2b2b2b;
+    --border: #313d50;
+    --border-subtle: #232d3c;
 
     /* Texto */
     --text: #cccccc;
     --text-strong: #e7e7e7;
-    --text-muted: #858585;
+    --text-muted: #8592a6;
 
     /* Destaques */
     --accent: #2f80d8;          /* azul do logo */
@@ -64,7 +72,12 @@
 
 body {
     font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-    background-color: var(--bg-app);
+    /* Brilhos bem suaves no azul e no verde da marca, fixos ao rolar */
+    background:
+        radial-gradient(60% 50% at 100% 0%, rgba(58, 138, 224, 0.08), transparent 70%),
+        radial-gradient(50% 45% at 20% 100%, rgba(52, 211, 163, 0.05), transparent 70%),
+        var(--bg-app);
+    background-attachment: fixed;
     color: var(--text);
     -webkit-font-smoothing: antialiased;
 }
@@ -90,11 +103,20 @@ body {
 /* ====== SIDEBAR ========== */
 /* ========================= */
 
+/* Degradê partindo do --brand-night (fundo do logo), com brilhos sutis
+   no azul e no verde da marca para dar contraste com a área de conteúdo */
 .sidebar {
+    position: relative;
+    z-index: 1;
     width: 240px;
-    background-color: var(--bg-sidebar);
+    flex-shrink: 0;
+    background:
+        radial-gradient(130% 35% at 0% 12%, rgba(58, 138, 224, 0.16), transparent 70%),
+        radial-gradient(120% 40% at 100% 100%, rgba(52, 211, 163, 0.12), transparent 70%),
+        linear-gradient(180deg, var(--brand-night) 0%, #101a29 45%, #0a0f17 100%);
     color: var(--text);
-    border-right: 1px solid var(--border-subtle);
+    border-right: 1px solid rgba(149, 190, 224, 0.13);
+    box-shadow: 4px 0 18px rgba(0, 0, 0, 0.35);
     display: flex;
     flex-direction: column;
 }
@@ -143,17 +165,29 @@ body {
 
 .menu-item:hover {
     background: var(--brand-hover-bg);
-    color: var(--text-strong);
+    color: var(--brand-white);
 }
 
 .menu-item:hover i {
-    color: var(--brand-blue);
+    color: #8cc4ff;
+}
+
+/* Barra lateral discreta no hover, antecipando o estilo do item ativo */
+.menu-item:not(.active):hover::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--brand-blue);
+    box-shadow: 0 0 8px rgba(58, 138, 224, 0.6);
 }
 
 /* Item ativo com a barra lateral no degradê do logo */
 .menu-item.active {
     background: var(--brand-active-bg);
-    color: var(--text-strong);
+    color: var(--brand-white);
 }
 
 .menu-item.active i {
@@ -190,10 +224,19 @@ body {
     overflow-y: auto;
 }
 
+/* Continua o --brand-night do logo à esquerda e termina com um brilho
+   azul/verde perto da área do usuário, no mesmo estilo da sidebar */
 .header {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
     height: 56px;
-    background-color: var(--bg-sidebar);
-    border-bottom: 1px solid var(--border-subtle);
+    background:
+        radial-gradient(45% 140% at 100% 50%, rgba(52, 211, 163, 0.10), transparent 70%),
+        radial-gradient(40% 160% at 75% 0%, rgba(58, 138, 224, 0.14), transparent 70%),
+        linear-gradient(90deg, var(--brand-night) 0%, #101a29 60%, #0f1724 100%);
+    border-bottom: 1px solid rgba(149, 190, 224, 0.13);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
     padding: 0 25px;
     display: flex;
     align-items: center;
@@ -211,7 +254,21 @@ body {
     align-items: center;
     gap: 10px;
     font-size: 13px;
-    color: var(--text-muted);
+    color: var(--brand-muted);
+}
+
+.user-name strong {
+    color: var(--text-strong);
+    font-weight: 600;
+}
+
+.user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--brand-blue);
+    box-shadow: 0 0 0 2px var(--brand-night), 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
 .content {
