@@ -45,7 +45,7 @@
     font-size: 14px;
     font-weight: 600;
     color: var(--brand-white);
-    max-width: 160px;
+    max-width: 280px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -70,6 +70,15 @@
         border-radius: 50%;
         background-color: var(--brand-night);
         color: var(--brand-muted);
+    }
+
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        background-color: var(--brand-night);
     }
 }
 
@@ -169,6 +178,7 @@
     font-family: inherit;
     font-size: 14px;
     text-align: left;
+    text-decoration: none;
     cursor: pointer;
     transition: background-color var(--transition), color var(--transition);
 

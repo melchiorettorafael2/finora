@@ -20,7 +20,7 @@
                     <span class="metric-label">Receitas</span>
                 </div>
                 <strong class="metric-value">{{ dashboard.resumo.receitas | currency }}</strong>
-                <small><i class="fa-regular fa-calendar"></i> Mês Atual</small>
+                <small><i class="fa-regular fa-calendar"></i> {{ dashboard.mes + '-01' | date: 'MMMM yyyy' }}</small>
             </div>
         </div>
         <div class="metric-card metric-expense">
@@ -30,7 +30,7 @@
                     <span class="metric-label">Despesas</span>
                 </div>
                 <strong class="metric-value">{{ dashboard.resumo.despesas | currency }}</strong>
-                <small><i class="fa-regular fa-calendar"></i> Mês Atual</small>
+                <small><i class="fa-regular fa-calendar"></i> {{ dashboard.mes + '-01' | date: 'MMMM yyyy' }}</small>
             </div>
         </div>
     </section>

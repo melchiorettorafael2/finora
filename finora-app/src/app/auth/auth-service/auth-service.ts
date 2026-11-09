@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { AuthResponse, CadastroUsuarioForm } from '../dados-auth';
 import { Observable, tap } from 'rxjs';
 import { LoginForm } from '../dados-auth';
@@ -23,6 +23,10 @@ export class AuthService {
   private readonly nome_key = 'nome_usuario_sessao';
   private logoyutTimer?: ReturnType<typeof setTimeout>;
 
+  // Reativo para o header refletir a troca de nome feita nas configurações
+  private readonly nomeUsuarioState = signal(localStorage.getItem(this.nome_key) ?? '');
+  readonly nomeUsuario = this.nomeUsuarioState.asReadonly();
+
   http = inject(HttpClient);
   router = inject(Router);
   baseUrl = 'http://localhost:8080/auth';
@@ -42,6 +46,7 @@ export class AuthService {
     const token = response.token;
     localStorage.setItem(this.token_key, token);
     localStorage.setItem(this.nome_key, response.nome);
+    this.nomeUsuarioState.set(response.nome);
     this.agendarLogoutPorExpiracao();
   }
 
@@ -80,6 +85,7 @@ export class AuthService {
   logout(redirecionar = true): void {
     localStorage.removeItem(this.token_key);
     localStorage.removeItem(this.nome_key);
+    this.nomeUsuarioState.set('');
     if(this.logoyutTimer){
       clearTimeout(this.logoyutTimer);
     }
@@ -94,6 +100,10 @@ export class AuthService {
       return;
     }
     const tempoRestante = exp * 1000 - Date.now(); // Convertendo para milissegundos
+    // A sessão pode ser renovada (ex.: ao editar os dados do usuário), então descarta o timer anterior
+    if(this.logoyutTimer){
+      clearTimeout(this.logoyutTimer);
+    }
     this.logoyutTimer = setTimeout(() => {
       this.logout();
     }, tempoRestante);

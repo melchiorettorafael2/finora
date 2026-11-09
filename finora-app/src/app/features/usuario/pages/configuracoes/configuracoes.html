@@ -1,0 +1,213 @@
+<app-header titulo="Configurações"></app-header>
+
+<main class="content">
+    <div class="config-grid">
+
+        <!-- ===== Foto de perfil ===== -->
+        <section class="card-full config-card">
+            <div class="form-header">
+                <div class="form-header-icon">
+                    <i class="fa-solid fa-camera"></i>
+                </div>
+                <div>
+                    <h2>Foto de perfil</h2>
+                    <p class="form-subtitle">Ela aparece no topo da tela, ao lado do seu nome.</p>
+                </div>
+            </div>
+
+            <div class="form-card foto-area">
+                <div class="foto-avatar" [class.preview]="previewUrl()">
+                    @if (fotoExibida(); as url) {
+                        <img [src]="url" alt="Foto do usuário" />
+                    } @else {
+                        <i class="fa-solid fa-circle-user"></i>
+                    }
+                </div>
+
+                <div class="foto-info">
+                    @if (arquivoSelecionado(); as arquivo) {
+                        <span class="foto-nome-arquivo">
+                            <i class="fa-solid fa-image"></i> {{ arquivo.name }}
+                        </span>
+                        <span class="form-subtitle">Pré-visualização. Clique em salvar para confirmar.</span>
+                    } @else {
+                        <span class="form-subtitle">JPG, PNG ou WEBP com até 2 MB.</span>
+                    }
+
+                    @if (erroFoto(); as erro) {
+                        <span class="form-hint form-hint-error">
+                            <i class="fa-solid fa-circle-exclamation"></i> {{ erro }}
+                        </span>
+                    }
+
+                    <div class="foto-acoes">
+                        <input #inputFoto type="file" class="input-arquivo" accept="image/jpeg,image/png,image/webp"
+                            (change)="selecionarFoto($event)" />
+
+                        @if (arquivoSelecionado()) {
+                            <button type="button" class="btn btn-secondary" (click)="cancelarFoto()" [disabled]="salvandoFoto()">
+                                <i class="fa-solid fa-xmark"></i> Cancelar
+                            </button>
+                            <button type="button" class="btn btn-primary" (click)="salvarFoto()" [disabled]="salvandoFoto()">
+                                <i class="fa-solid fa-check"></i>
+                                {{ salvandoFoto() ? 'Salvando...' : 'Salvar foto' }}
+                            </button>
+                        } @else {
+                            <button type="button" class="btn btn-secondary" (click)="inputFoto.click()" [disabled]="salvandoFoto()">
+                                <i class="fa-solid fa-upload"></i>
+                                {{ fotoAtual() ? 'Trocar foto' : 'Escolher foto' }}
+                            </button>
+                            @if (fotoAtual()) {
+                                <button type="button" class="btn btn-danger-outline" (click)="removerFoto()" [disabled]="salvandoFoto()">
+                                    <i class="fa-solid fa-trash"></i> Remover
+                                </button>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Dados pessoais ===== -->
+        <section class="card-full config-card">
+            <div class="form-header">
+                <div class="form-header-icon">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+                <div>
+                    <h2>Dados pessoais</h2>
+                    <p class="form-subtitle">O nome e o email também servem para entrar no sistema.</p>
+                </div>
+                @if (!editandoDados()) {
+                    <button type="button" class="btn btn-editar" (click)="editarDados()" [disabled]="carregando()">
+                        <i class="fa-solid fa-pen"></i> Editar
+                    </button>
+                }
+            </div>
+
+            <form [formGroup]="dadosForm" (ngSubmit)="salvarDados()" class="form form-card">
+                <div class="form-group">
+                    <label for="nome">Nome <span class="required">*</span></label>
+                    <div class="input-icon">
+                        <i class="fa-solid fa-user"></i>
+                        <input formControlName="nome" type="text" id="nome" placeholder="Seu nome" autocomplete="name" />
+                    </div>
+                    @if (campoInvalido(dadosForm, 'nome')) {
+                        <span class="form-hint form-hint-error">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            {{ erroApi(dadosForm, 'nome') ?? 'O nome é obrigatório.' }}
+                        </span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email <span class="required">*</span></label>
+                    <div class="input-icon">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input formControlName="email" type="email" id="email" placeholder="seu@email.com" autocomplete="email" />
+                    </div>
+                    @if (campoInvalido(dadosForm, 'email')) {
+                        <span class="form-hint form-hint-error">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            {{ erroApi(dadosForm, 'email') ?? (dadosForm.controls.email.hasError('required') ? 'O email é obrigatório.' : 'Informe um email válido.') }}
+                        </span>
+                    }
+                </div>
+
+                @if (editandoDados()) {
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" (click)="cancelarEdicaoDados()" [disabled]="salvandoDados()">
+                            <i class="fa-solid fa-xmark"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary" [disabled]="salvandoDados() || dadosForm.pristine">
+                            <i class="fa-solid fa-check"></i>
+                            {{ salvandoDados() ? 'Salvando...' : 'Salvar dados' }}
+                        </button>
+                    </div>
+                }
+            </form>
+        </section>
+
+        <!-- ===== Senha ===== -->
+        <section class="card-full config-card">
+            <div class="form-header">
+                <div class="form-header-icon">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <div>
+                    <h2>Alterar senha</h2>
+                    <p class="form-subtitle">Confirme sua senha atual para definir uma nova.</p>
+                </div>
+                @if (!editandoSenha()) {
+                    <button type="button" class="btn btn-editar" (click)="editarSenha()">
+                        <i class="fa-solid fa-key"></i> Alterar
+                    </button>
+                }
+            </div>
+
+            <form [formGroup]="senhaForm" (ngSubmit)="alterarSenha()" class="form form-card">
+                <div class="form-group">
+                    <label for="senhaAtual">Senha atual <span class="required">*</span></label>
+                    <div class="input-icon">
+                        <i class="fa-solid fa-lock"></i>
+                        <input formControlName="senhaAtual" [type]="mostrarSenhas() ? 'text' : 'password'" id="senhaAtual"
+                            placeholder="Digite sua senha atual" autocomplete="current-password" />
+                    </div>
+                    @if (campoInvalido(senhaForm, 'senhaAtual')) {
+                        <span class="form-hint form-hint-error">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            {{ erroApi(senhaForm, 'senhaAtual') ?? 'Informe a senha atual.' }}
+                        </span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="novaSenha">Nova senha <span class="required">*</span></label>
+                    <div class="input-icon">
+                        <i class="fa-solid fa-lock"></i>
+                        <input formControlName="novaSenha" [type]="mostrarSenhas() ? 'text' : 'password'" id="novaSenha"
+                            placeholder="Mínimo de 6 caracteres" autocomplete="new-password" />
+                    </div>
+                    @if (campoInvalido(senhaForm, 'novaSenha')) {
+                        <span class="form-hint form-hint-error">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            {{ erroApi(senhaForm, 'novaSenha') ?? 'A nova senha deve ter pelo menos 6 caracteres.' }}
+                        </span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmarSenha">Confirmar nova senha <span class="required">*</span></label>
+                    <div class="input-icon">
+                        <i class="fa-solid fa-lock"></i>
+                        <input formControlName="confirmarSenha" [type]="mostrarSenhas() ? 'text' : 'password'" id="confirmarSenha"
+                            placeholder="Repita a nova senha" autocomplete="new-password" />
+                    </div>
+                    @if (senhaForm.controls.confirmarSenha.touched && (senhaForm.controls.confirmarSenha.hasError('required') || senhaForm.hasError('senhasDiferentes'))) {
+                        <span class="form-hint form-hint-error">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            {{ senhaForm.hasError('senhasDiferentes') ? 'As senhas não conferem.' : 'Confirme a nova senha.' }}
+                        </span>
+                    }
+                </div>
+
+                @if (editandoSenha()) {
+                    <label class="checkbox-mostrar">
+                        <input type="checkbox" [checked]="mostrarSenhas()" (change)="mostrarSenhas.set(!mostrarSenhas())" />
+                        Mostrar senhas
+                    </label>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" (click)="cancelarEdicaoSenha()" [disabled]="salvandoSenha()">
+                            <i class="fa-solid fa-xmark"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary" [disabled]="salvandoSenha()">
+                            <i class="fa-solid fa-key"></i>
+                            {{ salvandoSenha() ? 'Alterando...' : 'Alterar senha' }}
+                        </button>
+                    </div>
+                }
+            </form>
+        </section>
+    </div>
+</main>

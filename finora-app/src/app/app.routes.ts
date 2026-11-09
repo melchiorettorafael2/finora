@@ -8,6 +8,7 @@ import { DASHBOARD_ROUTES } from './dashboard/dashboard-page/dashboard-page.rout
 import { INDEX_ROUTES } from './dashboard/dashboard-page/index.routes';
 import { Login } from './auth/login/login';
 import { authGuard } from './auth/auth-guard';
+import { USUARIO_ROUTES } from './features/usuario/usuario.routes';
 
 
 export const routes: Routes = [
@@ -30,7 +31,8 @@ export const routes: Routes = [
             ...CATEGORIAS_ROUTES, 
             ...CADASTROLANCAMENTO_ROUTES,
             ...LISTAGEMLANCAMENTO_ROUTES,
-            ...DASHBOARD_ROUTES
+            ...DASHBOARD_ROUTES,
+            ...USUARIO_ROUTES
         ]
     }
 ];

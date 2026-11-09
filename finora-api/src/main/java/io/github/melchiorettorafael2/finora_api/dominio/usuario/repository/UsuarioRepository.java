@@ -16,4 +16,8 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, UUID> {
     List<UsuarioEntity> findByNomeIgnoreCase(String nome);
 
     boolean existsByNomeIgnoreCase(String nome);
+
+    boolean existsByLoginAndIdNot(String login, UUID id);
+
+    boolean existsByNomeIgnoreCaseAndIdNot(String nome, UUID id);
 }

@@ -20,7 +20,8 @@ import java.util.Optional;
 @Service
 public class AuthService {
 
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
+    @Autowired
+    private BCryptPasswordEncoder encoder;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -73,7 +74,7 @@ public class AuthService {
         return usuarios.size() == 1 ? Optional.of(usuarios.get(0)) : Optional.empty();
     }
 
-    private AuthResponse toAuthResponse(UsuarioEntity usuario){
+    public AuthResponse toAuthResponse(UsuarioEntity usuario){
         var token = jwtService.gerarToken(usuario);
         var expiraEm = jwtService.getExpirationSeconds();
 

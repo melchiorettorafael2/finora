@@ -10,9 +10,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -50,6 +52,21 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(status).body(body);
     }
+    // Upload acima do limite do multipart: responde no mesmo formato dos erros de validação
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<?> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e){
+
+        var status = HttpStatus.UNPROCESSABLE_CONTENT;
+        var body = Map.of(
+                "timestamp", LocalDateTime.now(),
+                "status", status.value(),
+                "error", "Arquivo muito grande.",
+                "camposInvalidos", List.of(new CampoInvalido("foto", "A imagem deve ter no máximo 2 MB."))
+        );
+
+        return ResponseEntity.status(status).body(body);
+    }
+
     @ExceptionHandler(RegistroNaoEncontradoException.class)
     public ResponseEntity<?> handleRegistroNaoEncontradoException(RegistroNaoEncontradoException e){
 

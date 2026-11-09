@@ -11,10 +11,14 @@
             [attr.aria-expanded]="menuAberto()">
             <span class="user-greeting">
                 <span class="user-greeting-label">Olá,</span>
-                <span class="user-name">{{ primeiroNome() }}</span>
+                <span class="user-name" [attr.title]="nomeUsuario()">{{ nomeUsuario() }}</span>
             </span>
             <span class="user-avatar">
-                <i class="fa-solid fa-circle-user"></i>
+                @if (fotoUrl(); as url) {
+                    <img [src]="url" alt="" />
+                } @else {
+                    <i class="fa-solid fa-circle-user"></i>
+                }
             </span>
             <i class="fa-solid fa-chevron-down user-chevron"></i>
         </button>
@@ -23,7 +27,11 @@
             <div class="user-menu" role="menu">
                 <div class="user-menu-header">
                     <span class="user-menu-avatar">
-                        <i class="fa-solid fa-circle-user"></i>
+                        @if (fotoUrl(); as url) {
+                            <img [src]="url" alt="" />
+                        } @else {
+                            <i class="fa-solid fa-circle-user"></i>
+                        }
                     </span>
                     <div class="user-menu-info">
                         <span class="user-menu-name">{{ nomeUsuario() }}</span>
@@ -32,6 +40,11 @@
                 </div>
 
                 <div class="user-menu-divider"></div>
+
+                <a class="user-menu-item" role="menuitem" routerLink="/paginas/configuracoes" (click)="menuAberto.set(false)">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Configurações</span>
+                </a>
 
                 <button type="button" class="user-menu-item danger" role="menuitem" (click)="sair()">
                     <i class="fa-solid fa-right-from-bracket"></i>

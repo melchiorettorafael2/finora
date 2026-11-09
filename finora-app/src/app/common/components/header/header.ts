@@ -1,9 +1,11 @@
 import { Component, ElementRef, computed, inject, input, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../auth/auth-service/auth-service';
+import { UsuarioService } from '../../../features/usuario/services/usuario-service';
 
 @Component({
   selector: 'app-header',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './header.html',
   styleUrl: './header.scss',
   host: {
@@ -15,11 +17,17 @@ export class Header {
   titulo = input.required<string>();
 
   private authService = inject(AuthService);
+  private usuarioService = inject(UsuarioService);
   private elementRef = inject(ElementRef<HTMLElement>);
 
-  nomeUsuario = signal(this.authService.getNomeUsuario() || 'Usuário');
-  primeiroNome = computed(() => this.nomeUsuario().trim().split(/\s+/)[0]);
+  nomeUsuario = computed(() => this.authService.nomeUsuario() || 'Usuário');
+  fotoUrl = this.usuarioService.fotoUrl;
   menuAberto = signal(false);
+
+  constructor() {
+    // Só faz a requisição na primeira vez da sessão; depois reaproveita a foto em memória
+    this.usuarioService.carregarFoto();
+  }
 
   alternarMenu(): void {
     this.menuAberto.update(aberto => !aberto);
