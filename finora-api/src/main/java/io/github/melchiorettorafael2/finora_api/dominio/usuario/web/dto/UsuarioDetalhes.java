@@ -6,6 +6,7 @@ public record UsuarioDetalhes(
         UUID id,
         String nome,
         String email,
-        boolean possuiFoto
+        boolean possuiFoto,
+        boolean doisFatoresAtivo
 ) {
 }

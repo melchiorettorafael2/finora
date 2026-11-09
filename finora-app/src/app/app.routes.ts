@@ -8,6 +8,7 @@ import { DASHBOARD_ROUTES } from './dashboard/dashboard-page/dashboard-page.rout
 import { INDEX_ROUTES } from './dashboard/dashboard-page/index.routes';
 import { Login } from './auth/login/login';
 import { authGuard } from './auth/auth-guard';
+import { desafioDoisFatoresGuard } from './auth/desafio-dois-fatores-guard';
 import { USUARIO_ROUTES } from './features/usuario/usuario.routes';
 
 
@@ -15,6 +16,13 @@ export const routes: Routes = [
     {
         path: 'login',
         component: Login,
+    },
+    {
+        // Tela do Google Authenticator: 2ª etapa obrigatória do login/cadastro (código ou QR code).
+        // Carregada sob demanda para a lib de QR code não pesar na tela de login
+        path: 'verificacao',
+        loadComponent: () => import('./auth/verificacao/verificacao').then(m => m.Verificacao),
+        canActivate: [desafioDoisFatoresGuard],
     },
     {
         path: '',

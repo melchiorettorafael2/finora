@@ -85,7 +85,7 @@
                 }
             </div>
 
-            <form [formGroup]="dadosForm" (ngSubmit)="salvarDados()" class="form form-card">
+            <form #formDados [formGroup]="dadosForm" (ngSubmit)="salvarDados()" class="form form-card">
                 <div class="form-group">
                     <label for="nome">Nome <span class="required">*</span></label>
                     <div class="input-icon">
@@ -128,9 +128,32 @@
             </form>
         </section>
 
+        <!-- ===== Verificação em duas etapas (atalho para a página do Google Authenticator) ===== -->
+        <section class="card-full config-card">
+            <div class="form-header sem-conteudo">
+                <div class="form-header-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h2>
+                        Verificação em duas etapas
+                        @if (doisFatoresAtivo() === true) {
+                            <span class="badge badge-success badge-titulo">Ativa</span>
+                        } @else if (doisFatoresAtivo() === false) {
+                            <span class="badge badge-warning badge-titulo">Desativada</span>
+                        }
+                    </h2>
+                    <p class="form-subtitle">Peça um código do Google Authenticator além da senha ao entrar.</p>
+                </div>
+                <a class="btn btn-editar" routerLink="/paginas/configuracoes/dois-fatores">
+                    <i class="fa-solid fa-mobile-screen"></i> {{ doisFatoresAtivo() ? 'Gerenciar' : 'Configurar' }}
+                </a>
+            </div>
+        </section>
+
         <!-- ===== Senha ===== -->
         <section class="card-full config-card">
-            <div class="form-header">
+            <div class="form-header" [class.sem-conteudo]="!editandoSenha()">
                 <div class="form-header-icon">
                     <i class="fa-solid fa-key"></i>
                 </div>
@@ -145,7 +168,9 @@
                 }
             </div>
 
-            <form [formGroup]="senhaForm" (ngSubmit)="alterarSenha()" class="form form-card">
+            <!-- Os campos só aparecem depois de clicar em "Alterar" -->
+            @if (editandoSenha()) {
+            <form #formSenha [formGroup]="senhaForm" (ngSubmit)="alterarSenha()" class="form form-card form-entrada">
                 <div class="form-group">
                     <label for="senhaAtual">Senha atual <span class="required">*</span></label>
                     <div class="input-icon">
@@ -191,23 +216,22 @@
                     }
                 </div>
 
-                @if (editandoSenha()) {
-                    <label class="checkbox-mostrar">
-                        <input type="checkbox" [checked]="mostrarSenhas()" (change)="mostrarSenhas.set(!mostrarSenhas())" />
-                        Mostrar senhas
-                    </label>
+                <label class="checkbox-mostrar">
+                    <input type="checkbox" [checked]="mostrarSenhas()" (change)="mostrarSenhas.set(!mostrarSenhas())" />
+                    Mostrar senhas
+                </label>
 
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" (click)="cancelarEdicaoSenha()" [disabled]="salvandoSenha()">
-                            <i class="fa-solid fa-xmark"></i> Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-primary" [disabled]="salvandoSenha()">
-                            <i class="fa-solid fa-key"></i>
-                            {{ salvandoSenha() ? 'Alterando...' : 'Alterar senha' }}
-                        </button>
-                    </div>
-                }
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" (click)="cancelarEdicaoSenha()" [disabled]="salvandoSenha()">
+                        <i class="fa-solid fa-xmark"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" [disabled]="salvandoSenha()">
+                        <i class="fa-solid fa-key"></i>
+                        {{ salvandoSenha() ? 'Alterando...' : 'Alterar senha' }}
+                    </button>
+                </div>
             </form>
+            }
         </section>
     </div>
 </main>

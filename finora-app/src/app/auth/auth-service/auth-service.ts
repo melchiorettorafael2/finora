@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { AuthResponse, CadastroUsuarioForm } from '../dados-auth';
+import { AuthResponse, CadastroUsuarioForm, VerificacaoDoisFatoresForm } from '../dados-auth';
 import { Observable, tap } from 'rxjs';
 import { LoginForm } from '../dados-auth';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
+import { ConfiguracaoDoisFatores } from '../../features/usuario/models/dados-usuario';
 
 interface JwtPayload {
   //sub: string;
@@ -21,6 +22,8 @@ export class AuthService {
 
   private readonly token_key = 'token_sessao';
   private readonly nome_key = 'nome_usuario_sessao';
+  private readonly desafio_key = 'desafio_2fa';
+  private readonly desafio_modo_key = 'desafio_2fa_modo';
   private logoyutTimer?: ReturnType<typeof setTimeout>;
 
   // Reativo para o header refletir a troca de nome feita nas configurações
@@ -31,19 +34,84 @@ export class AuthService {
   router = inject(Router);
   baseUrl = 'http://localhost:8080/auth';
 
+  // O 2FA é obrigatório: login e cadastro devolvem doisFatoresPendente + tokenDesafio, sem
+  // token de acesso. A sessão só é salva depois do código do Google Authenticator
+  // (verificarDoisFatores, ou ativarDoisFatoresNoLogin no primeiro acesso)
   login(dados: LoginForm) : Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}/signin`, dados)
-           .pipe(tap(response => this.salvarSessao(response)));
+           .pipe(tap(response => this.tratarRespostaDeEntrada(response)));
   }
 
   cadastrar(dados: CadastroUsuarioForm) : Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}/signup`, dados)
-          .pipe(tap(response => this.salvarSessao(response)));
+          .pipe(tap(response => this.tratarRespostaDeEntrada(response)));
+  }
 
+  private tratarRespostaDeEntrada(response: AuthResponse): void {
+    if (response.doisFatoresPendente && response.tokenDesafio) {
+      this.iniciarDesafioDoisFatores(response.tokenDesafio, !!response.configuracaoDoisFatoresPendente);
+    } else {
+      this.salvarSessao(response);
+    }
+  }
+
+  /** Usuário que já tem o app configurado: envia o código. */
+  verificarDoisFatores(dados: VerificacaoDoisFatoresForm) : Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.baseUrl}/2fa/verificar`, dados)
+           .pipe(tap(response => this.salvarSessao(response)));
+  }
+
+  /** Primeiro acesso: gera o QR code do Google Authenticator. */
+  configurarDoisFatoresNoLogin(tokenDesafio: string) : Observable<ConfiguracaoDoisFatores> {
+    return this.http.post<ConfiguracaoDoisFatores>(`${this.baseUrl}/2fa/configurar`, { tokenDesafio });
+  }
+
+  /** Primeiro acesso: confirma o código do app, ativa o 2FA e inicia a sessão. */
+  ativarDoisFatoresNoLogin(dados: VerificacaoDoisFatoresForm) : Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.baseUrl}/2fa/ativar`, dados)
+           .pipe(tap(response => this.salvarSessao(response)));
+  }
+
+  // ===== Desafio de 2FA pendente (entre a senha e o código do Google Authenticator) =====
+  // Fica no sessionStorage: sobrevive a um F5 na tela de verificação, mas some ao fechar a aba.
+  // O token não dá acesso à API (só serve em /auth/2fa/*) e expira em 5 min (15 no primeiro acesso).
+
+  iniciarDesafioDoisFatores(tokenDesafio: string, configuracaoPendente: boolean): void {
+    sessionStorage.setItem(this.desafio_key, tokenDesafio);
+    sessionStorage.setItem(this.desafio_modo_key, configuracaoPendente ? 'configuracao' : 'codigo');
+  }
+
+  /** 'configuracao' no primeiro acesso (precisa escanear o QR code); 'codigo' se o app já está configurado. */
+  getModoDesafioDoisFatores(): 'codigo' | 'configuracao' {
+    return sessionStorage.getItem(this.desafio_modo_key) === 'configuracao' ? 'configuracao' : 'codigo';
+  }
+
+  /** Token do desafio pendente, ou null se não houver ou se já tiver expirado. */
+  getDesafioDoisFatores(): string | null {
+    const token = sessionStorage.getItem(this.desafio_key);
+    if (!token) {
+      return null;
+    }
+    try {
+      const { exp } = jwtDecode<JwtPayload>(token);
+      if (exp && Date.now() < exp * 1000) {
+        return token;
+      }
+    } catch {
+      // token corrompido: trata como inexistente
+    }
+    this.limparDesafioDoisFatores();
+    return null;
+  }
+
+  limparDesafioDoisFatores(): void {
+    sessionStorage.removeItem(this.desafio_key);
+    sessionStorage.removeItem(this.desafio_modo_key);
   }
 
   salvarSessao(response: AuthResponse) {
     const token = response.token;
+    this.limparDesafioDoisFatores(); // a sessão começou: desafio pendente não serve mais
     localStorage.setItem(this.token_key, token);
     localStorage.setItem(this.nome_key, response.nome);
     this.nomeUsuarioState.set(response.nome);

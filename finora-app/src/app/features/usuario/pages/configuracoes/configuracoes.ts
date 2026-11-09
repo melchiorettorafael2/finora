@@ -1,4 +1,15 @@
-import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Injector,
+  OnDestroy,
+  OnInit,
+  afterNextRender,
+  computed,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -8,6 +19,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Header } from '../../../../common/components/header/header';
 import { ValidationErroResponse } from '../../../../shared/models/validation-error-models';
@@ -36,13 +48,17 @@ const senhasIguais: ValidatorFn = (grupo: AbstractControl): ValidationErrors | n
 
 @Component({
   selector: 'app-configuracoes',
-  imports: [ReactiveFormsModule, Header],
+  imports: [ReactiveFormsModule, RouterLink, Header],
   templateUrl: './configuracoes.html',
   styleUrl: './configuracoes.scss',
 })
 export class Configuracoes implements OnInit, OnDestroy {
   private service = inject(UsuarioService);
   private toast = inject(ToastrService);
+  private injector = inject(Injector);
+
+  private formDadosRef = viewChild<ElementRef<HTMLElement>>('formDados');
+  private formSenhaRef = viewChild<ElementRef<HTMLElement>>('formSenha');
 
   dadosForm = new FormGroup<DadosForm>({
     nome: new FormControl('', { nonNullable: true, validators: Validators.required }),
@@ -62,6 +78,9 @@ export class Configuracoes implements OnInit, OnDestroy {
   editandoDados = signal(false);
   editandoSenha = signal(false);
   private dadosOriginais: DadosUsuarioForm = { nome: '', email: '' };
+
+  // null enquanto carrega
+  doisFatoresAtivo = signal<boolean | null>(null);
 
   carregando = signal(true);
   salvandoDados = signal(false);
@@ -84,6 +103,7 @@ export class Configuracoes implements OnInit, OnDestroy {
     this.service.carregarFoto();
     this.service.obterDados().subscribe({
       next: usuario => {
+        this.doisFatoresAtivo.set(usuario.doisFatoresAtivo);
         this.dadosOriginais = { nome: usuario.nome, email: usuario.email };
         this.dadosForm.reset(this.dadosOriginais);
         this.carregando.set(false);
@@ -179,6 +199,7 @@ export class Configuracoes implements OnInit, OnDestroy {
   editarDados(): void {
     this.dadosForm.enable();
     this.editandoDados.set(true);
+    this.rolarAteFormulario(this.formDadosRef, 'nearest');
   }
 
   // Descarta o que foi digitado e volta aos dados salvos
@@ -216,6 +237,8 @@ export class Configuracoes implements OnInit, OnDestroy {
   editarSenha(): void {
     this.senhaForm.enable();
     this.editandoSenha.set(true);
+    // O form de senha é o último da página: rola até o final para mostrá-lo inteiro
+    this.rolarAteFormulario(this.formSenhaRef, 'end');
   }
 
   cancelarEdicaoSenha(): void {
@@ -247,6 +270,23 @@ export class Configuracoes implements OnInit, OnDestroy {
   }
 
   // ===== Helpers =====
+
+  // Espera o Angular renderizar o form (o de senha só existe em modo de edição) e então
+  // rola até ele e foca o primeiro campo. scrollIntoView rola o container certo
+  // (.main-content), que é quem tem a barra de rolagem, e não a janela.
+  private rolarAteFormulario(ref: () => ElementRef<HTMLElement> | undefined, posicao: ScrollLogicalPosition): void {
+    afterNextRender(
+      () => {
+        const form = ref()?.nativeElement;
+        if (!form) {
+          return;
+        }
+        form.scrollIntoView({ behavior: 'smooth', block: posicao });
+        form.querySelector<HTMLInputElement>('input:not([type="checkbox"])')?.focus({ preventScroll: true });
+      },
+      { injector: this.injector }
+    );
+  }
 
   campoInvalido(form: FormGroup, campo: string): boolean {
     const control = form.get(campo);

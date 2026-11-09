@@ -1,0 +1,342 @@
+@use '../botoes';
+
+.pagina {
+    display: grid;
+    gap: 16px;
+    max-width: 760px;
+}
+
+.link-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--transition);
+
+    &:hover {
+        color: var(--brand-white);
+    }
+}
+
+/* Escudo fica verde quando o 2FA está ativo */
+.form-header-icon.ativo {
+    color: var(--brand-green);
+    background-color: rgba(52, 211, 163, 0.12);
+    border-color: rgba(52, 211, 163, 0.3);
+}
+
+.status-badge {
+    margin-left: auto;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.estado-mensagem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 32px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* ===== Desativada ===== */
+.beneficios {
+    display: grid;
+    gap: 14px;
+    list-style: none;
+
+    li {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--text);
+    }
+
+    i {
+        width: 30px;
+        height: 30px;
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        font-size: 13px;
+        color: var(--brand-blue);
+        background-color: rgba(58, 138, 224, 0.12);
+    }
+}
+
+/* ===== Passos da configuração ===== */
+.passos {
+    display: grid;
+    gap: 14px;
+    list-style: none;
+}
+
+.passo {
+    display: flex;
+    gap: 16px;
+}
+
+.passo-numero {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--brand-night);
+    background: var(--brand-gradient);
+}
+
+.passo-conteudo {
+    flex: 1;
+    min-width: 0;
+
+    h3 {
+        margin: 4px 0 4px;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-strong);
+    }
+
+    strong {
+        color: var(--text-strong);
+    }
+}
+
+.lojas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+
+    .btn {
+        text-decoration: none;
+    }
+}
+
+.qr-area {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    margin-top: 16px;
+}
+
+/* Fundo branco: alguns leitores não reconhecem QR code claro sobre escuro */
+.qr-code {
+    width: 236px;
+    height: 236px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    padding: 8px;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 1px var(--border), 0 6px 20px rgba(0, 0, 0, 0.35);
+
+    img {
+        display: block;
+        width: 220px;
+        height: 220px;
+        image-rendering: pixelated;
+    }
+}
+
+.qr-indisponivel {
+    padding: 16px;
+    font-size: 13px;
+    text-align: center;
+    color: #4a5568;
+}
+
+.chave-manual {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.chave-titulo {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-strong);
+}
+
+.chave-dados {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 14px;
+    margin-top: 10px;
+    font-size: 13px;
+
+    dt {
+        color: var(--text-muted);
+    }
+
+    dd {
+        color: var(--text-strong);
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+}
+
+.chave-valor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    code {
+        padding: 4px 8px;
+        border-radius: 6px;
+        background-color: var(--bg-elevated);
+        border: 1px solid var(--border);
+        font-family: 'Cascadia Code', 'Consolas', monospace;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+        color: var(--brand-cyan);
+        user-select: all;
+    }
+}
+
+.btn-copiar {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color var(--transition), background-color var(--transition), border-color var(--transition);
+
+    &:hover {
+        color: var(--text-strong);
+        background-color: rgba(255, 255, 255, 0.06);
+        border-color: #4a5a72;
+    }
+
+    .fa-check {
+        color: var(--success);
+    }
+}
+
+/* ===== Campo do código ===== */
+.form-codigo {
+    margin-top: 14px;
+
+    .form-group {
+        max-width: 260px;
+        margin-bottom: 14px;
+    }
+}
+
+.form-group input.input-codigo {
+    height: 52px;
+    padding: 0 12px 0 calc(12px + 0.45em);
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0.45em;
+    font-variant-numeric: tabular-nums;
+
+    &::placeholder {
+        color: rgba(133, 146, 166, 0.35);
+    }
+
+    &.invalido {
+        border-color: var(--danger);
+    }
+}
+
+.acoes-codigo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* ===== Ativa ===== */
+.ativo-mensagem {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    > i {
+        font-size: 26px;
+        color: var(--success);
+    }
+
+    strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 15px;
+        color: var(--text-strong);
+    }
+}
+
+.desativar-form {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+
+    > .form-subtitle {
+        margin-bottom: 12px;
+    }
+}
+
+.form-entrada {
+    animation: form-entrada 0.18s ease-out;
+}
+
+@keyframes form-entrada {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .qr-area {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .chave-manual {
+        align-self: stretch;
+    }
+
+    .form-codigo .form-group {
+        max-width: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .form-entrada {
+        animation: none;
+    }
+}

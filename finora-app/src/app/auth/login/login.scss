@@ -340,6 +340,95 @@
     cursor: not-allowed;
 }
 
+/* ========== Etapa do código (2FA) ========== */
+
+.etapa-codigo {
+    align-items: stretch;
+    text-align: center;
+}
+
+.codigo-icone {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 14px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    font-size: 24px;
+    color: var(--brand-green);
+    background-color: rgba(52, 211, 163, 0.12);
+    border: 1px solid rgba(52, 211, 163, 0.3);
+}
+
+.codigo-instrucao {
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-muted);
+
+    strong {
+        color: var(--text-strong);
+    }
+}
+
+/* Campo único com dígitos grandes e espaçados */
+.auth-form .form-group input.input-codigo {
+    height: 58px;
+    padding: 0 12px 0 calc(12px + 0.5em);
+    text-align: center;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.5em;
+    font-variant-numeric: tabular-nums;
+}
+
+.auth-form .form-group input.input-codigo::placeholder {
+    color: rgba(133, 146, 166, 0.35);
+}
+
+.auth-form .form-group input.input-codigo.invalido {
+    border-color: var(--danger);
+}
+
+.codigo-erro {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--danger);
+}
+
+.btn-voltar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: color var(--transition);
+
+    &:hover {
+        color: var(--text-strong);
+    }
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
 /* ========== Rodapé ========== */
 
 .auth-footer {

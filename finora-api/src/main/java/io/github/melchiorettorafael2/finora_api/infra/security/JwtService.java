@@ -16,12 +16,21 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class JwtService {
 
     private static final String ALGORITMO = "HmacSHA256";
+
+    // Token emitido após a senha correta quando o usuário tem 2FA: só serve para
+    // trocar pelo token de acesso em /auth/2fa/verificar, nunca para acessar a API
+    private static final String ESCOPO_DESAFIO_2FA = "2fa";
+    public static final long EXPIRACAO_DESAFIO_SEGUNDOS = 300;
+    // Primeiro acesso: tempo para instalar o app e escanear o QR code
+    public static final long EXPIRACAO_DESAFIO_CONFIGURACAO_SEGUNDOS = 900;
+
     private final ObjectMapper objectMapper;
 
     @Value("${app.jwt.secret}")
@@ -43,14 +52,27 @@ public class JwtService {
 
     public String gerarToken(UsuarioEntity usuario){
         long expiration = Instant.now().plusSeconds(expirationSeconds).getEpochSecond();
+        String payload = """
+                {"sub": "%s", "nome": "%s", "exp": %d }
+                """.formatted(usuario.getId().toString(), usuario.getNome(), expiration);
+
+        return montarToken(payload);
+    }
+
+    public String gerarTokenDesafio(UsuarioEntity usuario, long expiracaoSegundos){
+        long expiration = Instant.now().plusSeconds(expiracaoSegundos).getEpochSecond();
+        String payload = """
+                {"sub": "%s", "escopo": "%s", "exp": %d }
+                """.formatted(usuario.getId().toString(), ESCOPO_DESAFIO_2FA, expiration);
+
+        return montarToken(payload);
+    }
+
+    private String montarToken(String payloadJson){
         String header = base64Url("""
                 {"alg": "HS256", "type": "JWT"}
                 """);
-
-        String payload = base64Url("""
-                {"sub": "%s", "nome": "%s", "exp": %d }
-                """.formatted(usuario.getId().toString(), usuario.getNome(), expiration));
-
+        String payload = base64Url(payloadJson);
         String signature = assinar(header + "." + payload);
 
         return header + "." + payload + "." + signature;
@@ -73,7 +95,21 @@ public class JwtService {
                 .encodeToString(valor.getBytes(StandardCharsets.UTF_8));
     }
 
+    /** Token de acesso: assinatura válida, não expirado e sem escopo restrito. */
     public boolean isTokenValido(String token) {
+        return lerPayloadValido(token)
+                .map(json -> !json.has("escopo"))
+                .orElse(false);
+    }
+
+    /** Devolve o id do usuário se o token for um desafio de 2FA válido. */
+    public Optional<UUID> validarTokenDesafio(String token) {
+        return lerPayloadValido(token)
+                .filter(json -> json.has("escopo") && ESCOPO_DESAFIO_2FA.equals(json.get("escopo").asString()))
+                .map(json -> UUID.fromString(json.get("sub").asString()));
+    }
+
+    private Optional<JsonNode> lerPayloadValido(String token) {
         try {
             String[] partesDoToken = token.split("\\.");
             String header = partesDoToken[0];
@@ -83,20 +119,19 @@ public class JwtService {
             if(!MessageDigest.isEqual(
                     assinaturaEsperada.getBytes(StandardCharsets.UTF_8),
                     partesDoToken[2].getBytes(StandardCharsets.UTF_8))){
-                return false;
+                return Optional.empty();
             }
 
             var payloadDecodificado = Base64.getUrlDecoder().decode(payload);
             var payloadString = new String(payloadDecodificado, StandardCharsets.UTF_8);
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode json = objectMapper.readTree(payloadString);
+            JsonNode json = new ObjectMapper().readTree(payloadString);
             long expiraEm = json.get("exp").asLong();
             long epochSecond = Instant.now().getEpochSecond();
 
-            return epochSecond < expiraEm;
+            return epochSecond < expiraEm ? Optional.of(json) : Optional.empty();
 
         }catch (RuntimeException e){
-            return false;
+            return Optional.empty();
         }
     }
 

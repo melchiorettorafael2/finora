@@ -8,7 +8,11 @@ import io.github.melchiorettorafael2.finora_api.dominio.usuario.repository.Usuar
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.AuthResponse;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.LoginForm;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.UsuarioCadastroForm;
+import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.VerificacaoDoisFatoresForm;
+import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.ConfiguracaoDoisFatores;
+import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.TokenDesafioForm;
 import io.github.melchiorettorafael2.finora_api.infra.security.JwtService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -28,6 +33,9 @@ public class AuthService {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private DoisFatoresService doisFatoresService;
 
     public AuthResponse cadastrar(UsuarioCadastroForm form){
 
@@ -49,7 +57,8 @@ public class AuthService {
 
         usuarioRepository.save(usuario);
 
-        return toAuthResponse(usuario);
+        // 2FA é obrigatório: a conta nova ainda precisa configurar o Google Authenticator
+        return desafioDoisFatores(usuario);
     }
 
     public AuthResponse autenticar(@Valid LoginForm form){
@@ -65,7 +74,60 @@ public class AuthService {
             throw new UnauthorizedException(msg);
         }
 
+        // A senha nunca basta (2FA obrigatório): devolve só um token de desafio, trocado pelo
+        // token de acesso depois do código do Google Authenticator
+        return desafioDoisFatores(usuario);
+    }
+
+    /**
+     * Quem já tem o app configurado recebe o desafio de digitar o código (/auth/2fa/verificar);
+     * quem ainda não tem precisa configurar antes (/auth/2fa/configurar + /auth/2fa/ativar),
+     * com mais tempo de validade, já que pode precisar instalar o aplicativo.
+     */
+    private AuthResponse desafioDoisFatores(UsuarioEntity usuario){
+        if(usuario.possuiDoisFatoresAtivo()){
+            return AuthResponse.desafioDoisFatores(
+                    jwtService.gerarTokenDesafio(usuario, JwtService.EXPIRACAO_DESAFIO_SEGUNDOS),
+                    JwtService.EXPIRACAO_DESAFIO_SEGUNDOS
+            );
+        }
+        return AuthResponse.desafioConfiguracaoDoisFatores(
+                jwtService.gerarTokenDesafio(usuario, JwtService.EXPIRACAO_DESAFIO_CONFIGURACAO_SEGUNDOS),
+                JwtService.EXPIRACAO_DESAFIO_CONFIGURACAO_SEGUNDOS
+        );
+    }
+
+    @Transactional
+    public AuthResponse verificarDoisFatores(VerificacaoDoisFatoresForm form){
+        UsuarioEntity usuario = usuarioDoDesafio(form.tokenDesafio(), true);
+        doisFatoresService.confirmarCodigo(usuario, form.codigo());
         return toAuthResponse(usuario);
+    }
+
+    /** Primeiro acesso sem 2FA: gera o QR code a partir do token de desafio. */
+    @Transactional
+    public ConfiguracaoDoisFatores configurarDoisFatores(TokenDesafioForm form){
+        UsuarioEntity usuario = usuarioDoDesafio(form.tokenDesafio(), false);
+        return doisFatoresService.configurar(usuario.getId());
+    }
+
+    /** Confirma o primeiro código do app e já entrega o token de acesso. */
+    @Transactional
+    public AuthResponse ativarDoisFatores(VerificacaoDoisFatoresForm form){
+        UsuarioEntity usuario = usuarioDoDesafio(form.tokenDesafio(), false);
+        doisFatoresService.ativar(usuario.getId(), form.codigo());
+        return toAuthResponse(usuario);
+    }
+
+    // O desafio só vale para a etapa certa: verificar exige 2FA ativo, configurar/ativar exige inativo
+    private UsuarioEntity usuarioDoDesafio(String tokenDesafio, boolean doisFatoresAtivo){
+        final String msg = "Sessão de verificação expirada. Faça login novamente.";
+        UUID usuarioId = jwtService.validarTokenDesafio(tokenDesafio)
+                .orElseThrow(() -> new UnauthorizedException(msg));
+
+        return usuarioRepository.findById(usuarioId)
+                .filter(usuario -> usuario.possuiDoisFatoresAtivo() == doisFatoresAtivo)
+                .orElseThrow(() -> new UnauthorizedException(msg));
     }
 
     // Usuários antigos podem ter nome repetido: nesse caso só entra pelo email
@@ -78,14 +140,7 @@ public class AuthService {
         var token = jwtService.gerarToken(usuario);
         var expiraEm = jwtService.getExpirationSeconds();
 
-        return new AuthResponse(
-                token,
-           "Bearer",
-                expiraEm,
-                usuario.getNome()
-        );
-
-
+        return AuthResponse.acesso(token, expiraEm, usuario.getNome());
     }
 
 

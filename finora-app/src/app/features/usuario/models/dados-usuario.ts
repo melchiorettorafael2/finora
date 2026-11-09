@@ -3,6 +3,18 @@ export interface DetalhesUsuario {
     nome: string;
     email: string;
     possuiFoto: boolean;
+    doisFatoresAtivo: boolean;
+}
+
+export interface StatusDoisFatores {
+    ativo: boolean;
+}
+
+export interface ConfiguracaoDoisFatores {
+    segredo: string;
+    otpauthUri: string;
+    emissor: string;
+    conta: string;
 }
 
 export interface DadosUsuarioForm {

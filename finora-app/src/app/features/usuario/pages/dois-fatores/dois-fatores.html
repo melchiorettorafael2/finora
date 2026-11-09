@@ -1,0 +1,207 @@
+<app-header titulo="Google Authenticator"></app-header>
+
+<main class="content">
+    <div class="pagina">
+        <a class="link-voltar" routerLink="/paginas/configuracoes">
+            <i class="fa-solid fa-arrow-left"></i> Voltar para Configurações
+        </a>
+
+        <section class="card-full">
+            <div class="form-header">
+                <div class="form-header-icon" [class.ativo]="estado() === 'ativo'">
+                    <i class="fa-solid" [class.fa-shield-halved]="estado() !== 'ativo'" [class.fa-shield]="estado() === 'ativo'"></i>
+                </div>
+                <div>
+                    <h2>Verificação em duas etapas</h2>
+                    <p class="form-subtitle">Proteja sua conta com um código do Google Authenticator além da senha.</p>
+                </div>
+                @if (estado() === 'ativo') {
+                    <span class="badge badge-success status-badge"><i class="fa-solid fa-check"></i> Ativa</span>
+                } @else if (estado() === 'inativo' || estado() === 'configurando') {
+                    <span class="badge badge-warning status-badge">Desativada</span>
+                }
+            </div>
+
+            @switch (estado()) {
+                @case ('carregando') {
+                    <div class="form-card estado-mensagem">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Carregando...
+                    </div>
+                }
+
+                @case ('erro') {
+                    <div class="form-card estado-mensagem">
+                        <span>Não foi possível carregar a configuração.</span>
+                        <button type="button" class="btn btn-secondary" (click)="carregarStatus()">
+                            <i class="fa-solid fa-rotate-right"></i> Tentar novamente
+                        </button>
+                    </div>
+                }
+
+                <!-- ===== Desativada: explicação + botão para começar ===== -->
+                @case ('inativo') {
+                    <div class="form-card intro">
+                        <ul class="beneficios">
+                            <li>
+                                <i class="fa-solid fa-lock"></i>
+                                <span>Mesmo que alguém descubra sua senha, não consegue entrar sem o código do seu celular.</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                                <span>O código muda a cada 30 segundos e funciona sem internet no celular.</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-mobile-screen"></i>
+                                <span>Funciona com Google Authenticator, Microsoft Authenticator, Authy e similares.</span>
+                            </li>
+                        </ul>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-primary" (click)="iniciarConfiguracao()" [disabled]="processando()">
+                                <i class="fa-solid fa-qrcode"></i>
+                                {{ processando() ? 'Gerando QR code...' : 'Configurar Google Authenticator' }}
+                            </button>
+                        </div>
+                    </div>
+                }
+
+                <!-- ===== Configurando: passos 1, 2 e 3 ===== -->
+                @case ('configurando') {
+                    @if (configuracao(); as config) {
+                        <ol class="passos form-entrada">
+                            <li class="form-card passo">
+                                <span class="passo-numero">1</span>
+                                <div class="passo-conteudo">
+                                    <h3>Instale o aplicativo</h3>
+                                    <p class="form-subtitle">Baixe o Google Authenticator no seu celular, se ainda não tiver.</p>
+                                    <div class="lojas">
+                                        <a class="btn btn-secondary" [href]="linkPlayStore" target="_blank" rel="noopener noreferrer">
+                                            <i class="fa-brands fa-google-play"></i> Google Play
+                                        </a>
+                                        <a class="btn btn-secondary" [href]="linkAppStore" target="_blank" rel="noopener noreferrer">
+                                            <i class="fa-brands fa-apple"></i> App Store
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="form-card passo">
+                                <span class="passo-numero">2</span>
+                                <div class="passo-conteudo">
+                                    <h3>Escaneie o QR code</h3>
+                                    <p class="form-subtitle">No app, toque em <strong>+</strong> e depois em <strong>Ler código QR</strong>.</p>
+
+                                    <div class="qr-area">
+                                        <div class="qr-code">
+                                            @if (qrCodeUrl(); as qr) {
+                                                <img [src]="qr" width="220" height="220" alt="QR code para adicionar a conta Finora no Google Authenticator" />
+                                            } @else {
+                                                <span class="qr-indisponivel">QR code indisponível. Use a chave ao lado.</span>
+                                            }
+                                        </div>
+
+                                        <div class="chave-manual">
+                                            <span class="chave-titulo">Não consegue escanear?</span>
+                                            <span class="form-subtitle">Escolha <strong>Inserir chave de configuração</strong> e use:</span>
+                                            <dl class="chave-dados">
+                                                <dt>Conta</dt>
+                                                <dd>{{ config.emissor }} ({{ config.conta }})</dd>
+                                                <dt>Chave</dt>
+                                                <dd class="chave-valor">
+                                                    <code>{{ chaveFormatada() }}</code>
+                                                    <button type="button" class="btn-copiar" (click)="copiarChave()"
+                                                        [attr.aria-label]="chaveCopiada() ? 'Chave copiada' : 'Copiar chave'">
+                                                        <i class="fa-solid" [class.fa-copy]="!chaveCopiada()" [class.fa-check]="chaveCopiada()"></i>
+                                                    </button>
+                                                </dd>
+                                                <dt>Tipo</dt>
+                                                <dd>Baseada no horário</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="form-card passo">
+                                <span class="passo-numero">3</span>
+                                <div class="passo-conteudo">
+                                    <h3>Confirme o código</h3>
+                                    <p class="form-subtitle">Digite o código de 6 dígitos que aparece no app para a conta Finora.</p>
+
+                                    <form class="form-codigo" (submit)="$event.preventDefault(); ativar()">
+                                        <ng-container *ngTemplateOutlet="campoCodigo"></ng-container>
+                                        <div class="acoes-codigo">
+                                            <button type="button" class="btn btn-secondary" (click)="cancelarConfiguracao()" [disabled]="processando()">
+                                                <i class="fa-solid fa-xmark"></i> Cancelar
+                                            </button>
+                                            <button type="submit" class="btn btn-primary" [disabled]="processando()">
+                                                <i class="fa-solid fa-shield-halved"></i>
+                                                {{ processando() ? 'Ativando...' : 'Ativar' }}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </li>
+                        </ol>
+                    }
+                }
+
+                <!-- ===== Ativa: confirmação + opção de desativar ===== -->
+                @case ('ativo') {
+                    <div class="form-card ativo-painel">
+                        <div class="ativo-mensagem">
+                            <i class="fa-solid fa-circle-check"></i>
+                            <div>
+                                <strong>Sua conta está protegida.</strong>
+                                <p class="form-subtitle">
+                                    Ao entrar no Finora, depois da senha, será pedido o código do Google Authenticator.
+                                </p>
+                            </div>
+                        </div>
+
+                        @if (confirmandoDesativacao()) {
+                            <form class="form-codigo desativar-form form-entrada" (submit)="$event.preventDefault(); desativar()">
+                                <p class="form-subtitle">
+                                    Confirme com o código atual do aplicativo. O 2FA é obrigatório: no próximo login
+                                    você vai escanear um novo QR code (útil ao trocar de celular).
+                                </p>
+                                <ng-container *ngTemplateOutlet="campoCodigo"></ng-container>
+                                <div class="acoes-codigo">
+                                    <button type="button" class="btn btn-secondary" (click)="cancelarDesativacao()" [disabled]="processando()">
+                                        <i class="fa-solid fa-xmark"></i> Cancelar
+                                    </button>
+                                    <button type="submit" class="btn btn-danger-outline" [disabled]="processando()">
+                                        <i class="fa-solid fa-power-off"></i>
+                                        {{ processando() ? 'Desconectando...' : 'Confirmar' }}
+                                    </button>
+                                </div>
+                            </form>
+                        } @else {
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-danger-outline" (click)="abrirDesativacao()">
+                                    <i class="fa-solid fa-mobile-screen"></i> Trocar de celular
+                                </button>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+        </section>
+    </div>
+</main>
+
+<!-- Campo do código, usado na ativação e na desativação -->
+<ng-template #campoCodigo>
+    <div class="form-group">
+        <label for="codigo" class="sr-only">Código de 6 dígitos</label>
+        <input #inputCodigo id="codigo" class="input-codigo" [class.invalido]="erroCodigo()"
+            type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="000000"
+            [formControl]="codigoControl" (input)="onCodigoInput()"
+            [attr.aria-invalid]="!!erroCodigo()" aria-describedby="codigo-erro" />
+        @if (erroCodigo(); as erro) {
+            <span id="codigo-erro" class="form-hint form-hint-error">
+                <i class="fa-solid fa-circle-exclamation"></i> {{ erro }}
+            </span>
+        }
+    </div>
+</ng-template>

@@ -49,7 +49,8 @@ public class UsuarioService {
                 usuario.getId(),
                 usuario.getNome(),
                 usuario.getLogin(),
-                fotoRepository.existsById(usuarioId)
+                fotoRepository.existsById(usuarioId),
+                usuario.possuiDoisFatoresAtivo()
         );
     }
 

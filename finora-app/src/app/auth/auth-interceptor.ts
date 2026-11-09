@@ -8,7 +8,9 @@ export const authInterceptor : HttpInterceptorFn = (request, next) => {
     const authService = inject(AuthService);
     const router = inject(Router);
 
-    const ehRequisicaoDeAutenticacao = request.url.includes('/auth/signin') || request.url.includes('/auth/signup');
+    const ehRequisicaoDeAutenticacao = request.url.includes('/auth/signin')
+        || request.url.includes('/auth/signup')
+        || request.url.includes('/auth/2fa/');
 
     if(!ehRequisicaoDeAutenticacao && authService.isTokenExpired()) {
         authService.logout(false);
