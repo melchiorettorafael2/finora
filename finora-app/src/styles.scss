@@ -688,6 +688,8 @@ body {
         margin-left: 0;
         width: 100%;
         object-position: 18% center;
+        /* Esconde o começo do "F" de "Finora" que sobra à direita do ícone */
+        clip-path: inset(0 10px 0 0);
     }
 
     .menu-item {

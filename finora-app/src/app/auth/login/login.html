@@ -1,0 +1,71 @@
+<main class="auth-page">
+    <!-- Brilhos e grade decorativos no fundo, nas cores do logo -->
+    <div class="auth-bg" aria-hidden="true">
+        <span class="glow glow-blue"></span>
+        <span class="glow glow-green"></span>
+        <span class="grid"></span>
+    </div>
+
+    <section class="auth-panel">
+        <div class="brand">
+            <div class="brand-logo">
+                <img class="brand-icon" src="finora-logo.svg" alt="">
+                <img class="brand-name" src="finora-wordmark@2x.png" srcset="finora-wordmark@2x.png 2x, finora-wordmark@3x.png 3x" alt="Finora" />
+            </div>
+            <span class="brand-tagline"><span class="brand-tagline-text">Sistema de Gestão Financeira</span></span>
+            <span class="brand-subtitle">
+                {{ modo === 'login' ? 'Acesse sua conta para continuar' : 'Crie sua conta para começar' }}
+            </span>
+        </div>
+
+        <div class="mode-switch" [class.cadastro]="modo === 'cadastro'">
+            <button type="button" [class.active]="modo === 'login'" (click)="alternarModo('login')">
+                <i class="fa-solid fa-right-to-bracket"></i> Login
+            </button>
+            <button type="button" [class.active]="modo === 'cadastro'" (click)="alternarModo('cadastro')">
+                <i class="fa-solid fa-user-plus"></i> Cadastro
+            </button>
+        </div>
+
+        <form class="auth-form" [formGroup]="form" (ngSubmit)="handleSubmit()">
+            @if (modo === 'cadastro') {
+                <div class="form-group field-enter">
+                    <label for="nome">Nome:</label>
+                    <div class="input-icon">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="nome" formControlName="nome" placeholder="Digite seu nome" autocomplete="name">
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <div class="input-icon">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="email" formControlName="login" placeholder="Digite seu email" autocomplete="email">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Senha:</label>
+                <div class="input-icon">
+                    <i class="fa-solid fa-lock"></i>
+                    <input [type]="mostrarSenha ? 'text' : 'password'" id="password" formControlName="senha"
+                        placeholder="Digite sua senha"
+                        [attr.autocomplete]="modo === 'login' ? 'current-password' : 'new-password'">
+                    <button type="button" class="toggle-senha" (click)="mostrarSenha = !mostrarSenha"
+                        [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'">
+                        <i class="fa-solid" [class.fa-eye]="!mostrarSenha" [class.fa-eye-slash]="mostrarSenha"></i>
+                    </button>
+                </div>
+                @if (modo === 'cadastro' && form.get('senha')?.errors?.['minlength']) {
+                    <span class="field-hint">Mínimo de 6 caracteres</span>
+                }
+            </div>
+            <button type="submit" class="btn-submit" [disabled]="form.invalid">
+                {{ modo === 'login' ? 'Entrar' : 'Criar conta' }}
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </form>
+    </section>
+
+    <footer class="auth-footer">© {{ anoAtual }} Finora · Sistema de Gestão Financeira</footer>
+</main>

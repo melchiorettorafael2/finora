@@ -6,12 +6,17 @@ import { CADASTROLANCAMENTO_ROUTES } from './lancamentos/cadastroLancamento.rout
 import { LISTAGEMLANCAMENTO_ROUTES } from './lancamentos/listagem-lancamentos/listagemLancamento.routes';
 import { DASHBOARD_ROUTES } from './dashboard/dashboard-page/dashboard-page.routes';
 import { INDEX_ROUTES } from './dashboard/dashboard-page/index.routes';
+import { Login } from './auth/login/login';
 
 
 export const routes: Routes = [
     {
+        path: 'login',
+        component: Login,
+    },
+    {
         path: '',
-        redirectTo: 'paginas/dashboard',
+        redirectTo: 'login',
         pathMatch: 'full'
     },
     {
