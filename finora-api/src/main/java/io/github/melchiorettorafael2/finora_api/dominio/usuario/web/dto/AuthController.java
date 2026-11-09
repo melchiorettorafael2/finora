@@ -4,6 +4,7 @@ import io.github.melchiorettorafael2.finora_api.dominio.usuario.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +38,19 @@ public class AuthController {
     @PostMapping("/2fa/configurar")
     public ConfiguracaoDoisFatores configurarDoisFatores(@RequestBody @Valid TokenDesafioForm form){
         return service.configurarDoisFatores(form);
+    }
+
+    // "Esqueci minha senha", 1ª etapa: nome/email + código do Google Authenticator
+    @PostMapping("/senha/verificar")
+    public TokenRedefinicaoSenha verificarIdentidadeParaSenha(@RequestBody @Valid VerificarIdentidadeForm form){
+        return service.verificarIdentidadeParaSenha(form);
+    }
+
+    // "Esqueci minha senha", 2ª etapa: grava a nova senha com o token da 1ª (não inicia sessão)
+    @PostMapping("/senha/redefinir")
+    public ResponseEntity<Void> redefinirSenha(@RequestBody @Valid RedefinirSenhaForm form){
+        service.redefinirSenha(form);
+        return ResponseEntity.noContent().build();
     }
 
     // Primeiro acesso: confirma o código do app, ativa o 2FA e entrega o token de acesso

@@ -1,0 +1,141 @@
+<main class="auth-page">
+    <!-- Brilhos e grade decorativos no fundo, nas cores do logo -->
+    <div class="auth-bg" aria-hidden="true">
+        <span class="glow glow-blue"></span>
+        <span class="glow glow-green"></span>
+        <span class="grid"></span>
+    </div>
+
+    <section class="auth-panel">
+        <div class="brand">
+            <div class="brand-logo">
+                <img class="brand-icon" src="finora-logo.svg" alt="">
+                <img class="brand-name" src="finora-wordmark@2x.png" srcset="finora-wordmark@2x.png 2x, finora-wordmark@3x.png 3x" alt="Finora" />
+            </div>
+            <span class="brand-tagline"><span class="brand-tagline-text">Sistema de Gestão Financeira</span></span>
+            <span class="brand-subtitle">Redefinir senha</span>
+        </div>
+
+        <!-- Indicador das duas etapas -->
+        @if (etapa() !== 'concluido') {
+            <ol class="etapas" aria-label="Etapas">
+                <li [class.ativa]="etapa() === 'identidade'" [class.feita]="etapa() === 'nova-senha'">
+                    <span class="etapa-num">
+                        @if (etapa() === 'nova-senha') { <i class="fa-solid fa-check"></i> } @else { 1 }
+                    </span>
+                    Identidade
+                </li>
+                <li class="etapa-linha" aria-hidden="true"></li>
+                <li [class.ativa]="etapa() === 'nova-senha'">
+                    <span class="etapa-num">2</span>
+                    Nova senha
+                </li>
+            </ol>
+        }
+
+        @switch (etapa()) {
+            <!-- ===== Etapa 1: nome/email + código do Google Authenticator ===== -->
+            @case ('identidade') {
+                <form class="auth-form field-enter" [formGroup]="identidadeForm" (ngSubmit)="verificarIdentidade()">
+                    <p class="instrucao">
+                        Informe sua conta e o código atual do <strong>Google Authenticator</strong> para confirmar que é você.
+                    </p>
+
+                    <div class="form-group">
+                        <label for="login">Email ou nome de usuário:</label>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" id="login" formControlName="login" placeholder="Digite seu email ou nome de usuário" autocomplete="username">
+                        </div>
+                        @if (campoInvalido(identidadeForm, 'login')) {
+                            <span class="erro-campo">Informe o email ou nome de usuário.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="codigo">Código do Google Authenticator:</label>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <input type="text" id="codigo" class="input-codigo-compacto" [class.invalido]="erroIdentidade()"
+                                formControlName="codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="7"
+                                placeholder="000000" (input)="onCodigoInput()" aria-describedby="codigo-erro">
+                        </div>
+                        @if (erroIdentidade(); as erro) {
+                            <span id="codigo-erro" class="erro-campo"><i class="fa-solid fa-circle-exclamation"></i> {{ erro }}</span>
+                        } @else if (campoInvalido(identidadeForm, 'codigo')) {
+                            <span id="codigo-erro" class="erro-campo">Digite os 6 dígitos do aplicativo.</span>
+                        }
+                    </div>
+
+                    <button type="submit" class="btn-submit" [disabled]="enviando()">
+                        {{ enviando() ? 'Verificando...' : 'Continuar' }}
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+
+                    <a class="btn-voltar" routerLink="/login">
+                        <i class="fa-solid fa-arrow-left"></i> Voltar para o login
+                    </a>
+                </form>
+            }
+
+            <!-- ===== Etapa 2: só aparece depois que a API confirmou a identidade ===== -->
+            @case ('nova-senha') {
+                <form class="auth-form field-enter" [formGroup]="novaSenhaForm" (ngSubmit)="redefinir()">
+                    <div class="identidade-ok">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Identidade confirmada para <strong>{{ loginConfirmado() }}</strong></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="novaSenha">Nova senha:</label>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-lock"></i>
+                            <input #inputNovaSenha [type]="mostrarSenha() ? 'text' : 'password'" id="novaSenha" class="input-com-toggle"
+                                formControlName="novaSenha" placeholder="Mínimo de 6 caracteres" autocomplete="new-password">
+                            <button type="button" class="toggle-senha" (click)="mostrarSenha.set(!mostrarSenha())"
+                                [attr.aria-label]="mostrarSenha() ? 'Ocultar senhas' : 'Mostrar senhas'">
+                                <i class="fa-solid" [class.fa-eye]="!mostrarSenha()" [class.fa-eye-slash]="mostrarSenha()"></i>
+                            </button>
+                        </div>
+                        @if (campoInvalido(novaSenhaForm, 'novaSenha')) {
+                            <span class="erro-campo">A senha deve ter pelo menos 6 caracteres.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmarSenha">Confirmar nova senha:</label>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-lock"></i>
+                            <input [type]="mostrarSenha() ? 'text' : 'password'" id="confirmarSenha" formControlName="confirmarSenha"
+                                placeholder="Repita a nova senha" autocomplete="new-password">
+                        </div>
+                        @if (novaSenhaForm.controls.confirmarSenha.touched && (novaSenhaForm.controls.confirmarSenha.hasError('required') || novaSenhaForm.hasError('senhasDiferentes'))) {
+                            <span class="erro-campo">{{ novaSenhaForm.hasError('senhasDiferentes') ? 'As senhas não conferem.' : 'Confirme a nova senha.' }}</span>
+                        }
+                    </div>
+
+                    <button type="submit" class="btn-submit" [disabled]="enviando()">
+                        {{ enviando() ? 'Salvando...' : 'Redefinir senha' }}
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+
+                    <button type="button" class="btn-voltar" (click)="recomecar()">
+                        <i class="fa-solid fa-arrow-left"></i> Usar outra conta
+                    </button>
+                </form>
+            }
+
+            @case ('concluido') {
+                <div class="concluido field-enter" role="status">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <div>
+                        <strong>Senha redefinida!</strong>
+                        <span>Voltando para o login...</span>
+                    </div>
+                </div>
+            }
+        }
+    </section>
+
+    <footer class="auth-footer">© {{ anoAtual }} Finora · Sistema de Gestão Financeira</footer>
+</main>

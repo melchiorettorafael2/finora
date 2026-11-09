@@ -8,9 +8,8 @@ export const authInterceptor : HttpInterceptorFn = (request, next) => {
     const authService = inject(AuthService);
     const router = inject(Router);
 
-    const ehRequisicaoDeAutenticacao = request.url.includes('/auth/signin')
-        || request.url.includes('/auth/signup')
-        || request.url.includes('/auth/2fa/');
+    // Rotas públicas da API (/auth/**: login, cadastro, 2FA, redefinir senha): não levam token
+    const ehRequisicaoDeAutenticacao = request.url.includes('/auth/');
 
     if(!ehRequisicaoDeAutenticacao && authService.isTokenExpired()) {
         authService.logout(false);

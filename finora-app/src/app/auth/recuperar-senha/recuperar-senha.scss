@@ -1,0 +1,151 @@
+/* Complementa o login.scss com o que só a tela de redefinir senha usa */
+
+/* ===== Indicador de etapas: 1 Identidade —— 2 Nova senha ===== */
+.etapas {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: -8px 0 20px;
+    list-style: none;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+
+    li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: color var(--transition);
+    }
+
+    li.ativa {
+        color: var(--brand-white);
+    }
+
+    li.feita {
+        color: var(--brand-green);
+    }
+}
+
+.etapa-num {
+    width: 22px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font-size: 11px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-table);
+    transition: background var(--transition), border-color var(--transition), color var(--transition);
+
+    .ativa & {
+        border-color: transparent;
+        background: var(--brand-gradient);
+        color: var(--brand-night);
+    }
+
+    .feita & {
+        border-color: rgba(52, 211, 163, 0.5);
+        background-color: rgba(52, 211, 163, 0.14);
+        color: var(--brand-green);
+    }
+}
+
+.etapa-linha {
+    width: 36px;
+    height: 1px;
+    background-color: var(--border);
+}
+
+/* Faixa verde no topo da etapa 2 */
+.identidade-ok {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding: 10px 14px;
+    border: 1px solid rgba(52, 211, 163, 0.3);
+    border-radius: 8px;
+    background-color: rgba(52, 211, 163, 0.08);
+    font-size: 13px;
+    color: var(--text);
+
+    i {
+        color: var(--brand-green);
+    }
+
+    strong {
+        color: var(--text-strong);
+        overflow-wrap: anywhere;
+    }
+}
+
+.instrucao {
+    margin-bottom: 18px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--text-muted);
+
+    strong {
+        color: var(--text-strong);
+    }
+}
+
+/* Espaço para o botão de mostrar/ocultar dentro do campo */
+.auth-form .form-group input.input-com-toggle {
+    padding-right: 44px;
+}
+
+/* Código com dígitos espaçados, sem ocupar a altura do campo grande da verificação */
+.auth-form .form-group input.input-codigo-compacto {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.35em;
+    font-variant-numeric: tabular-nums;
+
+    &.invalido {
+        border-color: var(--danger);
+    }
+}
+
+.erro-campo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--danger);
+}
+
+/* O "voltar" aqui é um link, não um botão */
+a.btn-voltar {
+    text-decoration: none;
+}
+
+.concluido {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 1px solid rgba(52, 211, 163, 0.35);
+    border-radius: 10px;
+    background-color: rgba(52, 211, 163, 0.1);
+
+    > i {
+        font-size: 28px;
+        color: var(--brand-green);
+    }
+
+    strong {
+        display: block;
+        font-size: 14.5px;
+        color: var(--text-strong);
+    }
+
+    span {
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+}

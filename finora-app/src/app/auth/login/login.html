@@ -67,6 +67,9 @@
                 @if (modo === 'cadastro' && form.get('senha')?.errors?.['minlength']) {
                     <span class="field-hint">Mínimo de 6 caracteres</span>
                 }
+                @if (modo === 'login') {
+                    <a class="link-esqueci" routerLink="/recuperar-senha">Esqueci minha senha</a>
+                }
             </div>
             <button type="submit" class="btn-submit" [disabled]="form.invalid">
                 {{ modo === 'login' ? 'Entrar' : 'Criar conta' }}

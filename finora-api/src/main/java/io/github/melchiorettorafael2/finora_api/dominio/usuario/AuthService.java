@@ -11,6 +11,9 @@ import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.UsuarioC
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.VerificacaoDoisFatoresForm;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.ConfiguracaoDoisFatores;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.TokenDesafioForm;
+import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.RedefinirSenhaForm;
+import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.TokenRedefinicaoSenha;
+import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.VerificarIdentidadeForm;
 import io.github.melchiorettorafael2.finora_api.infra.security.JwtService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -117,6 +120,41 @@ public class AuthService {
         UsuarioEntity usuario = usuarioDoDesafio(form.tokenDesafio(), false);
         doisFatoresService.ativar(usuario.getId(), form.codigo());
         return toAuthResponse(usuario);
+    }
+
+    /**
+     * 1ª etapa do "Esqueci minha senha" (sem e-mail): como o 2FA é obrigatório, o código atual do
+     * Google Authenticator comprova que é o dono da conta. Usa o mesmo limite de tentativas e a
+     * mesma proteção contra reuso de código do login. Se conferir, devolve o token de redefinição.
+     */
+    @Transactional
+    public TokenRedefinicaoSenha verificarIdentidadeParaSenha(VerificarIdentidadeForm form){
+        // Mesma mensagem do código errado (DoisFatoresService.confirmarCodigo) para usuário
+        // inexistente ou sem 2FA: assim a resposta não revela quais contas existem
+        final String msg = "Código inválido ou já utilizado.";
+        String login = form.login().trim();
+        UsuarioEntity usuario = usuarioRepository.findByLogin(login)
+                .or(() -> buscarPorNome(login))
+                .filter(UsuarioEntity::possuiDoisFatoresAtivo)
+                .orElseThrow(() -> new ValidationException(List.of(new CampoInvalido("codigo", msg))));
+
+        doisFatoresService.confirmarCodigo(usuario, form.codigo());
+
+        return new TokenRedefinicaoSenha(
+                jwtService.gerarTokenRedefinicaoSenha(usuario),
+                JwtService.EXPIRACAO_REDEFINICAO_SENHA_SEGUNDOS
+        );
+    }
+
+    /** 2ª etapa: grava a nova senha. O token deixa de valer depois disso (uso único). */
+    @Transactional
+    public void redefinirSenha(RedefinirSenhaForm form){
+        UsuarioEntity usuario = jwtService.validarTokenRedefinicaoSenha(form.tokenRedefinicao())
+                .flatMap(usuarioRepository::findById)
+                .orElseThrow(() -> new UnauthorizedException("A confirmação de identidade expirou. Comece novamente."));
+
+        usuario.setSenha(encoder.encode(form.novaSenha()));
+        usuarioRepository.save(usuario);
     }
 
     // O desafio só vale para a etapa certa: verificar exige 2FA ativo, configurar/ativar exige inativo

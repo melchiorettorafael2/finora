@@ -25,6 +25,11 @@ export const routes: Routes = [
         canActivate: [desafioDoisFatoresGuard],
     },
     {
+        // "Esqueci minha senha": redefine com o código do Google Authenticator
+        path: 'recuperar-senha',
+        loadComponent: () => import('./auth/recuperar-senha/recuperar-senha').then(m => m.RecuperarSenha),
+    },
+    {
         path: '',
         redirectTo: 'login',
         pathMatch: 'full'

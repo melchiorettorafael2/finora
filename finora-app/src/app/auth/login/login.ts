@@ -3,7 +3,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { FormGroup } from '@angular/forms';
 import { AuthService } from '../auth-service/auth-service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Validators } from '@angular/forms';
 import { CadastroUsuarioForm, LoginForm } from '../dados-auth';
@@ -17,7 +17,7 @@ interface AuthForm{
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })

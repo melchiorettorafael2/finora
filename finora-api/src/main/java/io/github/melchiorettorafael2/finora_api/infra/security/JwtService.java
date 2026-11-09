@@ -31,6 +31,10 @@ public class JwtService {
     // Primeiro acesso: tempo para instalar o app e escanear o QR code
     public static final long EXPIRACAO_DESAFIO_CONFIGURACAO_SEGUNDOS = 900;
 
+    // "Esqueci minha senha": só serve em /auth/senha/redefinir, nunca para acessar a API
+    private static final String ESCOPO_REDEFINICAO_SENHA = "senha";
+    public static final long EXPIRACAO_REDEFINICAO_SENHA_SEGUNDOS = 600;
+
     private final ObjectMapper objectMapper;
 
     @Value("${app.jwt.secret}")
@@ -104,9 +108,46 @@ public class JwtService {
 
     /** Devolve o id do usuário se o token for um desafio de 2FA válido. */
     public Optional<UUID> validarTokenDesafio(String token) {
-        return lerPayloadValido(token)
-                .filter(json -> json.has("escopo") && ESCOPO_DESAFIO_2FA.equals(json.get("escopo").asString()))
+        return lerPayloadComEscopo(token, ESCOPO_DESAFIO_2FA)
                 .map(json -> UUID.fromString(json.get("sub").asString()));
+    }
+
+    /**
+     * Token de redefinição de senha, emitido depois de nome/email + código do Google Authenticator
+     * conferirem. Leva uma "versão" da senha atual (trecho do hash do hash): ao trocar a senha a
+     * versão muda e o token deixa de valer, então ele só pode ser usado uma vez.
+     */
+    public String gerarTokenRedefinicaoSenha(UsuarioEntity usuario){
+        long expiration = Instant.now().plusSeconds(EXPIRACAO_REDEFINICAO_SENHA_SEGUNDOS).getEpochSecond();
+        String payload = """
+                {"sub": "%s", "escopo": "%s", "sv": "%s", "exp": %d }
+                """.formatted(usuario.getId().toString(), ESCOPO_REDEFINICAO_SENHA, versaoDaSenha(usuario), expiration);
+
+        return montarToken(payload);
+    }
+
+    /** Devolve o id do usuário se o token de redefinição for válido e a senha ainda não tiver sido trocada com ele. */
+    public Optional<UUID> validarTokenRedefinicaoSenha(String token) {
+        return lerPayloadComEscopo(token, ESCOPO_REDEFINICAO_SENHA)
+                .flatMap(json -> usuarioRepository.findById(UUID.fromString(json.get("sub").asString()))
+                        .filter(usuario -> json.has("sv") && MessageDigest.isEqual(
+                                versaoDaSenha(usuario).getBytes(StandardCharsets.UTF_8),
+                                json.get("sv").asString().getBytes(StandardCharsets.UTF_8))))
+                .map(UsuarioEntity::getId);
+    }
+
+    private String versaoDaSenha(UsuarioEntity usuario){
+        try {
+            byte[] hash = MessageDigest.getInstance("SHA-256").digest(usuario.getSenha().getBytes(StandardCharsets.UTF_8));
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(hash).substring(0, 16);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 indisponível.", e);
+        }
+    }
+
+    private Optional<JsonNode> lerPayloadComEscopo(String token, String escopo) {
+        return lerPayloadValido(token)
+                .filter(json -> json.has("escopo") && escopo.equals(json.get("escopo").asString()));
     }
 
     private Optional<JsonNode> lerPayloadValido(String token) {
