@@ -2,7 +2,42 @@
     <h1>{{ titulo() }}</h1>
 
     <div class="user-area">
-        <span class="user-name">Olá, Usuário</span>
-        <i class="fa-solid fa-circle-user"></i>
+        <button
+            type="button"
+            class="user-trigger"
+            [class.open]="menuAberto()"
+            (click)="alternarMenu()"
+            aria-haspopup="menu"
+            [attr.aria-expanded]="menuAberto()">
+            <span class="user-greeting">
+                <span class="user-greeting-label">Olá,</span>
+                <span class="user-name">{{ primeiroNome() }}</span>
+            </span>
+            <span class="user-avatar">
+                <i class="fa-solid fa-circle-user"></i>
+            </span>
+            <i class="fa-solid fa-chevron-down user-chevron"></i>
+        </button>
+
+        @if (menuAberto()) {
+            <div class="user-menu" role="menu">
+                <div class="user-menu-header">
+                    <span class="user-menu-avatar">
+                        <i class="fa-solid fa-circle-user"></i>
+                    </span>
+                    <div class="user-menu-info">
+                        <span class="user-menu-name">{{ nomeUsuario() }}</span>
+                        <span class="user-menu-caption">Conta Finora</span>
+                    </div>
+                </div>
+
+                <div class="user-menu-divider"></div>
+
+                <button type="button" class="user-menu-item danger" role="menuitem" (click)="sair()">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Sair</span>
+                </button>
+            </div>
+        }
     </div>
 </header>

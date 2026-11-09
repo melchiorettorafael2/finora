@@ -7,6 +7,7 @@ import { LISTAGEMLANCAMENTO_ROUTES } from './lancamentos/listagem-lancamentos/li
 import { DASHBOARD_ROUTES } from './dashboard/dashboard-page/dashboard-page.routes';
 import { INDEX_ROUTES } from './dashboard/dashboard-page/index.routes';
 import { Login } from './auth/login/login';
+import { authGuard } from './auth/auth-guard';
 
 
 export const routes: Routes = [
@@ -22,6 +23,7 @@ export const routes: Routes = [
     {
         path: 'paginas',
         component: Template,
+        canActivate: [authGuard],
         children: [
             ...INDEX_ROUTES,
             ...CARTOES_ROUTES,

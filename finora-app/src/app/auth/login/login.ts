@@ -6,6 +6,7 @@ import { AuthService } from '../auth-service/auth-service';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Validators } from '@angular/forms';
+import { CadastroUsuarioForm, LoginForm } from '../dados-auth';
 
 
 interface AuthForm{
@@ -37,6 +38,10 @@ export class Login implements OnInit {
       login: new FormControl('', { nonNullable: true, validators: [Validators.required]  }),
       senha: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(6)]  }),
     });
+
+    if(this.authService.isAuthenticated()) {
+      this.router.navigate(['/paginas/dashboard']);
+    }
   }
 
   alternarModo(modo: 'login' | 'cadastro'): void {
@@ -51,7 +56,61 @@ export class Login implements OnInit {
   }
   
   handleSubmit(): void {
-    console.log('Formulário enviado:', this.form.value);
+    if(this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.toast.error('Verifique os dados informados.', 'Erro');
+      return;
+    }
+
+    if(this.modo === 'cadastro') {
+      const dadosCadastro = this.form.value as CadastroUsuarioForm;
+      this.authService.cadastrar(dadosCadastro).subscribe({
+        next: (response) => {
+          this.onAuthSuccess(response);
+          this.toast.success('Cadastro realizado com sucesso!', 'Sucesso');
+        },
+        error: (error) => {
+          this.onAuthError(error);
+        }
+      }); 
+      return; 
+    }
+
+    const dadosLogin = this.form.value as LoginForm;
+    this.authService.login(dadosLogin).subscribe({
+      next: (response) => {
+        this.onAuthSuccess(response);
+        this.toast.success('Login realizado com sucesso!', 'Sucesso');
+      },
+      error: (error) => {
+        this.onAuthError(error);
+      }
+    });
   }
+
+  onAuthSuccess(response: any): void {
+    localStorage.setItem('token', response.token);
+    localStorage.setItem('tipo', response.tipo);
+    localStorage.setItem('expiraEm', response.expiraEm.toString());
+    localStorage.setItem('nome', response.nome);
+
+    this.router.navigate(['/paginas/dashboard']);
+  }
+
+  onAuthError(response: any): void {
+    //Unauthorized error handling
+    if(response.status === 401) {
+      this.toast.error('Email ou senha inválidos.', 'Erro');
+      return;
+    } 
+
+    //validation
+    if(response.status === 422) {
+      this.toast.error('Erro de validação. Verifique os dados informados.', 'Erro');
+      return;
+    }
+      console.error('Erro na autenticação:', response);
+      this.toast.error('Erro na autenticação. Verifique suas credenciais e tente novamente.', 'Erro');
+  } 
 
 }

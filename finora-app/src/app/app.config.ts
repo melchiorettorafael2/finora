@@ -4,9 +4,10 @@ import localePt from '@angular/common/locales/pt';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
 import { provideEnvironmentNgxMask } from 'ngx-mask';
+import { authInterceptor } from './auth/auth-interceptor';
 
 registerLocaleData(localePt, 'pt-BR');
 
@@ -16,7 +17,7 @@ export const appConfig: ApplicationConfig = {
     { provide: LOCALE_ID, useValue: 'pt-BR' },
     { provide: DEFAULT_CURRENCY_CODE, useValue: 'BRL' },
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideToastr({
       positionClass: 'toast-top-right',
       timeOut: 5000,

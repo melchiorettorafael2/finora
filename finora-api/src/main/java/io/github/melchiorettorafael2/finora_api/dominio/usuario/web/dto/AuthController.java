@@ -1,6 +1,7 @@
 package io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto;
 
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,8 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public AuthResponse autenticar(@RequestBody @Valid LoginForm form){
+    public AuthResponse autenticar(@RequestBody @Valid LoginForm form, HttpServletRequest request){
+        var ususario = request.getAttribute("usuarioAutenticado");
         return service.autenticar(form);
     }
 

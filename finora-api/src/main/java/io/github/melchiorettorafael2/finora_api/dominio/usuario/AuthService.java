@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -33,6 +34,11 @@ public class AuthService {
             throw new ValidationException(List.of(new CampoInvalido("login", "Login já cadastrado.")));
         }
 
+        // O nome também serve para entrar no sistema, então precisa ser único
+        if(usuarioRepository.existsByNomeIgnoreCase(form.nome())){
+            throw new ValidationException(List.of(new CampoInvalido("nome", "Nome de usuário já cadastrado.")));
+        }
+
         String senhaCriptografada = encoder.encode(form.senha());
 
         UsuarioEntity usuario = new UsuarioEntity();
@@ -47,7 +53,9 @@ public class AuthService {
 
     public AuthResponse autenticar(@Valid LoginForm form){
         final String msg = "Login ou senha inválidos.";
+        // O campo login aceita o email ou o nome de usuário
         UsuarioEntity usuario = usuarioRepository.findByLogin(form.login())
+                .or(() -> buscarPorNome(form.login()))
                 .orElseThrow(() -> new UnauthorizedException(msg));
 
         boolean senhasBatem = encoder.matches(form.senha(), usuario.getSenha());
@@ -57,6 +65,12 @@ public class AuthService {
         }
 
         return toAuthResponse(usuario);
+    }
+
+    // Usuários antigos podem ter nome repetido: nesse caso só entra pelo email
+    private Optional<UsuarioEntity> buscarPorNome(String nome){
+        List<UsuarioEntity> usuarios = usuarioRepository.findByNomeIgnoreCase(nome);
+        return usuarios.size() == 1 ? Optional.of(usuarios.get(0)) : Optional.empty();
     }
 
     private AuthResponse toAuthResponse(UsuarioEntity usuario){
