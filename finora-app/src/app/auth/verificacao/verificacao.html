@@ -89,7 +89,7 @@
                     }
                 </div>
 
-                <button type="button" class="btn-voltar setup-voltar" (click)="voltarParaLogin()">
+                <button type="button" class="btn-voltar setup-voltar" [hidden]="autenticado()" (click)="voltarParaLogin()">
                     <i class="fa-solid fa-arrow-left"></i> Voltar para o login
                 </button>
             </form>
@@ -105,7 +105,7 @@
 
                 <ng-container *ngTemplateOutlet="campoCodigo"></ng-container>
 
-                <button type="button" class="btn-voltar" (click)="voltarParaLogin()">
+                <button type="button" class="btn-voltar" [hidden]="autenticado()" (click)="voltarParaLogin()">
                     <i class="fa-solid fa-arrow-left"></i> Voltar para o login
                 </button>
             </form>
@@ -117,6 +117,17 @@
 
 <!-- Campo do código + botão principal, usados nos dois modos -->
 <ng-template #campoCodigo>
+    @if (autenticado()) {
+        <!-- Confirmação exibida durante a pausa antes de abrir o Dashboard -->
+        <div class="autenticado" role="status">
+            <i class="fa-solid fa-circle-check"></i>
+            <div>
+                <strong>{{ modo() === 'configuracao' ? 'Google Authenticator configurado!' : 'Código confirmado!' }}</strong>
+                <span>Abrindo o Dashboard<span class="reticencias" aria-hidden="true"></span></span>
+            </div>
+            <span class="barra-progresso" aria-hidden="true"></span>
+        </div>
+    } @else {
     <div class="form-group">
         <label for="codigo" class="sr-only">Código de verificação</label>
         <input #inputCodigo id="codigo" class="input-codigo" [class.invalido]="erroCodigo()"
@@ -138,4 +149,5 @@
         }
         <i class="fa-solid fa-arrow-right"></i>
     </button>
+    }
 </ng-template>

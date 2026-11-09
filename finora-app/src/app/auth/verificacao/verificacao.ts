@@ -31,6 +31,11 @@ export class Verificacao implements OnInit, OnDestroy {
 
   verificando = signal(false);
   erroCodigo = signal<string | null>(null);
+
+  // Depois do código aceito: mostra a confirmação por um instante antes de abrir o Dashboard
+  private static readonly ATRASO_REDIRECIONAMENTO_MS = 2000;
+  autenticado = signal(false);
+  private timerRedirecionamento?: ReturnType<typeof setTimeout>;
   codigoControl = new FormControl('', {
     nonNullable: true,
     validators: [Validators.required, Validators.pattern(/^\d{6}$/)],
@@ -61,6 +66,7 @@ export class Verificacao implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     clearTimeout(this.timerCopia);
+    clearTimeout(this.timerRedirecionamento);
   }
 
   gerarQrCode(): void {
@@ -131,7 +137,7 @@ export class Verificacao implements OnInit, OnDestroy {
   }
 
   verificar(): void {
-    if (this.verificando()) {
+    if (this.verificando() || this.autenticado()) {
       return;
     }
     if (this.codigoControl.invalid) {
@@ -154,11 +160,16 @@ export class Verificacao implements OnInit, OnDestroy {
     requisicao.subscribe({
       next: () => {
         this.verificando.set(false);
+        this.autenticado.set(true);
         this.toast.success(
           this.modo() === 'configuracao' ? 'Google Authenticator configurado! Bem-vindo ao Finora.' : 'Login realizado com sucesso!',
           'Sucesso'
         );
-        this.router.navigate(['/paginas/dashboard']);
+        // Pausa para o usuário ver a confirmação antes de trocar de tela
+        this.timerRedirecionamento = setTimeout(
+          () => this.router.navigate(['/paginas/dashboard']),
+          Verificacao.ATRASO_REDIRECIONAMENTO_MS
+        );
       },
       error: (erro) => {
         this.verificando.set(false);

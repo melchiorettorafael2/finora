@@ -271,6 +271,97 @@
     }
 }
 
+/* ===== Confirmação antes de abrir o Dashboard ===== */
+.autenticado {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 4px;
+    padding: 16px 18px;
+    border: 1px solid rgba(52, 211, 163, 0.35);
+    border-radius: 10px;
+    background-color: rgba(52, 211, 163, 0.1);
+    text-align: left;
+    overflow: hidden;
+    animation: autenticado-entrada 0.25s ease-out both;
+
+    > i {
+        font-size: 28px;
+        color: var(--brand-green);
+        animation: autenticado-check 0.4s ease-out both;
+    }
+
+    strong {
+        display: block;
+        font-size: 14.5px;
+        color: var(--text-strong);
+    }
+
+    span {
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+}
+
+/* Mesma duração de ATRASO_REDIRECIONAMENTO_MS (verificacao.ts) */
+.barra-progresso {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg, var(--brand-blue), var(--brand-green));
+    transform-origin: left;
+    animation: progresso 2s linear both;
+}
+
+.reticencias::after {
+    content: '';
+    animation: reticencias 1.2s steps(4, end) infinite;
+}
+
+@keyframes autenticado-entrada {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
+@keyframes autenticado-check {
+    from {
+        transform: scale(0.4);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.15);
+    }
+}
+
+@keyframes progresso {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@keyframes reticencias {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .autenticado,
+    .autenticado > i,
+    .reticencias::after {
+        animation: none;
+    }
+}
+
 /* Celular / tela estreita: volta para uma coluna, QR code logo após os passos */
 @media (max-width: 680px) {
     .setup-grid {
