@@ -1,0 +1,214 @@
+<app-header titulo="Relatórios"></app-header>
+
+<main class="content">
+    <div class="toolbar">
+        <div class="toolbar-filtros">
+            <div class="chips" role="group" aria-label="Período do relatório">
+                @for (opcao of periodos; track opcao.valor) {
+                    <button type="button"
+                        [class.ativo]="periodo() === opcao.valor"
+                        [attr.aria-pressed]="periodo() === opcao.valor"
+                        (click)="periodo.set(opcao.valor)">
+                        {{ opcao.rotulo }}
+                    </button>
+                }
+            </div>
+        </div>
+        <div class="toolbar-acoes">
+            <button type="button" class="btn btn-secondary" disabled title="Em breve">
+                <i class="fa-solid fa-file-csv"></i>
+                Exportar CSV
+            </button>
+            <button type="button" class="btn btn-primary" disabled title="Em breve">
+                <i class="fa-solid fa-file-pdf"></i>
+                Exportar PDF
+            </button>
+        </div>
+    </div>
+
+    <div class="aviso-exemplo">
+        <i class="fa-solid fa-flask"></i>
+        <span>Esta página ainda exibe dados de exemplo. A integração com a API será feita em breve.</span>
+    </div>
+
+    @if (relatorio$ | async; as r) {
+        <!-- Totais do período -->
+        <section class="metricas-grid">
+            <div class="metric-card metric-income">
+                <div class="metric-body">
+                    <div class="metric-header">
+                        <span class="metric-icon"><i class="fa-solid fa-arrow-trend-up"></i></span>
+                        <span class="metric-label">Receitas</span>
+                    </div>
+                    <strong class="metric-value">{{ r.totalReceitas | currency }}</strong>
+                    <small class="metric-rodape">Últimos {{ periodo() }} meses</small>
+                </div>
+            </div>
+            <div class="metric-card metric-expense">
+                <div class="metric-body">
+                    <div class="metric-header">
+                        <span class="metric-icon"><i class="fa-solid fa-arrow-trend-down"></i></span>
+                        <span class="metric-label">Despesas</span>
+                    </div>
+                    <strong class="metric-value">{{ r.totalDespesas | currency }}</strong>
+                    <small class="metric-rodape">Últimos {{ periodo() }} meses</small>
+                </div>
+            </div>
+            <div class="metric-card" [ngClass]="r.saldo >= 0 ? 'metric-income' : 'metric-expense'">
+                <div class="metric-body">
+                    <div class="metric-header">
+                        <span class="metric-icon"><i class="fa-solid fa-scale-balanced"></i></span>
+                        <span class="metric-label">Saldo do período</span>
+                    </div>
+                    <strong class="metric-value">{{ r.saldo | currency }}</strong>
+                    <small class="metric-rodape">{{ r.taxaEconomia }}% das receitas economizadas</small>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-body">
+                    <div class="metric-header">
+                        <span class="metric-icon"><i class="fa-solid fa-calculator"></i></span>
+                        <span class="metric-label">Média de gastos</span>
+                    </div>
+                    <strong class="metric-value">{{ r.mediaDespesas | currency }}</strong>
+                    <small class="metric-rodape">por mês</small>
+                </div>
+            </div>
+        </section>
+
+        <section class="paineis-grid">
+            <!-- Evolução mensal -->
+            <div class="chart-panel painel-largo">
+                <div class="chart-body">
+                    <div class="chart-header">
+                        <span class="chart-icon"><i class="fa-solid fa-chart-column"></i></span>
+                        <div class="chart-title">
+                            <h2>Evolução mensal</h2>
+                            <span>Receitas e despesas mês a mês</span>
+                        </div>
+                        <div class="chart-header-acao legenda">
+                            <span><i class="legenda-cor income"></i> Receitas</span>
+                            <span><i class="legenda-cor expense"></i> Despesas</span>
+                        </div>
+                    </div>
+
+                    <div class="evolucao" [style.--colunas]="r.meses.length">
+                        @for (mes of r.meses; track mes.mes) {
+                            <div class="evolucao-mes">
+                                <div class="evolucao-barras"
+                                    [attr.title]="(mes.mes + '-01' | date: 'MMMM yyyy') + ': receitas ' + (mes.receitas | currency) + ', despesas ' + (mes.despesas | currency)">
+                                    <div class="evolucao-barra income" [style.height.%]="mes.alturaReceitas"></div>
+                                    <div class="evolucao-barra expense" [style.height.%]="mes.alturaDespesas"></div>
+                                </div>
+                                <span class="evolucao-rotulo">{{ mes.mes + '-01' | date: 'MMM' }}</span>
+                                <small class="evolucao-saldo" [ngClass]="mes.saldo >= 0 ? 'text-success' : 'text-danger'">
+                                    {{ mes.saldo | currency: 'BRL' : 'symbol' : '1.0-0' }}
+                                </small>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ranking de categorias -->
+            <div class="chart-panel">
+                <div class="chart-body">
+                    <div class="chart-header">
+                        <span class="chart-icon"><i class="fa-solid fa-ranking-star"></i></span>
+                        <div class="chart-title">
+                            <h2>Gastos por categoria</h2>
+                            <span>Variação em relação ao período anterior</span>
+                        </div>
+                    </div>
+
+                    @if (r.categorias.length) {
+                        <div class="ranking">
+                            @for (categoria of r.categorias; track categoria.categoria; let i = $index) {
+                                <div class="ranking-row">
+                                    <span class="ranking-posicao">{{ i + 1 }}</span>
+                                    <div class="ranking-info">
+                                        <div class="ranking-topo">
+                                            <span class="ranking-nome">{{ categoria.categoria }}</span>
+                                            <strong>{{ categoria.valor | currency }}</strong>
+                                        </div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill expense" [style.width.%]="categoria.largura"></div>
+                                        </div>
+                                        <div class="ranking-rodape">
+                                            <span>{{ categoria.percentualTotal }}% das despesas</span>
+                                            <span class="variacao"
+                                                [class.subiu]="categoria.variacao > 0"
+                                                [class.caiu]="categoria.variacao < 0">
+                                                @if (categoria.variacao > 0) {
+                                                    <i class="fa-solid fa-caret-up"></i>
+                                                } @else if (categoria.variacao < 0) {
+                                                    <i class="fa-solid fa-caret-down"></i>
+                                                } @else {
+                                                    <i class="fa-solid fa-minus"></i>
+                                                }
+                                                {{ (categoria.variacao < 0 ? -categoria.variacao : categoria.variacao) }}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    } @else {
+                        <div class="empty-state">
+                            <i class="fa-solid fa-chart-pie"></i>
+                            <span>Nenhuma despesa no período</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Maiores lançamentos -->
+            <div class="chart-panel">
+                <div class="chart-body">
+                    <div class="chart-header">
+                        <span class="chart-icon"><i class="fa-solid fa-money-bill-transfer"></i></span>
+                        <div class="chart-title">
+                            <h2>Maiores lançamentos</h2>
+                            <span>Os valores mais altos do período</span>
+                        </div>
+                    </div>
+
+                    @if (r.maioresLancamentos.length) {
+                        <div class="tabela-wrapper">
+                            <table class="datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Descrição</th>
+                                        <th>Data</th>
+                                        <th class="text-right">Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (lancamento of r.maioresLancamentos; track $index) {
+                                        <tr>
+                                            <td>
+                                                <div class="lancamento-desc">
+                                                    <strong>{{ lancamento.descricao }}</strong>
+                                                    <small>{{ lancamento.categoria }}</small>
+                                                </div>
+                                            </td>
+                                            <td>{{ lancamento.data | date: 'dd/MM/yyyy' }}</td>
+                                            <td class="text-right" [ngClass]="lancamento.tipo === 'RECEITA' ? 'text-success' : 'text-danger'">
+                                                {{ lancamento.tipo === 'RECEITA' ? '+' : '-' }} {{ lancamento.valor | currency }}
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    } @else {
+                        <div class="empty-state">
+                            <i class="fa-solid fa-money-bill-transfer"></i>
+                            <span>Nenhum lançamento no período</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+</main>

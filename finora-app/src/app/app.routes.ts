@@ -10,6 +10,8 @@ import { Login } from './auth/login/login';
 import { authGuard } from './auth/auth-guard';
 import { desafioDoisFatoresGuard } from './auth/desafio-dois-fatores-guard';
 import { USUARIO_ROUTES } from './features/usuario/usuario.routes';
+import { PLANEJAMENTO_ROUTES } from './features/planejamento/planejamento.routes';
+import { RELATORIOS_ROUTES } from './features/relatorios/relatorios.routes';
 
 
 export const routes: Routes = [
@@ -45,7 +47,9 @@ export const routes: Routes = [
             ...CADASTROLANCAMENTO_ROUTES,
             ...LISTAGEMLANCAMENTO_ROUTES,
             ...DASHBOARD_ROUTES,
-            ...USUARIO_ROUTES
+            ...USUARIO_ROUTES,
+            ...PLANEJAMENTO_ROUTES,
+            ...RELATORIOS_ROUTES
         ]
     }
 ];

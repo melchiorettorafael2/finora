@@ -1,0 +1,215 @@
+<app-header titulo="Planejamento"></app-header>
+
+<main class="content">
+    <div class="toolbar">
+        <div class="toolbar-filtros">
+            <app-month-picker inputId="mes-planejamento" [formControl]="mes" />
+        </div>
+        <div class="toolbar-acoes">
+            <button type="button" class="btn btn-secondary" disabled title="Em breve">
+                <i class="fa-solid fa-bullseye"></i>
+                Nova meta
+            </button>
+            <button type="button" class="btn btn-primary" disabled title="Em breve">
+                <i class="fa-solid fa-sliders"></i>
+                Definir orçamento
+            </button>
+        </div>
+    </div>
+
+    <div class="aviso-exemplo">
+        <i class="fa-solid fa-flask"></i>
+        <span>Esta página ainda exibe dados de exemplo. A integração com a API será feita em breve.</span>
+    </div>
+
+    @if (planejamento$ | async; as p) {
+        <!-- Resumo do mês -->
+        <section class="metricas-grid">
+            <div class="metric-card">
+                <div class="metric-body">
+                    <div class="metric-header">
+                        <span class="metric-icon"><i class="fa-solid fa-bullseye"></i></span>
+                        <span class="metric-label">Orçamento do mês</span>
+                    </div>
+                    <strong class="metric-value">{{ p.totalLimite | currency }}</strong>
+                    <small class="metric-rodape">
+                        {{ p.percentualReceita }}% da receita prevista de {{ p.receitaPrevista | currency }}
+                    </small>
+                </div>
+            </div>
+            <div class="metric-card metric-expense">
+                <div class="metric-body">
+                    <div class="metric-header">
+                        <span class="metric-icon"><i class="fa-solid fa-receipt"></i></span>
+                        <span class="metric-label">Gasto até agora</span>
+                    </div>
+                    <strong class="metric-value">{{ p.totalGasto | currency }}</strong>
+                    <small class="metric-rodape">{{ p.percentualUsado }}% do orçamento utilizado</small>
+                </div>
+            </div>
+            <div class="metric-card" [ngClass]="p.disponivel >= 0 ? 'metric-income' : 'metric-expense'">
+                <div class="metric-body">
+                    <div class="metric-header">
+                        <span class="metric-icon"><i class="fa-solid fa-piggy-bank"></i></span>
+                        <span class="metric-label">{{ p.disponivel >= 0 ? 'Disponível' : 'Excedido' }}</span>
+                    </div>
+                    <strong class="metric-value">{{ (p.disponivel >= 0 ? p.disponivel : -p.disponivel) | currency }}</strong>
+                    <small class="metric-rodape"><i class="fa-regular fa-calendar"></i> {{ p.mes + '-01' | date: 'MMMM yyyy' }}</small>
+                </div>
+            </div>
+            <div class="metric-card" [ngClass]="p.categoriasEstouradas ? 'metric-warning' : 'metric-income'">
+                <div class="metric-body">
+                    <div class="metric-header">
+                        <span class="metric-icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                        <span class="metric-label">Acima do limite</span>
+                    </div>
+                    <strong class="metric-value">{{ p.categoriasEstouradas }}</strong>
+                    <small class="metric-rodape">
+                        {{ p.categoriasEstouradas === 1 ? 'categoria' : 'categorias' }} de {{ p.orcamentos.length }} planejadas
+                    </small>
+                </div>
+            </div>
+        </section>
+
+        <section class="paineis-grid">
+            <!-- Orçamento por categoria -->
+            <div class="chart-panel painel-largo">
+                <div class="chart-body">
+                    <div class="chart-header">
+                        <span class="chart-icon"><i class="fa-solid fa-list-check"></i></span>
+                        <div class="chart-title">
+                            <h2>Orçamento por categoria</h2>
+                            <span>Quanto já foi gasto do limite definido para cada categoria</span>
+                        </div>
+                    </div>
+
+                    @if (p.orcamentos.length) {
+                        <div class="orcamentos">
+                            @for (orcamento of p.orcamentos; track orcamento.categoria) {
+                                <div class="orcamento-row">
+                                    <div class="orcamento-topo">
+                                        <span class="orcamento-nome"><i class="fa-solid fa-tag"></i> {{ orcamento.categoria }}</span>
+                                        <span class="badge"
+                                            [ngClass]="{
+                                                'badge-success': orcamento.status === 'ok',
+                                                'badge-warning': orcamento.status === 'alerta',
+                                                'badge-danger': orcamento.status === 'estourado'
+                                            }">
+                                            {{ rotuloStatus[orcamento.status] }}
+                                        </span>
+                                    </div>
+                                    <div class="bar-track">
+                                        <div class="bar-fill"
+                                            [class.warning]="orcamento.status === 'alerta'"
+                                            [class.expense]="orcamento.status === 'estourado'"
+                                            [style.width.%]="orcamento.percentual"></div>
+                                    </div>
+                                    <div class="orcamento-rodape">
+                                        <span>
+                                            <strong>{{ orcamento.gasto | currency }}</strong> de {{ orcamento.limite | currency }}
+                                            <span class="orcamento-percentual">({{ orcamento.percentual }}%)</span>
+                                        </span>
+                                        @if (orcamento.restante >= 0) {
+                                            <span>Restam {{ orcamento.restante | currency }}</span>
+                                        } @else {
+                                            <span class="text-danger">Excedeu {{ -orcamento.restante | currency }}</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    } @else {
+                        <div class="empty-state">
+                            <i class="fa-solid fa-list-check"></i>
+                            <span>Nenhum orçamento definido para este mês</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Metas de economia -->
+            <div class="chart-panel">
+                <div class="chart-body">
+                    <div class="chart-header">
+                        <span class="chart-icon"><i class="fa-solid fa-flag-checkered"></i></span>
+                        <div class="chart-title">
+                            <h2>Metas de economia</h2>
+                            <span>Progresso dos seus objetivos</span>
+                        </div>
+                    </div>
+
+                    @if (p.metas.length) {
+                        <div class="metas">
+                            @for (meta of p.metas; track meta.nome) {
+                                <div class="meta-item">
+                                    <span class="meta-icone"><i class="fa-solid" [ngClass]="meta.icone"></i></span>
+                                    <div class="meta-info">
+                                        <div class="meta-topo">
+                                            <strong>{{ meta.nome }}</strong>
+                                            <span class="meta-percentual">{{ meta.percentual }}%</span>
+                                        </div>
+                                        <div class="bar-track">
+                                            <div class="bar-fill income" [style.width.%]="meta.percentual"></div>
+                                        </div>
+                                        <div class="meta-rodape">
+                                            <span>{{ meta.acumulado | currency }} de {{ meta.objetivo | currency }}</span>
+                                            <span><i class="fa-regular fa-clock"></i> {{ meta.prazo | date: 'MMM yyyy' }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    } @else {
+                        <div class="empty-state">
+                            <i class="fa-solid fa-flag-checkered"></i>
+                            <span>Nenhuma meta cadastrada</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Contas previstas -->
+            <div class="chart-panel">
+                <div class="chart-body">
+                    <div class="chart-header">
+                        <span class="chart-icon"><i class="fa-solid fa-calendar-check"></i></span>
+                        <div class="chart-title">
+                            <h2>Contas previstas</h2>
+                            <span>{{ p.contasPendentes }} {{ p.contasPendentes === 1 ? 'pendente' : 'pendentes' }} neste mês</span>
+                        </div>
+                    </div>
+
+                    @if (p.contasPrevistas.length) {
+                        <ul class="contas">
+                            @for (conta of p.contasPrevistas; track conta.descricao) {
+                                <li class="conta-item" [class.paga]="conta.pago">
+                                    <span class="conta-data">
+                                        <strong>{{ conta.vencimento | date: 'dd' }}</strong>
+                                        <small>{{ conta.vencimento | date: 'MMM' }}</small>
+                                    </span>
+                                    <div class="conta-info">
+                                        <strong>{{ conta.descricao }}</strong>
+                                        <small>{{ conta.categoria }}</small>
+                                    </div>
+                                    <div class="conta-valor">
+                                        <strong [ngClass]="conta.tipo === 'RECEITA' ? 'text-success' : 'text-danger'">
+                                            {{ conta.tipo === 'RECEITA' ? '+' : '-' }} {{ conta.valor | currency }}
+                                        </strong>
+                                        <span class="badge" [ngClass]="conta.pago ? 'badge-success' : 'badge-warning'">
+                                            {{ conta.pago ? (conta.tipo === 'RECEITA' ? 'Recebido' : 'Pago') : 'Pendente' }}
+                                        </span>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    } @else {
+                        <div class="empty-state">
+                            <i class="fa-solid fa-calendar-check"></i>
+                            <span>Nenhuma conta prevista para este mês</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+</main>
