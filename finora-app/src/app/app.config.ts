@@ -20,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor])),
     provideToastr({
       positionClass: 'toast-top-right',
-      timeOut: 3000,
+      timeOut: 2500,
       closeButton: true,
       progressBar: true
     }),
