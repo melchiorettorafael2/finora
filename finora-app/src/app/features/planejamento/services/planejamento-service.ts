@@ -17,27 +17,28 @@ export class PlanejamentoService {
   obterPlanejamento(mes: string): Observable<Planejamento> {
     return of({
       mes,
-      receitaPrevista: 7200,
+      // Renda de ~R$ 5.000/mês: orçamento de 70% e o restante para as metas
+      receitaPrevista: 5000,
       orcamentos: [
-        { categoria: 'Moradia', limite: 2200, gasto: 2150 },
-        { categoria: 'Alimentação', limite: 1200, gasto: 1340.5 },
-        { categoria: 'Transporte', limite: 600, gasto: 412.8 },
-        { categoria: 'Lazer', limite: 400, gasto: 355 },
-        { categoria: 'Saúde', limite: 350, gasto: 120 },
-        { categoria: 'Educação', limite: 300, gasto: 299.9 },
+        { categoria: 'Moradia', limite: 1500, gasto: 1460 },
+        { categoria: 'Alimentação', limite: 900, gasto: 985.4 },
+        { categoria: 'Transporte', limite: 400, gasto: 286.5 },
+        { categoria: 'Lazer', limite: 300, gasto: 262 },
+        { categoria: 'Saúde', limite: 250, gasto: 89.9 },
+        { categoria: 'Educação', limite: 150, gasto: 149.9 },
       ],
       metas: [
-        { nome: 'Reserva de emergência', icone: 'fa-shield-heart', objetivo: 20000, acumulado: 12400, prazo: '2027-06-30' },
-        { nome: 'Viagem de férias', icone: 'fa-plane', objetivo: 8000, acumulado: 2750, prazo: '2027-01-15' },
-        { nome: 'Notebook novo', icone: 'fa-laptop', objetivo: 6500, acumulado: 5900, prazo: '2026-12-20' },
+        { nome: 'Reserva de emergência', icone: 'fa-shield-heart', objetivo: 15000, acumulado: 6800, prazo: '2027-12-31' },
+        { nome: 'Viagem de férias', icone: 'fa-plane', objetivo: 4000, acumulado: 1350, prazo: '2027-07-15' },
+        { nome: 'Notebook novo', icone: 'fa-laptop', objetivo: 4500, acumulado: 3900, prazo: '2026-12-20' },
       ],
       contasPrevistas: [
-        { descricao: 'Salário', categoria: 'Renda', vencimento: `${mes}-05`, valor: 6500, tipo: 'RECEITA', pago: true },
-        { descricao: 'Aluguel', categoria: 'Moradia', vencimento: `${mes}-10`, valor: 1800, tipo: 'DESPESA', pago: true },
-        { descricao: 'Internet', categoria: 'Moradia', vencimento: `${mes}-12`, valor: 120, tipo: 'DESPESA', pago: true },
-        { descricao: 'Plano de saúde', categoria: 'Saúde', vencimento: `${mes}-15`, valor: 320, tipo: 'DESPESA', pago: false },
-        { descricao: 'Freelance', categoria: 'Renda', vencimento: `${mes}-20`, valor: 700, tipo: 'RECEITA', pago: false },
-        { descricao: 'Curso online', categoria: 'Educação', vencimento: `${mes}-25`, valor: 89.9, tipo: 'DESPESA', pago: false },
+        { descricao: 'Salário', categoria: 'Renda', vencimento: `${mes}-05`, valor: 4500, tipo: 'RECEITA', pago: true },
+        { descricao: 'Aluguel', categoria: 'Moradia', vencimento: `${mes}-10`, valor: 1200, tipo: 'DESPESA', pago: true },
+        { descricao: 'Internet', categoria: 'Moradia', vencimento: `${mes}-12`, valor: 99.9, tipo: 'DESPESA', pago: true },
+        { descricao: 'Plano de saúde', categoria: 'Saúde', vencimento: `${mes}-15`, valor: 189.9, tipo: 'DESPESA', pago: false },
+        { descricao: 'Freelance', categoria: 'Renda', vencimento: `${mes}-20`, valor: 500, tipo: 'RECEITA', pago: false },
+        { descricao: 'Curso online', categoria: 'Educação', vencimento: `${mes}-25`, valor: 49.9, tipo: 'DESPESA', pago: false },
       ],
     });
   }
