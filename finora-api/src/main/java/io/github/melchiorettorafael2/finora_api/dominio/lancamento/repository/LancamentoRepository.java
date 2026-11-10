@@ -40,4 +40,28 @@ public interface LancamentoRepository extends JpaRepository<LancamentoEntity, UU
             @Param("tipo")TipoLancamento tipoLancamento,
             @Param("inicio") LocalDate inicio,
             @Param("fim") LocalDate fim);
+
+    // Planejamento: gasto de cada categoria no mês, para comparar com o orçamento
+    @Query("""
+        select l.categoria.id, coalesce(sum(l.valor), 0)
+        from LancamentoEntity as l
+        where l.tipo = :tipo
+        and l.data between :inicio and :fim
+        group by l.categoria.id
+""")
+    List<Object[]> somaPorCategoriaIdNoPeriodo(
+            @Param("tipo") TipoLancamento tipoLancamento,
+            @Param("inicio") LocalDate inicio,
+            @Param("fim") LocalDate fim);
+
+    // Relatórios: receitas e despesas agrupadas por mês (ano, mês, tipo, soma)
+    @Query("""
+        select year(l.data), month(l.data), l.tipo, coalesce(sum(l.valor), 0)
+        from LancamentoEntity as l
+        where l.data between :inicio and :fim
+        group by year(l.data), month(l.data), l.tipo
+""")
+    List<Object[]> somaPorMesETipoNoPeriodo(
+            @Param("inicio") LocalDate inicio,
+            @Param("fim") LocalDate fim);
 }
