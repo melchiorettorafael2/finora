@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Dashboard } from './dados-dashboard';
@@ -10,8 +10,10 @@ export class DashboardService {
 
   http = inject(HttpClient);
   baseUrl = 'http://localhost:8080/dashboard';
-  obterDashboardMesAtual() : Observable<Dashboard>{
-    return this.http.get<Dashboard>(this.baseUrl);
+
+  /** mes no formato 'yyyy-MM' */
+  obterDashboard(mes: string) : Observable<Dashboard>{
+    return this.http.get<Dashboard>(this.baseUrl, { params: new HttpParams().set('mes', mes) });
   }
 
 }

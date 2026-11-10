@@ -14,6 +14,11 @@ public class LancamentoSpecs {
 
     }
 
+    // Sempre aplicado na listagem: só os lançamentos do usuário logado
+    public static Specification<LancamentoEntity> usuarioEqual(UUID usuarioId){
+        return (root, query, cb) -> cb.equal(root.get("usuario").get("id"), usuarioId);
+    }
+
     public static Specification<LancamentoEntity> tipoEqual(TipoLancamento tipo){
         return (root, query, cb) ->{
             return cb.equal(root.get("tipo"), tipo);

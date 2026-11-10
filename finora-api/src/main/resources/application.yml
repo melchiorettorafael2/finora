@@ -25,3 +25,7 @@ app:
   jwt:
     secret: QVdTIENlcnRpZmllZCBEZXZlbG9wZXI=
     expiration-seconds: 3600
+  migracao:
+    # Registros criados antes de existir dono (usuario_id nulo) passam para este login ao subir a API.
+    # Só mexe no que está sem dono; deixe vazio para desativar.
+    dono-dados-antigos: ds@gmail.com

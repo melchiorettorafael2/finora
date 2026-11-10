@@ -8,7 +8,7 @@ import io.github.melchiorettorafael2.finora_api.dominio.cartao.web.dto.CartaoDet
 import io.github.melchiorettorafael2.finora_api.dominio.cartao.web.dto.CartaoForm;
 import io.github.melchiorettorafael2.finora_api.dominio.cartao.web.mapper.CartaoMapper;
 import io.github.melchiorettorafael2.finora_api.dominio.cartao.model.CartaoEntity;
-import io.github.melchiorettorafael2.finora_api.dominio.categoria.web.dto.CategoriaDetalhes;
+import io.github.melchiorettorafael2.finora_api.infra.security.UsuarioLogado;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,6 +27,8 @@ public class CartaoService {
     private CartaoRepository repository;
     @Autowired
     private CartaoMapper mapper;
+    @Autowired
+    private UsuarioLogado usuarioLogado;
 
 
     public CartaoDetalhes criar(CartaoForm form) {
@@ -36,24 +38,23 @@ public class CartaoService {
             throw new ValidationException(result.getCamposInvalidos());
         }
         CartaoEntity entity = mapper.toEntity(form);
+        entity.setUsuario(usuarioLogado.get());
         repository.save(entity);
         return mapper.toDetalhes(entity);
     }
 
     @Transactional
     public void deletar(UUID id){
-        var cartao = repository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
-        repository.delete(cartao);
+        repository.delete(buscarDoUsuario(id));
     }
 
     public CartaoDetalhes obterDetalhes(UUID id) {
-        return repository.findById(id).map(mapper::toDetalhes).orElseThrow(() -> new RegistroNaoEncontradoException());
+        return mapper.toDetalhes(buscarDoUsuario(id));
     }
 
     @Transactional
     public void atualizar(UUID id, CartaoForm dadosAtualizacao) {
-        var entity = repository.findById(id)
-                .orElseThrow(() -> new RegistroNaoEncontradoException());
+        var entity = buscarDoUsuario(id);
         var result = validator.validar(dadosAtualizacao, id);
 
         if(result.isInvalido()){
@@ -64,16 +65,21 @@ public class CartaoService {
     }
 
     public Page<CartaoDetalhes> listar(PageRequest pageRequest) {
-        return repository.findAll(pageRequest).map(mapper::toDetalhes);
+        return repository.findAllByUsuarioId(usuarioLogado.id(), pageRequest).map(mapper::toDetalhes);
     }
 
     @Transactional
     public void mudarStatus(UUID id){
-        var cartao = repository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
+        var cartao = buscarDoUsuario(id);
         cartao.setAtivo(!cartao.getAtivo());
     }
 
     public List<CartaoDetalhes> listarAtivos() {
-        return repository.findByAtivoTrue().stream().map(mapper::toDetalhes).toList();
+        return repository.findByAtivoTrueAndUsuarioId(usuarioLogado.id()).stream().map(mapper::toDetalhes).toList();
+    }
+
+    // Cartão de outro usuário responde como inexistente (404), sem revelar que ele existe
+    private CartaoEntity buscarDoUsuario(UUID id) {
+        return repository.findByIdAndUsuarioId(id, usuarioLogado.id()).orElseThrow(RegistroNaoEncontradoException::new);
     }
 }

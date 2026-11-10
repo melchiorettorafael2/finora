@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import java.time.YearMonth;
 import java.util.UUID;
 
+import io.github.melchiorettorafael2.finora_api.infra.security.UsuarioLogado;
+
 import static io.github.melchiorettorafael2.finora_api.dominio.lancamento.LancamentoSpecs.*;
 
 @Service
@@ -37,13 +39,17 @@ public class LancamentoService {
     private LancamentoValidator validator;
     @Autowired
     private LancamentoMapper mapper;
+    @Autowired
+    private UsuarioLogado usuarioLogado;
 
     public LancamentoDetalhes criar(LancamentoForm form){
-        CategoriaEntity categoria = categoriaRepository.findById(form.categoriaId()).orElse(null);
+        UUID usuarioId = usuarioLogado.id();
+        // Só aceita categoria e cartão do próprio usuário: os de outro usuário caem em "não encontrado"
+        CategoriaEntity categoria = categoriaRepository.findByIdAndUsuarioId(form.categoriaId(), usuarioId).orElse(null);
 
         CartaoEntity cartao = null;
         if(form.cartaoId() != null){
-            cartao = cartaoRepository.findById(form.cartaoId()).orElse(null);
+            cartao = cartaoRepository.findByIdAndUsuarioId(form.cartaoId(), usuarioId).orElse(null);
         }
 
          var result = validator.validar(form, categoria, cartao);
@@ -53,6 +59,7 @@ public class LancamentoService {
         }
 
         LancamentoEntity entity = mapper.toEntity(form, categoria, cartao);
+        entity.setUsuario(usuarioLogado.get());
         repository.save(entity);
 
         return mapper.toDetalhes(entity);
@@ -61,7 +68,7 @@ public class LancamentoService {
 
     public Page<LancamentoDetalhes> listar(PageRequest pageRequest, YearMonth mes, TipoLancamento tipo, UUID categoriaId){
 
-        Specification<LancamentoEntity> spec = Specification.unrestricted();
+        Specification<LancamentoEntity> spec = usuarioEqual(usuarioLogado.id());
 
         if(tipo != null){
             spec = spec.and(tipoEqual(tipo));
@@ -81,7 +88,7 @@ public class LancamentoService {
     }
 
     public void deletar(UUID id){
-        var lancamento = repository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
+        var lancamento = repository.findByIdAndUsuarioId(id, usuarioLogado.id()).orElseThrow(RegistroNaoEncontradoException::new);
         repository.delete(lancamento);
     }
 

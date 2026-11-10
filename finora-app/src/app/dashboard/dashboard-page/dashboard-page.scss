@@ -1,8 +1,44 @@
+// Barra de ferramentas, botões, legenda e gráfico de colunas compartilhados com Planejamento e Relatórios.
+// Vêm primeiro: as regras abaixo, específicas do Dashboard, prevalecem sobre as do arquivo compartilhado.
+@use '../../shared/styles/botoes';
+@use '../../shared/styles/paineis';
+
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr;
+    grid-template-columns: 1.3fr 1fr 1fr 1fr;
     gap: 18px;
     margin-bottom: 22px;
+}
+
+/* Card de orçamento é um link para o Planejamento */
+.metric-link {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+// Seletor composto: a regra base .metric-card (mais abaixo) não pode sobrescrever a cor de alerta
+.metric-card.metric-warning {
+    --metric-color: var(--warning);
+    --metric-rgb: 204, 167, 0;
+    --metric-text: #e0c040;
+}
+
+/* Variação em relação ao mês anterior */
+.variacao {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700;
+    color: var(--text-strong);
+
+    &.boa {
+        color: #6ee6be;
+    }
+
+    &.ruim {
+        color: var(--danger);
+    }
 }
 
 /* Moldura compartilhada: card externo + painel interno mais escuro, como em .card-full > .form-card */
@@ -109,15 +145,111 @@
     display: flex;
     align-items: center;
     gap: 7px;
+    flex-wrap: wrap;
     color: #a8adb5;
-    font-size: 14px;
-    text-transform: capitalize;
+    font-size: 13.5px;
 }
 
 .charts-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 18px;
+}
+
+/* Gráfico de colunas mais baixo que o de Relatórios; o mês consultado fica destacado */
+.evolucao-barras {
+    height: 170px;
+}
+
+.evolucao-mes.atual .evolucao-rotulo {
+    color: var(--teal);
+}
+
+/* "Ver todos" / "Ver relatórios" no rodapé do painel */
+.link-painel {
+    margin-top: auto;
+    padding-top: 16px;
+    align-self: flex-end;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #8cc4ff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+        color: var(--brand-white);
+    }
+}
+
+/* ===== Últimos lançamentos ===== */
+.lancamentos {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.lancamento-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.lancamento-icone {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    font-size: 13px;
+
+    &.receita {
+        color: #6ee6be;
+        background-color: rgba(79, 214, 168, 0.14);
+        border: 1px solid rgba(79, 214, 168, 0.3);
+    }
+
+    &.despesa {
+        color: var(--danger);
+        background-color: rgba(241, 76, 76, 0.12);
+        border: 1px solid rgba(241, 76, 76, 0.28);
+    }
+}
+
+.lancamento-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    strong {
+        color: var(--text-strong);
+        font-size: 14px;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    small {
+        color: var(--text-muted);
+        font-size: 12px;
+    }
+}
+
+.lancamento-valor {
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 }
 
 .chart-panel:hover {
@@ -176,7 +308,6 @@
     gap: 6px;
     color: var(--text-muted);
     font-size: 13px;
-    text-transform: capitalize;
 }
 
 .comparison-chart,
@@ -280,6 +411,12 @@
 .empty-state i {
     color: var(--teal);
     font-size: 32px;
+}
+
+@media (max-width: 1300px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 992px) {

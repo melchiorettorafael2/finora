@@ -11,9 +11,11 @@ import org.mapstruct.MappingTarget;
 public interface MetaEconomiaMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "usuario", ignore = true)
     MetaEconomiaEntity toEntity(MetaEconomiaForm form);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "usuario", ignore = true)
     void atualizar(MetaEconomiaForm form, @MappingTarget MetaEconomiaEntity entity);
 
     MetaEconomiaDetalhes toDetalhes(MetaEconomiaEntity entity);

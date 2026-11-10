@@ -8,6 +8,7 @@ import io.github.melchiorettorafael2.finora_api.dominio.categoria.web.dto.Catego
 import io.github.melchiorettorafael2.finora_api.dominio.categoria.model.CategoriaEntity;
 
 import io.github.melchiorettorafael2.finora_api.dominio.categoria.web.mapper.CategoriaMapper;
+import io.github.melchiorettorafael2.finora_api.infra.security.UsuarioLogado;
 import jakarta.transaction.Transactional;
 import io.github.melchiorettorafael2.finora_api.common.exceptions.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class CategoriaService {
     @Autowired
     private CategoriaRepository repository;
 
+    @Autowired
+    private UsuarioLogado usuarioLogado;
+
 
     public CategoriaDetalhes criar(CategoriaForm nova) {
         ValidationResult result = validator.validar(nova);
@@ -39,6 +43,7 @@ public class CategoriaService {
         }
 
         CategoriaEntity entity = mapper.toEntity(nova);
+        entity.setUsuario(usuarioLogado.get());
         repository.save(entity);
 
         return mapper.toDetalhes(entity);
@@ -46,19 +51,20 @@ public class CategoriaService {
 
     public Page<CategoriaDetalhes> listar(PageRequest pageRequest) {
         return repository
-                .findAll(pageRequest)
+                .findAllByUsuarioId(usuarioLogado.id(), pageRequest)
                 .map(mapper::toDetalhes);
     }
 
     @Transactional
     public void mudarStatus(UUID id) {
-        var categoria = repository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
+        // Categoria de outro usuário responde como inexistente (404)
+        var categoria = repository.findByIdAndUsuarioId(id, usuarioLogado.id()).orElseThrow(RegistroNaoEncontradoException::new);
 
         categoria.setAtivo(!categoria.getAtivo());
         repository.save(categoria);
     }
 
     public List<CategoriaDetalhes> listarAtivas() {
-        return repository.findByAtivoTrue().stream().map(mapper::toDetalhes).toList();
+        return repository.findByAtivoTrueAndUsuarioId(usuarioLogado.id()).stream().map(mapper::toDetalhes).toList();
     }
 }

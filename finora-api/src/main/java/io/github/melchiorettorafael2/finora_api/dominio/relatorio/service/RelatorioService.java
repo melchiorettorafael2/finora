@@ -5,6 +5,7 @@ import io.github.melchiorettorafael2.finora_api.dominio.lancamento.repository.La
 import io.github.melchiorettorafael2.finora_api.dominio.relatorio.web.dto.CategoriaRelatorio;
 import io.github.melchiorettorafael2.finora_api.dominio.relatorio.web.dto.Relatorio;
 import io.github.melchiorettorafael2.finora_api.dominio.relatorio.web.dto.ResumoMensal;
+import io.github.melchiorettorafael2.finora_api.infra.security.UsuarioLogado;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,25 +23,32 @@ public class RelatorioService {
 
     @Autowired
     private LancamentoRepository repository;
+    @Autowired
+    private UsuarioLogado usuarioLogado;
 
     public Relatorio gerar(int meses) {
         YearMonth primeiroMes = YearMonth.now().minusMonths(meses - 1L);
         LocalDate inicio = primeiroMes.atDay(1);
         LocalDate fim = YearMonth.now().atEndOfMonth();
 
-        List<CategoriaRelatorio> categorias = repository.somaPorCategoriaNoPeriodo(TipoLancamento.DESPESA, inicio, fim)
+        List<CategoriaRelatorio> categorias = repository.somaPorCategoriaNoPeriodo(usuarioLogado.id(), TipoLancamento.DESPESA, inicio, fim)
                 .stream()
                 .map(linha -> new CategoriaRelatorio((String) linha[0], (BigDecimal) linha[1]))
                 .toList();
 
-        return new Relatorio(meses, resumoMensal(primeiroMes, meses, inicio, fim), categorias);
+        return new Relatorio(meses, evolucao(YearMonth.now(), meses), categorias);
     }
 
-    private List<ResumoMensal> resumoMensal(YearMonth primeiroMes, int meses, LocalDate inicio, LocalDate fim) {
+    /** Receitas e despesas de cada mês, dos N meses que terminam em {@code ultimoMes} (usado também pelo Dashboard). */
+    public List<ResumoMensal> evolucao(YearMonth ultimoMes, int meses) {
+        YearMonth primeiroMes = ultimoMes.minusMonths(meses - 1L);
+        LocalDate inicio = primeiroMes.atDay(1);
+        LocalDate fim = ultimoMes.atEndOfMonth();
+
         Map<YearMonth, BigDecimal> receitas = new HashMap<>();
         Map<YearMonth, BigDecimal> despesas = new HashMap<>();
 
-        for (Object[] linha : repository.somaPorMesETipoNoPeriodo(inicio, fim)) {
+        for (Object[] linha : repository.somaPorMesETipoNoPeriodo(usuarioLogado.id(), inicio, fim)) {
             var mes = YearMonth.of(((Number) linha[0]).intValue(), ((Number) linha[1]).intValue());
             var destino = linha[2] == TipoLancamento.RECEITA ? receitas : despesas;
             destino.put(mes, (BigDecimal) linha[3]);

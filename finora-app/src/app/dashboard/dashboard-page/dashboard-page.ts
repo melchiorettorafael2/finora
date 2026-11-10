@@ -1,24 +1,54 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { DashboardService } from '../dashboard-service';
-import { Observable } from 'rxjs';
-import { Dashboard, DespesaCategoriaResumo } from '../dados-dashboard';
-import { Header } from '../../common/components/header/header';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { EMPTY, Observable, catchError, map, startWith, switchMap } from 'rxjs';
+import { DashboardService } from '../dashboard-service';
+import { Dashboard, DespesaCategoriaResumo } from '../dados-dashboard';
+import { ResumoMensal } from '../../features/relatorios/models/dados-relatorio';
+import { Header } from '../../common/components/header/header';
+import { MonthPicker } from '../../common/components/month-picker/month-picker';
+
+interface MesEvolucao extends ResumoMensal {
+  alturaReceitas: number; // % da maior barra do gráfico
+  alturaDespesas: number;
+  atual: boolean;
+}
+
+interface DashboardView extends Dashboard {
+  variacaoReceitas: number | null; // % em relação ao mês anterior; null se o anterior foi zero
+  variacaoDespesas: number | null;
+  percentualOrcamento: number;
+  orcamentoEstourado: boolean; // gasto acima do limite (o percentual arredondado pode mostrar 100%)
+  meses: MesEvolucao[];
+}
 
 @Component({
   selector: 'app-dashboard-page',
-  imports: [Header, CommonModule],
+  imports: [Header, CommonModule, ReactiveFormsModule, RouterLink, MonthPicker],
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.scss',
 })
-export class DashboardPage implements OnInit{
+export class DashboardPage {
 
   service = inject(DashboardService);
-  dashboard$!: Observable<Dashboard>;
+  private toast = inject(ToastrService);
 
-  ngOnInit(): void {
-    this.dashboard$ = this.service.obterDashboardMesAtual();
-  }
+  mes = new FormControl(this.mesAtual(), { nonNullable: true });
+
+  dashboard$: Observable<DashboardView> = this.mes.valueChanges.pipe(
+    startWith(this.mes.value),
+    // "Todos os meses" não se aplica ao resumo mensal: volta para o mês atual
+    map(mes => mes || this.mesAtual()),
+    switchMap(mes => this.service.obterDashboard(mes).pipe(
+      catchError(() => {
+        this.toast.error('Erro ao carregar o dashboard.', 'Erro');
+        return EMPTY;
+      })
+    )),
+    map(dashboard => this.montarView(dashboard))
+  );
 
   percentual(valor: number, total: number){
 
@@ -37,6 +67,40 @@ export class DashboardPage implements OnInit{
     }
     const valoresDespesas = despesas.map(despesa => despesa.valor);
     return Math.max(...valoresDespesas);
+  }
+
+  iconeVariacao(variacao: number) {
+    if (variacao > 0) {
+      return 'fa-caret-up';
+    }
+    return variacao < 0 ? 'fa-caret-down' : 'fa-minus';
+  }
+
+  private montarView(d: Dashboard): DashboardView {
+    const maiorValorMes = Math.max(0, ...d.evolucao.flatMap(m => [m.receitas, m.despesas]));
+
+    return {
+      ...d,
+      variacaoReceitas: this.variacao(d.resumo.receitas, d.resumoMesAnterior.receitas),
+      variacaoDespesas: this.variacao(d.resumo.despesas, d.resumoMesAnterior.despesas),
+      percentualOrcamento: d.orcamento ? this.percentual(d.orcamento.gasto, d.orcamento.limite) : 0,
+      orcamentoEstourado: !!d.orcamento && d.orcamento.gasto > d.orcamento.limite,
+      meses: d.evolucao.map(mes => ({
+        ...mes,
+        alturaReceitas: this.percentual(mes.receitas, maiorValorMes),
+        alturaDespesas: this.percentual(mes.despesas, maiorValorMes),
+        atual: mes.mes === d.mes,
+      })),
+    };
+  }
+
+  private variacao(atual: number, anterior: number): number | null {
+    return anterior ? Math.round(((atual - anterior) / anterior) * 100) : null;
+  }
+
+  private mesAtual() {
+    const hoje = new Date();
+    return `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
   }
 
 }

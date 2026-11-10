@@ -45,6 +45,7 @@ O projeto também serve como estudo prático de boas práticas de desenvolviment
 | Lançamento de despesas e receitas | ✅ Implementado |
 | Dashboard com resumo mensal | ✅ Implementado  |
 | Autenticação de usuários | ✅ Implementado |
+| Dados separados por usuário (cada conta vê só os próprios registros) | ✅ Implementado |
 | Planejamento: orçamento por categoria e metas de economia | ✅ Implementado |
 | Relatórios: evolução mensal e gastos por categoria (3, 6 ou 12 meses) | ✅ Implementado |
 
@@ -193,6 +194,12 @@ Content-Type: application/json
 |---|---|
 | `422 Unprocessable Content` | Campos obrigatórios ausentes ou dados inválidos |
 | `404 Not Found` | Cartão não encontrado para o ID informado |
+
+### Dashboard — `/dashboard`
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/dashboard?mes=yyyy-MM` | Resumo do mês e do mês anterior, gastos por categoria, uso do orçamento, evolução dos últimos 6 meses e os 5 lançamentos mais recentes (sem `mes`, usa o mês atual) |
 
 ### Planejamento — `/planejamento`
 
