@@ -1,10 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { Observable, map, switchMap } from 'rxjs';
+import { EMPTY, Observable, catchError, map, switchMap } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 import { Header } from '../../../../common/components/header/header';
 import { RelatorioService } from '../../services/relatorio-service';
-import { CategoriaRelatorio, LancamentoRelatorio, PeriodoRelatorio, Relatorio, ResumoMensal } from '../../models/dados-relatorio';
+import { CategoriaRelatorio, PeriodoRelatorio, Relatorio, ResumoMensal } from '../../models/dados-relatorio';
 
 interface MesView extends ResumoMensal {
   saldo: number;
@@ -25,7 +26,6 @@ interface RelatorioView {
   taxaEconomia: number;
   meses: MesView[];
   categorias: CategoriaView[];
-  maioresLancamentos: LancamentoRelatorio[];
 }
 
 @Component({
@@ -37,6 +37,7 @@ interface RelatorioView {
 export class RelatoriosPage {
 
   private service = inject(RelatorioService);
+  private toast = inject(ToastrService);
 
   periodos: { valor: PeriodoRelatorio; rotulo: string }[] = [
     { valor: 3, rotulo: '3 meses' },
@@ -47,7 +48,12 @@ export class RelatoriosPage {
   periodo = signal<PeriodoRelatorio>(6);
 
   relatorio$: Observable<RelatorioView> = toObservable(this.periodo).pipe(
-    switchMap(periodo => this.service.obterRelatorio(periodo)),
+    switchMap(periodo => this.service.obterRelatorio(periodo).pipe(
+      catchError(() => {
+        this.toast.error('Erro ao carregar o relatório.', 'Erro');
+        return EMPTY;
+      })
+    )),
     map(relatorio => this.montarView(relatorio))
   );
 
@@ -78,7 +84,6 @@ export class RelatoriosPage {
           percentualTotal: this.percentual(categoria.valor, totalCategorias),
           largura: this.percentual(categoria.valor, maiorCategoria),
         })),
-      maioresLancamentos: [...r.maioresLancamentos].sort((a, b) => b.valor - a.valor),
     };
   }
 

@@ -14,21 +14,6 @@
                 }
             </div>
         </div>
-        <div class="toolbar-acoes">
-            <button type="button" class="btn btn-secondary" disabled title="Em breve">
-                <i class="fa-solid fa-file-csv"></i>
-                Exportar CSV
-            </button>
-            <button type="button" class="btn btn-primary" disabled title="Em breve">
-                <i class="fa-solid fa-file-pdf"></i>
-                Exportar PDF
-            </button>
-        </div>
-    </div>
-
-    <div class="aviso-exemplo">
-        <i class="fa-solid fa-flask"></i>
-        <span>Esta página ainda exibe dados de exemplo. A integração com a API será feita em breve.</span>
     </div>
 
     @if (relatorio$ | async; as r) {
@@ -111,13 +96,13 @@
             </div>
 
             <!-- Ranking de categorias -->
-            <div class="chart-panel">
+            <div class="chart-panel painel-largo">
                 <div class="chart-body">
                     <div class="chart-header">
                         <span class="chart-icon"><i class="fa-solid fa-ranking-star"></i></span>
                         <div class="chart-title">
                             <h2>Gastos por categoria</h2>
-                            <span>Variação em relação ao período anterior</span>
+                            <span>Onde o dinheiro foi gasto no período</span>
                         </div>
                     </div>
 
@@ -135,19 +120,7 @@
                                             <div class="bar-fill expense" [style.width.%]="categoria.largura"></div>
                                         </div>
                                         <div class="ranking-rodape">
-                                            <span>{{ categoria.percentualTotal }}% das despesas</span>
-                                            <span class="variacao"
-                                                [class.subiu]="categoria.variacao > 0"
-                                                [class.caiu]="categoria.variacao < 0">
-                                                @if (categoria.variacao > 0) {
-                                                    <i class="fa-solid fa-caret-up"></i>
-                                                } @else if (categoria.variacao < 0) {
-                                                    <i class="fa-solid fa-caret-down"></i>
-                                                } @else {
-                                                    <i class="fa-solid fa-minus"></i>
-                                                }
-                                                {{ (categoria.variacao < 0 ? -categoria.variacao : categoria.variacao) }}%
-                                            </span>
+                                            <span>{{ categoria.percentualTotal }}% das despesas do período</span>
                                         </div>
                                     </div>
                                 </div>
@@ -157,54 +130,6 @@
                         <div class="empty-state">
                             <i class="fa-solid fa-chart-pie"></i>
                             <span>Nenhuma despesa no período</span>
-                        </div>
-                    }
-                </div>
-            </div>
-
-            <!-- Maiores lançamentos -->
-            <div class="chart-panel">
-                <div class="chart-body">
-                    <div class="chart-header">
-                        <span class="chart-icon"><i class="fa-solid fa-money-bill-transfer"></i></span>
-                        <div class="chart-title">
-                            <h2>Maiores lançamentos</h2>
-                            <span>Os valores mais altos do período</span>
-                        </div>
-                    </div>
-
-                    @if (r.maioresLancamentos.length) {
-                        <div class="tabela-wrapper">
-                            <table class="datatable">
-                                <thead>
-                                    <tr>
-                                        <th>Descrição</th>
-                                        <th>Data</th>
-                                        <th class="text-right">Valor</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @for (lancamento of r.maioresLancamentos; track $index) {
-                                        <tr>
-                                            <td>
-                                                <div class="lancamento-desc">
-                                                    <strong>{{ lancamento.descricao }}</strong>
-                                                    <small>{{ lancamento.categoria }}</small>
-                                                </div>
-                                            </td>
-                                            <td>{{ lancamento.data | date: 'dd/MM/yyyy' }}</td>
-                                            <td class="text-right" [ngClass]="lancamento.tipo === 'RECEITA' ? 'text-success' : 'text-danger'">
-                                                {{ lancamento.tipo === 'RECEITA' ? '+' : '-' }} {{ lancamento.valor | currency }}
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    } @else {
-                        <div class="empty-state">
-                            <i class="fa-solid fa-money-bill-transfer"></i>
-                            <span>Nenhum lançamento no período</span>
                         </div>
                     }
                 </div>

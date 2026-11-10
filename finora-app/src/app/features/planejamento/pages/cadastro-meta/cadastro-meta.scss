@@ -1,0 +1,44 @@
+/* Seletor de ícone da meta */
+.icones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.icone-opcao {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background-color: var(--bg-input);
+    color: var(--text-muted);
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color var(--transition), color var(--transition), background-color var(--transition);
+
+    &:hover {
+        color: var(--text-strong);
+        border-color: #4a5a72;
+    }
+
+    &.selecionado {
+        color: #6ee6be;
+        border-color: rgba(79, 214, 168, 0.6);
+        background-color: rgba(79, 214, 168, 0.14);
+    }
+}
+
+/* Objetivo e valor guardado lado a lado */
+.form-linha {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .form-linha {
+        grid-template-columns: 1fr;
+    }
+}
