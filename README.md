@@ -194,6 +194,12 @@ Content-Type: application/json
 | `422 Unprocessable Content` | Campos obrigatórios ausentes ou dados inválidos |
 | `404 Not Found` | Cartão não encontrado para o ID informado |
 
+### Dashboard — `/dashboard`
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/dashboard?mes=yyyy-MM` | Resumo do mês e do mês anterior, gastos por categoria, uso do orçamento, evolução dos últimos 6 meses e os 5 lançamentos mais recentes (sem `mes`, usa o mês atual) |
+
 ### Planejamento — `/planejamento`
 
 | Método | Rota | Descrição |

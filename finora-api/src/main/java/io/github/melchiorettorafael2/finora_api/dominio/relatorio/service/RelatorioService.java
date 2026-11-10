@@ -33,10 +33,15 @@ public class RelatorioService {
                 .map(linha -> new CategoriaRelatorio((String) linha[0], (BigDecimal) linha[1]))
                 .toList();
 
-        return new Relatorio(meses, resumoMensal(primeiroMes, meses, inicio, fim), categorias);
+        return new Relatorio(meses, evolucao(YearMonth.now(), meses), categorias);
     }
 
-    private List<ResumoMensal> resumoMensal(YearMonth primeiroMes, int meses, LocalDate inicio, LocalDate fim) {
+    /** Receitas e despesas de cada mês, dos N meses que terminam em {@code ultimoMes} (usado também pelo Dashboard). */
+    public List<ResumoMensal> evolucao(YearMonth ultimoMes, int meses) {
+        YearMonth primeiroMes = ultimoMes.minusMonths(meses - 1L);
+        LocalDate inicio = primeiroMes.atDay(1);
+        LocalDate fim = ultimoMes.atEndOfMonth();
+
         Map<YearMonth, BigDecimal> receitas = new HashMap<>();
         Map<YearMonth, BigDecimal> despesas = new HashMap<>();
 
