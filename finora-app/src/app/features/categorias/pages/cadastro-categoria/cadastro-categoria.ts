@@ -76,15 +76,17 @@ export class CadastroCategoria {
     console.log(this.form.value) 
     const dadosCategoria : DadosCategoriaForm = this.form.value as DadosCategoriaForm;
 
+    // Guardado antes da requisição: o id de edição é zerado no sucesso
+    const editando = !!this.idCategoriaParaEdicao;
     const requisicao: Observable<DetalhesCategoria | void> = this.idCategoriaParaEdicao
       ? this.service.atualizar(this.idCategoriaParaEdicao, dadosCategoria)
       : this.service.criar(dadosCategoria);
 
     requisicao
       .subscribe({
-        next: (response: DetalhesCategoria | void) => { 
+        next: (response: DetalhesCategoria | void) => {
           console.log('Categoria criada com sucesso:', response);
-          this.toast.success('Categoria cadastrada/atualizada com sucesso!', 'Sucesso');
+          this.toast.success(editando ? 'Categoria atualizada com sucesso!' : 'Categoria cadastrada com sucesso!', 'Sucesso');
           this.form.reset();
           this.idCategoriaParaEdicao = null;
       },

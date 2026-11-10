@@ -53,7 +53,7 @@ export class CadastroOrcamento implements OnInit {
     this.salvando.set(true);
     this.service.definirOrcamento({ ...dados, limite: valorParaApi(dados.limite) }).subscribe({
       next: () => {
-        this.toast.success('Orçamento salvo com sucesso!', 'Sucesso');
+        this.toast.success(this.editando ? 'Orçamento atualizado com sucesso!' : 'Orçamento cadastrado com sucesso!', 'Sucesso');
         this.router.navigate(['/paginas/planejamento']);
       },
       error: erro => {
