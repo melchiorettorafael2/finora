@@ -3,8 +3,13 @@ package io.github.melchiorettorafael2.finora_api.dominio.dashboard.service;
 import io.github.melchiorettorafael2.finora_api.dominio.dashboard.repository.Dashboard;
 import io.github.melchiorettorafael2.finora_api.dominio.dashboard.web.dto.DespesaCategoriaResumo;
 import io.github.melchiorettorafael2.finora_api.dominio.dashboard.web.dto.ResumoFinanceiro;
+import io.github.melchiorettorafael2.finora_api.dominio.dashboard.web.dto.ResumoOrcamento;
 import io.github.melchiorettorafael2.finora_api.dominio.lancamento.model.TipoLancamento;
 import io.github.melchiorettorafael2.finora_api.dominio.lancamento.repository.LancamentoRepository;
+import io.github.melchiorettorafael2.finora_api.dominio.lancamento.web.mapper.LancamentoMapper;
+import io.github.melchiorettorafael2.finora_api.dominio.planejamento.service.PlanejamentoService;
+import io.github.melchiorettorafael2.finora_api.dominio.planejamento.web.dto.OrcamentoCategoria;
+import io.github.melchiorettorafael2.finora_api.dominio.relatorio.service.RelatorioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,19 +21,20 @@ import java.util.List;
 @Service
 public class DashboardService {
 
+    private static final int MESES_EVOLUCAO = 6;
+
     @Autowired
     private LancamentoRepository repository;
+    @Autowired
+    private LancamentoMapper lancamentoMapper;
+    @Autowired
+    private PlanejamentoService planejamentoService;
+    @Autowired
+    private RelatorioService relatorioService;
 
-    public Dashboard obterDashboardMesAtual() {
-        YearMonth mesAtual = YearMonth.now();
-        LocalDate primeiroDiaMes = mesAtual.atDay(1);
-        LocalDate ultimoDia = mesAtual.atEndOfMonth();
-
-        BigDecimal receitas = repository.somaPorTipoPeriodo(TipoLancamento.RECEITA, primeiroDiaMes, ultimoDia);
-        BigDecimal despesas = repository.somaPorTipoPeriodo(TipoLancamento.DESPESA, primeiroDiaMes, ultimoDia);;
-        BigDecimal saldo = receitas.subtract(despesas);
-
-        ResumoFinanceiro resumoFinanceiro = new ResumoFinanceiro(receitas, despesas, saldo);
+    public Dashboard obter(YearMonth mes) {
+        LocalDate primeiroDiaMes = mes.atDay(1);
+        LocalDate ultimoDia = mes.atEndOfMonth();
 
         List<DespesaCategoriaResumo> despesaPorCategoria = repository.somaPorCategoriaNoPeriodo(TipoLancamento.DESPESA, primeiroDiaMes, ultimoDia)
                 .stream()
@@ -37,9 +43,34 @@ public class DashboardService {
                 ).toList();
 
         return new Dashboard(
-                mesAtual.toString(),
-                resumoFinanceiro,
-                despesaPorCategoria
+                mes.toString(),
+                resumo(mes),
+                resumo(mes.minusMonths(1)),
+                despesaPorCategoria,
+                resumoOrcamento(mes),
+                relatorioService.evolucao(mes, MESES_EVOLUCAO),
+                repository.findTop5ByDataBetweenOrderByDataDesc(primeiroDiaMes, ultimoDia).stream()
+                        .map(lancamentoMapper::toDetalhes)
+                        .toList()
+        );
+    }
+
+    private ResumoFinanceiro resumo(YearMonth mes) {
+        BigDecimal receitas = repository.somaPorTipoPeriodo(TipoLancamento.RECEITA, mes.atDay(1), mes.atEndOfMonth());
+        BigDecimal despesas = repository.somaPorTipoPeriodo(TipoLancamento.DESPESA, mes.atDay(1), mes.atEndOfMonth());
+        return new ResumoFinanceiro(receitas, despesas, receitas.subtract(despesas));
+    }
+
+    private ResumoOrcamento resumoOrcamento(YearMonth mes) {
+        List<OrcamentoCategoria> orcamentos = planejamentoService.obter(mes).orcamentos();
+        if (orcamentos.isEmpty()) {
+            return null;
+        }
+
+        return new ResumoOrcamento(
+                orcamentos.stream().map(OrcamentoCategoria::limite).reduce(BigDecimal.ZERO, BigDecimal::add),
+                orcamentos.stream().map(OrcamentoCategoria::gasto).reduce(BigDecimal.ZERO, BigDecimal::add),
+                orcamentos.stream().filter(o -> o.gasto().compareTo(o.limite()) > 0).count()
         );
     }
 }

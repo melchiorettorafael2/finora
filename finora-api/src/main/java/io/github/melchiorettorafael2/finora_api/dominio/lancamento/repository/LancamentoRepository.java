@@ -64,4 +64,7 @@ public interface LancamentoRepository extends JpaRepository<LancamentoEntity, UU
     List<Object[]> somaPorMesETipoNoPeriodo(
             @Param("inicio") LocalDate inicio,
             @Param("fim") LocalDate fim);
+
+    // Dashboard: lançamentos mais recentes do mês
+    List<LancamentoEntity> findTop5ByDataBetweenOrderByDataDesc(LocalDate inicio, LocalDate fim);
 }

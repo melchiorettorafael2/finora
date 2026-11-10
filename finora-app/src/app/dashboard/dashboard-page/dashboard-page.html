@@ -1,16 +1,28 @@
 <app-header titulo="Dashboard"></app-header>
 
 <main class="content">
+    <div class="toolbar">
+        <div class="toolbar-filtros">
+            <app-month-picker inputId="mes-dashboard" [formControl]="mes" />
+        </div>
+        <div class="toolbar-acoes">
+            <a class="btn btn-primary" routerLink="/paginas/cadastro-lancamentos">
+                <i class="fa-solid fa-plus"></i>
+                Novo lançamento
+            </a>
+        </div>
+    </div>
+
     @if(dashboard$ | async; as dashboard ){
     <section class="dashboard-grid">
-        <div class="metric-card metric-card-balance" [ngClass]="dashboard.resumo.saldo > 0 ? 'metric-income' : 'metric-expense'">
+        <div class="metric-card metric-card-balance" [ngClass]="dashboard.resumo.saldo >= 0 ? 'metric-income' : 'metric-expense'">
             <div class="metric-body">
                 <div class="metric-header">
                     <span class="metric-icon"><i class="fa-solid fa-wallet"></i></span>
-                    <span class="metric-label">Saldo Atual</span>
+                    <span class="metric-label">Saldo do mês</span>
                 </div>
                 <strong class="metric-value">{{ dashboard.resumo.saldo | currency }}</strong>
-                <small><i class="fa-regular fa-calendar"></i> {{ dashboard.mes + '-01' | date: 'MMMM yyyy' }}</small>
+                <small><i class="fa-regular fa-calendar"></i> {{ dashboard.mes + '-01' | date: 'MMMM yyyy' | titlecase }}</small>
             </div>
         </div>
         <div class="metric-card metric-income">
@@ -20,7 +32,17 @@
                     <span class="metric-label">Receitas</span>
                 </div>
                 <strong class="metric-value">{{ dashboard.resumo.receitas | currency }}</strong>
-                <small><i class="fa-regular fa-calendar"></i> {{ dashboard.mes + '-01' | date: 'MMMM yyyy' }}</small>
+                <small>
+                    @if (dashboard.variacaoReceitas !== null) {
+                        <span class="variacao" [class.boa]="dashboard.variacaoReceitas > 0" [class.ruim]="dashboard.variacaoReceitas < 0">
+                            <i class="fa-solid" [ngClass]="iconeVariacao(dashboard.variacaoReceitas)"></i>
+                            {{ dashboard.variacaoReceitas < 0 ? -dashboard.variacaoReceitas : dashboard.variacaoReceitas }}%
+                        </span>
+                        em relação ao mês anterior
+                    } @else {
+                        Sem receitas no mês anterior
+                    }
+                </small>
             </div>
         </div>
         <div class="metric-card metric-expense">
@@ -30,9 +52,44 @@
                     <span class="metric-label">Despesas</span>
                 </div>
                 <strong class="metric-value">{{ dashboard.resumo.despesas | currency }}</strong>
-                <small><i class="fa-regular fa-calendar"></i> {{ dashboard.mes + '-01' | date: 'MMMM yyyy' }}</small>
+                <small>
+                    @if (dashboard.variacaoDespesas !== null) {
+                        <!-- Em despesas, subir é ruim e cair é bom -->
+                        <span class="variacao" [class.ruim]="dashboard.variacaoDespesas > 0" [class.boa]="dashboard.variacaoDespesas < 0">
+                            <i class="fa-solid" [ngClass]="iconeVariacao(dashboard.variacaoDespesas)"></i>
+                            {{ dashboard.variacaoDespesas < 0 ? -dashboard.variacaoDespesas : dashboard.variacaoDespesas }}%
+                        </span>
+                        em relação ao mês anterior
+                    } @else {
+                        Sem despesas no mês anterior
+                    }
+                </small>
             </div>
         </div>
+        <a class="metric-card metric-link" routerLink="/paginas/planejamento" title="Abrir o Planejamento"
+            [ngClass]="{
+                'metric-expense': dashboard.orcamentoEstourado,
+                'metric-warning': !dashboard.orcamentoEstourado && dashboard.percentualOrcamento >= 85
+            }">
+            <div class="metric-body">
+                <div class="metric-header">
+                    <span class="metric-icon"><i class="fa-solid fa-bullseye"></i></span>
+                    <span class="metric-label">Orçamento</span>
+                </div>
+                @if (dashboard.orcamento; as orcamento) {
+                    <strong class="metric-value">{{ dashboard.percentualOrcamento }}%</strong>
+                    <small>
+                        {{ orcamento.gasto | currency }} de {{ orcamento.limite | currency }} usados
+                        @if (orcamento.categoriasAcimaDoLimite) {
+                            · {{ orcamento.categoriasAcimaDoLimite }} acima do limite
+                        }
+                    </small>
+                } @else {
+                    <strong class="metric-value">—</strong>
+                    <small>Defina limites no Planejamento <i class="fa-solid fa-arrow-right"></i></small>
+                }
+            </div>
+        </a>
     </section>
     <section class="charts-grid">
         <div class="chart-panel">
@@ -41,7 +98,7 @@
                     <span class="chart-icon"><i class="fa-solid fa-chart-simple"></i></span>
                     <div class="chart-title">
                         <h2>Receitas x Despesas</h2>
-                        <span><i class="fa-regular fa-calendar"></i> {{ dashboard.mes + '-01' | date: 'MMMM yyyy' }}</span>
+                        <span><i class="fa-regular fa-calendar"></i> {{ dashboard.mes + '-01' | date: 'MMMM yyyy' | titlecase }}</span>
                     </div>
                 </div>
                 <div class="comparison-chart">
@@ -80,7 +137,7 @@
                     <span class="chart-icon"><i class="fa-solid fa-chart-pie"></i></span>
                     <div class="chart-title">
                         <h2>Gastos por Categoria</h2>
-                        <span><i class="fa-regular fa-calendar"></i> {{ dashboard.mes + '-01' | date: 'MMMM yyyy' }}</span>
+                        <span><i class="fa-regular fa-calendar"></i> {{ dashboard.mes + '-01' | date: 'MMMM yyyy' | titlecase }}</span>
                     </div>
                 </div>
                 @if(dashboard.despesasPorCategoria.length){
@@ -109,8 +166,76 @@
                 }
             </div>
         </div>
+
+        <!-- Evolução dos últimos 6 meses -->
+        <div class="chart-panel">
+            <div class="chart-body">
+                <div class="chart-header">
+                    <span class="chart-icon"><i class="fa-solid fa-chart-column"></i></span>
+                    <div class="chart-title">
+                        <h2>Últimos 6 meses</h2>
+                        <span>Receitas e despesas mês a mês</span>
+                    </div>
+                    <div class="chart-header-acao legenda">
+                        <span><i class="legenda-cor income"></i> Receitas</span>
+                        <span><i class="legenda-cor expense"></i> Despesas</span>
+                    </div>
+                </div>
+
+                <div class="evolucao" [style.--colunas]="dashboard.meses.length">
+                    @for (mes of dashboard.meses; track mes.mes) {
+                        <div class="evolucao-mes" [class.atual]="mes.atual">
+                            <div class="evolucao-barras"
+                                [attr.title]="(mes.mes + '-01' | date: 'MMMM yyyy') + ': receitas ' + (mes.receitas | currency) + ', despesas ' + (mes.despesas | currency)">
+                                <div class="evolucao-barra income" [style.height.%]="mes.alturaReceitas"></div>
+                                <div class="evolucao-barra expense" [style.height.%]="mes.alturaDespesas"></div>
+                            </div>
+                            <span class="evolucao-rotulo">{{ mes.mes + '-01' | date: 'MMM' }}</span>
+                        </div>
+                    }
+                </div>
+                <a class="link-painel" routerLink="/paginas/relatorios">Ver relatórios <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+
+        <!-- Últimos lançamentos do mês -->
+        <div class="chart-panel">
+            <div class="chart-body">
+                <div class="chart-header">
+                    <span class="chart-icon"><i class="fa-solid fa-clock-rotate-left"></i></span>
+                    <div class="chart-title">
+                        <h2>Últimos lançamentos</h2>
+                        <span><i class="fa-regular fa-calendar"></i> {{ dashboard.mes + '-01' | date: 'MMMM yyyy' | titlecase }}</span>
+                    </div>
+                </div>
+
+                @if (dashboard.ultimosLancamentos.length) {
+                    <ul class="lancamentos">
+                        @for (lancamento of dashboard.ultimosLancamentos; track lancamento.id) {
+                            <li class="lancamento-item">
+                                <span class="lancamento-icone" [ngClass]="lancamento.tipo === 'RECEITA' ? 'receita' : 'despesa'">
+                                    <i class="fa-solid" [ngClass]="lancamento.tipo === 'RECEITA' ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+                                </span>
+                                <div class="lancamento-info">
+                                    <strong>{{ lancamento.descricao }}</strong>
+                                    <small>{{ lancamento.categoriaNome }} · {{ lancamento.data | date: 'dd/MM' }}</small>
+                                </div>
+                                <strong class="lancamento-valor" [ngClass]="lancamento.tipo === 'RECEITA' ? 'text-success' : 'text-danger'">
+                                    {{ lancamento.tipo === 'RECEITA' ? '+' : '-' }} {{ lancamento.valor | currency }}
+                                </strong>
+                            </li>
+                        }
+                    </ul>
+                    <a class="link-painel" routerLink="/paginas/listagem-lancamentos">Ver todos <i class="fa-solid fa-arrow-right"></i></a>
+                } @else {
+                    <div class="empty-state">
+                        <i class="fa-solid fa-receipt"></i>
+                        <span>Nenhum lançamento neste mês</span>
+                        <a class="btn btn-secondary" routerLink="/paginas/cadastro-lancamentos">Novo lançamento</a>
+                    </div>
+                }
+            </div>
+        </div>
     </section>
-
-
     }
 </main>
