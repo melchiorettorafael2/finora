@@ -7,9 +7,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+// Todas as consultas filtram pelo dono: um usuário nunca enxerga os orçamentos de outro
 public interface OrcamentoRepository extends JpaRepository<OrcamentoEntity, UUID> {
 
-    Optional<OrcamentoEntity> findByCategoriaId(UUID categoriaId);
+    Optional<OrcamentoEntity> findByIdAndUsuarioId(UUID id, UUID usuarioId);
 
-    List<OrcamentoEntity> findAllByOrderByCategoriaNomeAsc();
+    Optional<OrcamentoEntity> findByCategoriaIdAndUsuarioId(UUID categoriaId, UUID usuarioId);
+
+    List<OrcamentoEntity> findAllByUsuarioIdOrderByCategoriaNomeAsc(UUID usuarioId);
 }

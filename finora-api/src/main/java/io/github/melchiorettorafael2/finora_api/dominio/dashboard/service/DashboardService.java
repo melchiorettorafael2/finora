@@ -10,6 +10,7 @@ import io.github.melchiorettorafael2.finora_api.dominio.lancamento.web.mapper.La
 import io.github.melchiorettorafael2.finora_api.dominio.planejamento.service.PlanejamentoService;
 import io.github.melchiorettorafael2.finora_api.dominio.planejamento.web.dto.OrcamentoCategoria;
 import io.github.melchiorettorafael2.finora_api.dominio.relatorio.service.RelatorioService;
+import io.github.melchiorettorafael2.finora_api.infra.security.UsuarioLogado;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class DashboardService {
@@ -31,12 +33,15 @@ public class DashboardService {
     private PlanejamentoService planejamentoService;
     @Autowired
     private RelatorioService relatorioService;
+    @Autowired
+    private UsuarioLogado usuarioLogado;
 
     public Dashboard obter(YearMonth mes) {
+        UUID usuarioId = usuarioLogado.id();
         LocalDate primeiroDiaMes = mes.atDay(1);
         LocalDate ultimoDia = mes.atEndOfMonth();
 
-        List<DespesaCategoriaResumo> despesaPorCategoria = repository.somaPorCategoriaNoPeriodo(TipoLancamento.DESPESA, primeiroDiaMes, ultimoDia)
+        List<DespesaCategoriaResumo> despesaPorCategoria = repository.somaPorCategoriaNoPeriodo(usuarioId, TipoLancamento.DESPESA, primeiroDiaMes, ultimoDia)
                 .stream()
                 .map( resultado ->
                         new DespesaCategoriaResumo((String) resultado[0], (BigDecimal) resultado[1])
@@ -44,20 +49,20 @@ public class DashboardService {
 
         return new Dashboard(
                 mes.toString(),
-                resumo(mes),
-                resumo(mes.minusMonths(1)),
+                resumo(usuarioId, mes),
+                resumo(usuarioId, mes.minusMonths(1)),
                 despesaPorCategoria,
                 resumoOrcamento(mes),
                 relatorioService.evolucao(mes, MESES_EVOLUCAO),
-                repository.findTop5ByDataBetweenOrderByDataDesc(primeiroDiaMes, ultimoDia).stream()
+                repository.findTop5ByUsuarioIdAndDataBetweenOrderByDataDesc(usuarioId, primeiroDiaMes, ultimoDia).stream()
                         .map(lancamentoMapper::toDetalhes)
                         .toList()
         );
     }
 
-    private ResumoFinanceiro resumo(YearMonth mes) {
-        BigDecimal receitas = repository.somaPorTipoPeriodo(TipoLancamento.RECEITA, mes.atDay(1), mes.atEndOfMonth());
-        BigDecimal despesas = repository.somaPorTipoPeriodo(TipoLancamento.DESPESA, mes.atDay(1), mes.atEndOfMonth());
+    private ResumoFinanceiro resumo(UUID usuarioId, YearMonth mes) {
+        BigDecimal receitas = repository.somaPorTipoPeriodo(usuarioId, TipoLancamento.RECEITA, mes.atDay(1), mes.atEndOfMonth());
+        BigDecimal despesas = repository.somaPorTipoPeriodo(usuarioId, TipoLancamento.DESPESA, mes.atDay(1), mes.atEndOfMonth());
         return new ResumoFinanceiro(receitas, despesas, receitas.subtract(despesas));
     }
 

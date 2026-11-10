@@ -14,6 +14,7 @@ public interface LancamentoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "categoria", source = "categoria")
     @Mapping(target = "cartao", source = "cartao")
+    @Mapping(target = "usuario", ignore = true)
     LancamentoEntity toEntity(LancamentoForm form, CategoriaEntity categoria, CartaoEntity cartao);
 
     @Mapping(target = "categoriaId", source = "categoria.id")

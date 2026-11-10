@@ -45,6 +45,7 @@ O projeto também serve como estudo prático de boas práticas de desenvolviment
 | Lançamento de despesas e receitas | ✅ Implementado |
 | Dashboard com resumo mensal | ✅ Implementado  |
 | Autenticação de usuários | ✅ Implementado |
+| Dados separados por usuário (cada conta vê só os próprios registros) | ✅ Implementado |
 | Planejamento: orçamento por categoria e metas de economia | ✅ Implementado |
 | Relatórios: evolução mensal e gastos por categoria (3, 6 ou 12 meses) | ✅ Implementado |
 

@@ -6,6 +6,7 @@ import io.github.melchiorettorafael2.finora_api.dominio.planejamento.web.dto.Met
 import io.github.melchiorettorafael2.finora_api.dominio.planejamento.web.dto.MetaEconomiaForm;
 import io.github.melchiorettorafael2.finora_api.dominio.planejamento.web.mapper.MetaEconomiaMapper;
 import jakarta.transaction.Transactional;
+import io.github.melchiorettorafael2.finora_api.infra.security.UsuarioLogado;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,33 +20,36 @@ public class MetaEconomiaService {
     private MetaEconomiaRepository repository;
     @Autowired
     private MetaEconomiaMapper mapper;
+    @Autowired
+    private UsuarioLogado usuarioLogado;
 
     public MetaEconomiaDetalhes criar(MetaEconomiaForm form) {
         var entity = mapper.toEntity(form);
+        entity.setUsuario(usuarioLogado.get());
         repository.save(entity);
         return mapper.toDetalhes(entity);
     }
 
     public List<MetaEconomiaDetalhes> listar() {
-        return repository.findAllByOrderByPrazoAsc().stream().map(mapper::toDetalhes).toList();
+        return repository.findAllByUsuarioIdOrderByPrazoAsc(usuarioLogado.id()).stream().map(mapper::toDetalhes).toList();
     }
 
     public MetaEconomiaDetalhes buscar(UUID id) {
-        return repository.findById(id)
+        return repository.findByIdAndUsuarioId(id, usuarioLogado.id())
                 .map(mapper::toDetalhes)
                 .orElseThrow(RegistroNaoEncontradoException::new);
     }
 
     @Transactional
     public MetaEconomiaDetalhes atualizar(UUID id, MetaEconomiaForm form) {
-        var entity = repository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
+        var entity = repository.findByIdAndUsuarioId(id, usuarioLogado.id()).orElseThrow(RegistroNaoEncontradoException::new);
         mapper.atualizar(form, entity);
         repository.save(entity);
         return mapper.toDetalhes(entity);
     }
 
     public void remover(UUID id) {
-        var entity = repository.findById(id).orElseThrow(RegistroNaoEncontradoException::new);
+        var entity = repository.findByIdAndUsuarioId(id, usuarioLogado.id()).orElseThrow(RegistroNaoEncontradoException::new);
         repository.delete(entity);
     }
 }

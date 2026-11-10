@@ -5,6 +5,7 @@ import io.github.melchiorettorafael2.finora_api.dominio.lancamento.repository.La
 import io.github.melchiorettorafael2.finora_api.dominio.planejamento.repository.OrcamentoRepository;
 import io.github.melchiorettorafael2.finora_api.dominio.planejamento.web.dto.OrcamentoCategoria;
 import io.github.melchiorettorafael2.finora_api.dominio.planejamento.web.dto.Planejamento;
+import io.github.melchiorettorafael2.finora_api.infra.security.UsuarioLogado;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,17 +26,20 @@ public class PlanejamentoService {
     @Autowired
     private LancamentoRepository lancamentoRepository;
     @Autowired
+    private UsuarioLogado usuarioLogado;
+    @Autowired
     private MetaEconomiaService metaService;
 
     public Planejamento obter(YearMonth mes) {
+        UUID usuarioId = usuarioLogado.id();
         LocalDate inicio = mes.atDay(1);
         LocalDate fim = mes.atEndOfMonth();
 
         Map<UUID, BigDecimal> gastoPorCategoria = new HashMap<>();
-        lancamentoRepository.somaPorCategoriaIdNoPeriodo(TipoLancamento.DESPESA, inicio, fim)
+        lancamentoRepository.somaPorCategoriaIdNoPeriodo(usuarioId, TipoLancamento.DESPESA, inicio, fim)
                 .forEach(linha -> gastoPorCategoria.put((UUID) linha[0], (BigDecimal) linha[1]));
 
-        List<OrcamentoCategoria> orcamentos = orcamentoRepository.findAllByOrderByCategoriaNomeAsc().stream()
+        List<OrcamentoCategoria> orcamentos = orcamentoRepository.findAllByUsuarioIdOrderByCategoriaNomeAsc(usuarioId).stream()
                 .map(o -> new OrcamentoCategoria(
                         o.getId().toString(),
                         o.getCategoria().getId().toString(),
@@ -46,7 +50,7 @@ public class PlanejamentoService {
 
         return new Planejamento(
                 mes.toString(),
-                lancamentoRepository.somaPorTipoPeriodo(TipoLancamento.RECEITA, inicio, fim),
+                lancamentoRepository.somaPorTipoPeriodo(usuarioId, TipoLancamento.RECEITA, inicio, fim),
                 orcamentos,
                 metaService.listar()
         );
