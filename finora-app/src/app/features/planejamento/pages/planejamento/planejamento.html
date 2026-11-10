@@ -6,20 +6,15 @@
             <app-month-picker inputId="mes-planejamento" [formControl]="mes" />
         </div>
         <div class="toolbar-acoes">
-            <button type="button" class="btn btn-secondary" disabled title="Em breve">
+            <a class="btn btn-secondary" routerLink="/paginas/planejamento/metas/nova">
                 <i class="fa-solid fa-bullseye"></i>
                 Nova meta
-            </button>
-            <button type="button" class="btn btn-primary" disabled title="Em breve">
+            </a>
+            <a class="btn btn-primary" routerLink="/paginas/planejamento/orcamento">
                 <i class="fa-solid fa-sliders"></i>
                 Definir orçamento
-            </button>
+            </a>
         </div>
-    </div>
-
-    <div class="aviso-exemplo">
-        <i class="fa-solid fa-flask"></i>
-        <span>Esta página ainda exibe dados de exemplo. A integração com a API será feita em breve.</span>
     </div>
 
     @if (planejamento$ | async; as p) {
@@ -33,7 +28,11 @@
                     </div>
                     <strong class="metric-value">{{ p.totalLimite | currency }}</strong>
                     <small class="metric-rodape">
-                        {{ p.percentualReceita }}% da receita prevista de {{ p.receitaPrevista | currency }}
+                        @if (p.receitasMes) {
+                            {{ p.percentualReceita }}% das receitas do mês ({{ p.receitasMes | currency }})
+                        } @else {
+                            Nenhuma receita lançada neste mês
+                        }
                     </small>
                 </div>
             </div>
@@ -79,24 +78,33 @@
                         <span class="chart-icon"><i class="fa-solid fa-list-check"></i></span>
                         <div class="chart-title">
                             <h2>Orçamento por categoria</h2>
-                            <span>Quanto já foi gasto do limite definido para cada categoria</span>
+                            <span>Quanto já foi gasto do limite mensal de cada categoria</span>
                         </div>
                     </div>
 
                     @if (p.orcamentos.length) {
                         <div class="orcamentos">
-                            @for (orcamento of p.orcamentos; track orcamento.categoria) {
+                            @for (orcamento of p.orcamentos; track orcamento.id) {
                                 <div class="orcamento-row">
                                     <div class="orcamento-topo">
                                         <span class="orcamento-nome"><i class="fa-solid fa-tag"></i> {{ orcamento.categoria }}</span>
-                                        <span class="badge"
-                                            [ngClass]="{
-                                                'badge-success': orcamento.status === 'ok',
-                                                'badge-warning': orcamento.status === 'alerta',
-                                                'badge-danger': orcamento.status === 'estourado'
-                                            }">
-                                            {{ rotuloStatus[orcamento.status] }}
-                                        </span>
+                                        <div class="orcamento-acoes">
+                                            <span class="badge"
+                                                [ngClass]="{
+                                                    'badge-success': orcamento.status === 'ok',
+                                                    'badge-warning': orcamento.status === 'alerta',
+                                                    'badge-danger': orcamento.status === 'estourado'
+                                                }">
+                                                {{ rotuloStatus[orcamento.status] }}
+                                            </span>
+                                            <button type="button" class="icon-btn" title="Alterar limite" (click)="editarOrcamento(orcamento)">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </button>
+                                            <button type="button" class="icon-btn danger" title="Remover orçamento"
+                                                (click)="pedirExclusao('orcamento', orcamento.id, orcamento.categoria)">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="bar-track">
                                         <div class="bar-fill"
@@ -121,14 +129,15 @@
                     } @else {
                         <div class="empty-state">
                             <i class="fa-solid fa-list-check"></i>
-                            <span>Nenhum orçamento definido para este mês</span>
+                            <span>Nenhum orçamento definido ainda</span>
+                            <a class="btn btn-secondary" routerLink="/paginas/planejamento/orcamento">Definir orçamento</a>
                         </div>
                     }
                 </div>
             </div>
 
             <!-- Metas de economia -->
-            <div class="chart-panel">
+            <div class="chart-panel painel-largo">
                 <div class="chart-body">
                     <div class="chart-header">
                         <span class="chart-icon"><i class="fa-solid fa-flag-checkered"></i></span>
@@ -140,7 +149,7 @@
 
                     @if (p.metas.length) {
                         <div class="metas">
-                            @for (meta of p.metas; track meta.nome) {
+                            @for (meta of p.metas; track meta.id) {
                                 <div class="meta-item">
                                     <span class="meta-icone"><i class="fa-solid" [ngClass]="meta.icone"></i></span>
                                     <div class="meta-info">
@@ -156,6 +165,15 @@
                                             <span><i class="fa-regular fa-clock"></i> {{ meta.prazo | date: 'MMM yyyy' }}</span>
                                         </div>
                                     </div>
+                                    <div class="item-acoes">
+                                        <a class="icon-btn" title="Editar meta" [routerLink]="['/paginas/planejamento/metas', meta.id]">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        <button type="button" class="icon-btn danger" title="Remover meta"
+                                            (click)="pedirExclusao('meta', meta.id, meta.nome)">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             }
                         </div>
@@ -163,53 +181,24 @@
                         <div class="empty-state">
                             <i class="fa-solid fa-flag-checkered"></i>
                             <span>Nenhuma meta cadastrada</span>
+                            <a class="btn btn-secondary" routerLink="/paginas/planejamento/metas/nova">Nova meta</a>
                         </div>
                     }
                 </div>
             </div>
 
-            <!-- Contas previstas -->
-            <div class="chart-panel">
-                <div class="chart-body">
-                    <div class="chart-header">
-                        <span class="chart-icon"><i class="fa-solid fa-calendar-check"></i></span>
-                        <div class="chart-title">
-                            <h2>Contas previstas</h2>
-                            <span>{{ p.contasPendentes }} {{ p.contasPendentes === 1 ? 'pendente' : 'pendentes' }} neste mês</span>
-                        </div>
-                    </div>
-
-                    @if (p.contasPrevistas.length) {
-                        <ul class="contas">
-                            @for (conta of p.contasPrevistas; track conta.descricao) {
-                                <li class="conta-item" [class.paga]="conta.pago">
-                                    <span class="conta-data">
-                                        <strong>{{ conta.vencimento | date: 'dd' }}</strong>
-                                        <small>{{ conta.vencimento | date: 'MMM' }}</small>
-                                    </span>
-                                    <div class="conta-info">
-                                        <strong>{{ conta.descricao }}</strong>
-                                        <small>{{ conta.categoria }}</small>
-                                    </div>
-                                    <div class="conta-valor">
-                                        <strong [ngClass]="conta.tipo === 'RECEITA' ? 'text-success' : 'text-danger'">
-                                            {{ conta.tipo === 'RECEITA' ? '+' : '-' }} {{ conta.valor | currency }}
-                                        </strong>
-                                        <span class="badge" [ngClass]="conta.pago ? 'badge-success' : 'badge-warning'">
-                                            {{ conta.pago ? (conta.tipo === 'RECEITA' ? 'Recebido' : 'Pago') : 'Pendente' }}
-                                        </span>
-                                    </div>
-                                </li>
-                            }
-                        </ul>
-                    } @else {
-                        <div class="empty-state">
-                            <i class="fa-solid fa-calendar-check"></i>
-                            <span>Nenhuma conta prevista para este mês</span>
-                        </div>
-                    }
-                </div>
-            </div>
         </section>
     }
 </main>
+
+@if (itemParaExcluir(); as item) {
+    <app-confirm-dialog
+        [titulo]="tituloExclusao(item)"
+        mensagem="Deseja remover o item selecionado?"
+        [destaque]="item.nome"
+        aviso="Esta ação não poderá ser desfeita."
+        textoConfirmar="Remover"
+        (confirmar)="confirmarExclusao()"
+        (cancelar)="itemParaExcluir.set(null)">
+    </app-confirm-dialog>
+}

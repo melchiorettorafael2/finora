@@ -1,4 +1,3 @@
-@use '../../../../shared/styles/botoes';
 @use '../../../../shared/styles/paineis';
 
 /* ===== Legenda do gráfico ===== */
@@ -142,49 +141,6 @@
 .ranking-rodape {
     color: var(--text-muted);
     font-size: 12.5px;
-}
-
-/* Em despesas, aumentar é ruim (vermelho) e diminuir é bom (verde) */
-.variacao {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-weight: 600;
-
-    &.subiu {
-        color: var(--danger);
-    }
-
-    &.caiu {
-        color: var(--success);
-    }
-}
-
-/* ===== Tabela de maiores lançamentos ===== */
-.tabela-wrapper {
-    overflow-x: auto;
-}
-
-.text-right {
-    text-align: right !important;
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-}
-
-.lancamento-desc {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-
-    strong {
-        color: var(--text-strong);
-        font-weight: 600;
-    }
-
-    small {
-        color: var(--text-muted);
-        font-size: 12px;
-    }
 }
 
 @media (max-width: 768px) {

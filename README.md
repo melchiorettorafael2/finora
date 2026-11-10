@@ -45,6 +45,8 @@ O projeto também serve como estudo prático de boas práticas de desenvolviment
 | Lançamento de despesas e receitas | ✅ Implementado |
 | Dashboard com resumo mensal | ✅ Implementado  |
 | Autenticação de usuários | ✅ Implementado |
+| Planejamento: orçamento por categoria e metas de economia | ✅ Implementado |
+| Relatórios: evolução mensal e gastos por categoria (3, 6 ou 12 meses) | ✅ Implementado |
 
 ---
 
@@ -192,6 +194,37 @@ Content-Type: application/json
 | `422 Unprocessable Content` | Campos obrigatórios ausentes ou dados inválidos |
 | `404 Not Found` | Cartão não encontrado para o ID informado |
 
+### Planejamento — `/planejamento`
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/planejamento?mes=yyyy-MM` | Dados da tela: receitas do mês, orçamentos com o gasto de cada categoria e metas (sem `mes`, usa o mês atual) |
+| `GET` | `/planejamento/categorias-disponiveis` | Categorias ativas para o formulário de orçamento |
+| `PUT` | `/planejamento/orcamentos` | Define o limite mensal de uma categoria (cria ou atualiza) |
+| `DELETE` | `/planejamento/orcamentos/{id}` | Remove um orçamento |
+| `POST` | `/planejamento/metas` | Cadastra uma meta de economia |
+| `GET` | `/planejamento/metas/{id}` | Busca uma meta pelo ID |
+| `PUT` | `/planejamento/metas/{id}` | Atualiza uma meta (ex.: valor já guardado) |
+| `DELETE` | `/planejamento/metas/{id}` | Remove uma meta |
+
+```http
+PUT /planejamento/orcamentos
+Content-Type: application/json
+
+{
+  "categoriaId": "3f1c2b7e-...",
+  "limite": 800.00
+}
+```
+
+O orçamento é recorrente: o limite vale para todos os meses e o gasto é calculado a partir das despesas do mês consultado.
+
+### Relatórios — `/relatorios`
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/relatorios?meses=6` | Receitas e despesas mês a mês e gastos por categoria nos últimos 3, 6 ou 12 meses |
+
 ---
 
 ## Roadmap
@@ -203,6 +236,7 @@ Content-Type: application/json
 - [x] Lançamentos (despesas e receitas)
 - [x] Telas do frontend em Angular
 - [x] Dashboard com gráficos de gastos por categoria
+- [x] Planejamento (orçamentos e metas) e relatórios por período
 - [x] Autenticação com Spring Security + JWT
 - [x] Migrar para PostgreSQL e versionar o banco com Flyway
 - [x] Documentação da API com Swagger / OpenAPI
