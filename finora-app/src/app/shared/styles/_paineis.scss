@@ -22,24 +22,6 @@
     gap: 10px;
 }
 
-/* Aviso de que a página ainda usa dados de exemplo */
-.aviso-exemplo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    padding: 10px 14px;
-    border: 1px dashed rgba(204, 167, 0, 0.45);
-    border-radius: 8px;
-    background-color: var(--warning-bg);
-    color: var(--text);
-    font-size: 13px;
-
-    i {
-        color: var(--warning);
-    }
-}
-
 /* ===== Cards de métrica ===== */
 .metricas-grid {
     display: grid;

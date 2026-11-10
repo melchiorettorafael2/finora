@@ -47,15 +47,34 @@
     margin-left: 4px;
 }
 
-/* ===== Metas ===== */
-.metas {
+.orcamento-acoes,
+.item-acoes {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+
+    .badge {
+        margin-right: 6px;
+    }
+
+    a.icon-btn {
+        display: inline-grid;
+        place-items: center;
+        text-decoration: none;
+    }
+}
+
+/* ===== Metas (duas colunas em telas largas) ===== */
+.metas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 32px;
 }
 
 .meta-item {
     display: flex;
+    align-items: center;
     gap: 14px;
 }
 
@@ -102,82 +121,9 @@
     font-variant-numeric: tabular-nums;
 }
 
-/* ===== Contas previstas ===== */
-.contas {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-}
-
-.conta-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 11px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-
-    &:last-child {
-        border-bottom: none;
-    }
-
-    &.paga .conta-info strong {
-        color: var(--text-muted);
-    }
-}
-
-.conta-data {
-    width: 44px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 5px 0;
-    border-radius: 8px;
-    background-color: var(--bg-elevated);
-    border: 1px solid var(--border);
-    line-height: 1.15;
-
-    strong {
-        color: var(--text-strong);
-        font-size: 15px;
-    }
-
-    small {
-        color: var(--text-muted);
-        font-size: 11px;
-        text-transform: uppercase;
-    }
-}
-
-.conta-info {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-
-    strong {
-        color: var(--text-strong);
-        font-size: 14px;
-    }
-
-    small {
-        color: var(--text-muted);
-        font-size: 12px;
-    }
-}
-
-.conta-valor {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-}
-
 @media (max-width: 1200px) {
-    .orcamentos {
+    .orcamentos,
+    .metas {
         grid-template-columns: 1fr;
     }
 }
