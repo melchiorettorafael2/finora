@@ -3,8 +3,6 @@ package io.github.melchiorettorafael2.finora_api.infra.config;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.repository.UsuarioRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -22,8 +20,6 @@ import java.util.List;
  */
 @Component
 public class DonoDadosAntigos implements ApplicationRunner {
-
-    private static final Logger log = LoggerFactory.getLogger(DonoDadosAntigos.class);
 
     private static final List<String> ENTIDADES = List.of(
             "CartaoEntity", "CategoriaEntity", "LancamentoEntity", "OrcamentoEntity", "MetaEconomiaEntity");
@@ -46,18 +42,14 @@ public class DonoDadosAntigos implements ApplicationRunner {
 
         var dono = usuarioRepository.findByLogin(loginDono).orElse(null);
         if (dono == null) {
-            log.warn("Migração de dados antigos: usuário '{}' não encontrado, nada foi alterado.", loginDono);
             return;
         }
 
         for (String entidade : ENTIDADES) {
-            int alterados = entityManager
+            entityManager
                     .createQuery("update " + entidade + " e set e.usuario = :dono where e.usuario is null")
                     .setParameter("dono", dono)
                     .executeUpdate();
-            if (alterados > 0) {
-                log.info("Migração de dados antigos: {} registro(s) de {} atribuído(s) a '{}'.", alterados, entidade, loginDono);
-            }
         }
     }
 }
