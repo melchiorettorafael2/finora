@@ -63,17 +63,17 @@
 @mixin tema-claro {
     color-scheme: light;
 
-    --bg-app: #eef2f7;
-    --bg-surface: #ffffff;
-    --bg-elevated: #eef2f6;
-    --bg-table: #f8fafc;
-    --bg-input: #e9eef4;
-    --bg-hover: #f1f5fa;
-    --bg-active: #e4ecf6;
+    --bg-app: #d9dfe7;          /* cinza-azulado, sem branco puro */
+    --bg-surface: #e8ecf1;
+    --bg-elevated: #dde3ea;
+    --bg-table: #f1f3f6;
+    --bg-input: #e1e6ec;
+    --bg-hover: #e4e9ef;
+    --bg-active: #d9e2ed;
 
-    --border: #d3dbe6;
-    --border-subtle: #e2e8f0;
-    --border-hover: #aab6c6;
+    --border: #c7d0db;
+    --border-subtle: #d5dce4;
+    --border-hover: #a3afbf;
     --linha: rgba(15, 23, 42, 0.09);
     --grade-grafico: rgba(15, 23, 42, 0.07);
     --superficie-sutil: rgba(15, 23, 42, 0.03);
@@ -101,8 +101,8 @@
     --texto-azul: #2468bd;
     --texto-amarelo: #9a7600;
 
-    --btn-secundario: #e2e8f0;
-    --btn-secundario-hover: #d5dde8;
+    --btn-secundario: #d5dce5;
+    --btn-secundario-hover: #c9d1dc;
 
     --shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
 }
@@ -208,11 +208,36 @@ body {
     flex-direction: column;
 }
 
+/* O logo também é o botão que recolhe/expande o menu */
 .sidebar-logo {
+    display: block;
+    width: 100%;
+    flex-shrink: 0;
     overflow: hidden;
     height: 56px; /* mesma altura do header */
-    background-color: var(--brand-night);
+    padding: 0;
+    border: none;
     border-bottom: 1px solid rgba(149, 190, 224, 0.13);
+    background-color: var(--brand-night);
+    cursor: pointer;
+}
+
+/* Destaque discreto ao passar o mouse: indica que o logo é clicável */
+.sidebar-logo .logo-img {
+    transition: filter var(--transition), transform var(--transition);
+}
+
+.sidebar-logo:hover .logo-img {
+    filter: brightness(1.18);
+}
+
+.sidebar-logo:active .logo-img {
+    transform: scale(0.97);
+}
+
+.sidebar-logo:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--brand-blue);
 }
 
 /* finora-logo-sidebar@2x/@3x.png: recorte do finora-logo.png já reduzido
@@ -233,44 +258,22 @@ body {
     margin-top: 12px;
 }
 
-/* ===== Menu recolhido (botão no rodapé da sidebar) ===== */
-.sidebar {
+/* ===== Menu recolhido (clique no logo) ===== */
+
+/* Só anima depois de um clique: ao abrir o app já recolhido, o menu não "desliza" */
+.menu-animado .sidebar {
     transition: width 0.2s ease;
 }
 
 /* Ícones com largura fixa: o texto começa na mesma coluna e eles centralizam ao recolher */
-.menu-item i,
-.sidebar-recolher i {
+.menu-item i {
     width: 18px;
     text-align: center;
 }
 
-.menu-item span,
-.sidebar-recolher span {
+.menu-item span {
     white-space: nowrap;
     overflow: hidden;
-}
-
-.sidebar-recolher {
-    margin-top: auto;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 20px;
-    border: none;
-    border-top: 1px solid rgba(149, 190, 224, 0.13);
-    background: transparent;
-    color: var(--brand-muted);
-    font: inherit;
-    font-size: 13px;
-    text-align: left;
-    cursor: pointer;
-    transition: background-color var(--transition), color var(--transition);
-}
-
-.sidebar-recolher:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: var(--brand-white);
 }
 
 .menu-recolhido .sidebar {
@@ -281,8 +284,7 @@ body {
     display: none;
 }
 
-.menu-recolhido .menu-item,
-.menu-recolhido .sidebar-recolher {
+.menu-recolhido .menu-item {
     justify-content: center;
     padding-left: 0;
     padding-right: 0;
@@ -847,9 +849,9 @@ body {
         padding: 14px 0;
     }
 
-    /* No celular o menu já é sempre a barra de ícones: o botão de recolher não faz sentido */
-    .sidebar-recolher {
-        display: none;
+    /* No celular o menu já é sempre a barra de ícones: o logo não recolhe nada */
+    .sidebar-logo {
+        pointer-events: none;
     }
 
     .content {
@@ -881,16 +883,32 @@ body {
         background-color: var(--bg-elevated);
     }
 
-    .datatable td {
+    /* Menos espaço em volta: no celular o card da tabela ficava estreito */
+    .card,
+    .card-full {
+        padding: 14px;
+    }
+
+    .table-card {
+        background: transparent;
         border: none;
-        padding: 8px 0;
+    }
+
+    /* Cada célula vira uma linha do card, com o conteúdo centralizado
+       (tbody td: precisa ganhar da borda por célula da versão de computador) */
+    .datatable tbody td {
+        border: none;
+        padding: 6px 0;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
+        gap: 8px;
+        text-align: center;
         font-size: 14px;
     }
 
-    .datatable td::before {
+    /* Rótulo só onde a célula tiver data-label (sem ele, o espaço vazio empurrava o valor para a direita) */
+    .datatable td[data-label]::before {
         content: attr(data-label);
         font-weight: 600;
         color: var(--text-muted);
@@ -899,11 +917,14 @@ body {
     }
 
     .datatable td.text-center {
-        justify-content: flex-end;
+        justify-content: center;
     }
 
-    .datatable td:last-child {
-        padding-top: 12px;
+    /* Ações (última célula) separadas do conteúdo por uma linha */
+    .datatable tbody td:last-child {
+        margin-top: 6px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border-subtle);
     }
 
     .icon-btn {

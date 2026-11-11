@@ -28,9 +28,18 @@ export class Header {
   menuAberto = signal(false);
   temaClaro = computed(() => this.preferencias.tema() === 'claro');
 
+  // O header é recriado a cada troca de página: sem isto, a bolinha do switch
+  // animaria até a posição do modo claro toda vez. Só anima depois de um clique.
+  animarSwitch = signal(false);
+
   constructor() {
     // Só faz a requisição na primeira vez da sessão; depois reaproveita a foto em memória
     this.usuarioService.carregarFoto();
+  }
+
+  alternarTema(): void {
+    this.animarSwitch.set(true);
+    this.preferencias.alternarTema();
   }
 
   alternarMenu(): void {

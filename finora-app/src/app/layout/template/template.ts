@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { PreferenciasService } from '../../common/services/preferencias-service';
@@ -18,6 +18,14 @@ interface ItemMenu {
 })
 export class Template {
   preferencias = inject(PreferenciasService);
+
+  // A largura do menu só anima depois de um clique: ao abrir o app já recolhido, ele não "desliza"
+  menuAnimado = signal(false);
+
+  alternarMenu(): void {
+    this.menuAnimado.set(true);
+    this.preferencias.alternarMenu();
+  }
 
   itensMenu: ItemMenu[] = [
     { rota: '/paginas/dashboard', icone: 'fa-chart-line', rotulo: 'Dashboard', exato: true },

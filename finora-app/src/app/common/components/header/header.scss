@@ -32,7 +32,6 @@
     font-size: 13px;
     color: var(--brand-muted);
     opacity: 0.55;
-    transition: color var(--transition), opacity var(--transition);
 }
 
 // Destaca o ícone do tema atual
@@ -57,7 +56,6 @@
     border-radius: 999px;
     background-color: rgba(255, 255, 255, 0.12);
     border: 1px solid rgba(149, 190, 224, 0.25);
-    transition: background var(--transition), border-color var(--transition);
 }
 
 .tema-bolinha {
@@ -69,7 +67,21 @@
     border-radius: 50%;
     background-color: var(--brand-white);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-    transition: transform 0.2s ease;
+}
+
+// Transições só depois de um clique (ver animarSwitch no header.ts)
+.tema-switch.animar {
+    .tema-icone {
+        transition: color var(--transition), opacity var(--transition);
+    }
+
+    .tema-trilho {
+        transition: background var(--transition), border-color var(--transition);
+    }
+
+    .tema-bolinha {
+        transition: transform 0.2s ease;
+    }
 }
 
 .tema-switch.claro {
