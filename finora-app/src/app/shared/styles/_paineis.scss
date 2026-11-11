@@ -383,3 +383,140 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* =========================================================
+   Tema claro: componentes com cor
+   Cada card de métrica ganha um tom suave da própria cor (verde,
+   vermelho, azul, âmbar), com o ícone num quadrado de cor sólida;
+   os painéis de gráfico ganham moldura e cabeçalho azulados.
+   Barras e colunas em cores sólidas, sem brilho.
+   ========================================================= */
+:host-context(.tema-claro) {
+    // Tons do tema claro (mais saturados que os do escuro, para ler bem no fundo claro)
+    .metric-card {
+        --metric-color: #2563eb;
+        --metric-rgb: 37, 99, 235;
+        background-color: rgba(var(--metric-rgb), 0.10);
+        border-color: rgba(var(--metric-rgb), 0.22);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 6px 16px rgba(var(--metric-rgb), 0.10);
+    }
+
+    .metric-income {
+        --metric-color: #059669;
+        --metric-rgb: 5, 150, 105;
+    }
+
+    .metric-expense {
+        --metric-color: #dc2626;
+        --metric-rgb: 220, 38, 38;
+    }
+
+    .metric-warning {
+        --metric-color: #d97706;
+        --metric-rgb: 217, 119, 6;
+    }
+
+    .metric-card:hover {
+        border-color: rgba(var(--metric-rgb), 0.40);
+    }
+
+    .metric-body {
+        background:
+            linear-gradient(135deg, rgba(var(--metric-rgb), 0.12) 0%, rgba(var(--metric-rgb), 0.04) 60%, transparent 100%),
+            #ffffff;
+        border-color: rgba(var(--metric-rgb), 0.20);
+        box-shadow: none;
+    }
+
+    .metric-body::before {
+        height: 3px;
+        background: linear-gradient(90deg, var(--metric-color), rgba(var(--metric-rgb), 0.35));
+    }
+
+    .metric-value {
+        text-shadow: none;
+    }
+
+    // Ícone em quadrado de cor sólida, desenho branco
+    .metric-icon {
+        color: #ffffff;
+        background: var(--metric-color);
+        border-color: transparent;
+        box-shadow: 0 4px 10px rgba(var(--metric-rgb), 0.30);
+    }
+
+    .metric-rodape {
+        border-top-color: rgba(var(--metric-rgb), 0.18);
+    }
+
+    // Painéis de gráfico: moldura e cabeçalho azulados
+    .chart-panel {
+        background-color: #e3ebf8;
+        border-color: #cfdcf0;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 6px 16px rgba(37, 99, 235, 0.07);
+    }
+
+    .chart-panel:hover {
+        border-color: #b9cdea;
+    }
+
+    .chart-body {
+        background:
+            linear-gradient(180deg, rgba(37, 99, 235, 0.06) 0%, transparent 120px),
+            #ffffff;
+        border-color: #d6e1f2;
+    }
+
+    .chart-header {
+        border-bottom-color: #e1e9f5;
+    }
+
+    .chart-icon {
+        color: #ffffff;
+        background: linear-gradient(135deg, #2563eb, #0ea5a4);
+        border-color: transparent;
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.28);
+    }
+
+    .bar-track {
+        background-color: #e6edf6;
+    }
+
+    .bar-fill,
+    .bar-fill.category {
+        background: #2563eb;
+        box-shadow: none;
+    }
+
+    .bar-fill.income {
+        background: #059669;
+    }
+
+    .bar-fill.expense {
+        background: #dc2626;
+    }
+
+    .bar-fill.warning {
+        background: #d97706;
+    }
+
+    .evolucao-barra {
+        border-radius: 3px 3px 0 0;
+    }
+
+    .evolucao-barra.income {
+        background: linear-gradient(0deg, #34d399, #059669);
+    }
+
+    .evolucao-barra.expense {
+        background: linear-gradient(0deg, #f87171, #dc2626);
+    }
+
+    .legenda-cor.income {
+        background-color: #059669;
+    }
+
+    .legenda-cor.expense {
+        background-color: #dc2626;
+    }
+}

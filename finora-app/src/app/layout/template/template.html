@@ -1,20 +1,14 @@
-<div class="app-container"
-    [class.tema-claro]="preferencias.tema() === 'claro'"
-    [class.menu-recolhido]="preferencias.menuRecolhido()"
-    [class.menu-animado]="menuAnimado()">
+<div class="app-container" [class.tema-claro]="preferencias.tema() === 'claro'">
+    <!-- Menu sempre minimizado; expande ao passar o mouse (ver .sidebar no styles.scss) -->
     <aside class="sidebar">
-        <!-- Clicar no logo recolhe/expande o menu -->
-        <button type="button" class="sidebar-logo" (click)="alternarMenu()"
-            [attr.title]="preferencias.menuRecolhido() ? 'Expandir menu' : 'Recolher menu'"
-            [attr.aria-label]="preferencias.menuRecolhido() ? 'Expandir menu' : 'Recolher menu'"
-            [attr.aria-expanded]="!preferencias.menuRecolhido()">
-            <img class="logo-img" src="finora-logo-sidebar@2x.png" srcset="finora-logo-sidebar@2x.png 2x, finora-logo-sidebar@3x.png 3x" alt="" />
-        </button>
+        <div class="sidebar-logo">
+            <img class="logo-img" src="finora-logo-sidebar@2x.png" srcset="finora-logo-sidebar@2x.png 2x, finora-logo-sidebar@3x.png 3x" alt="Finora" />
+        </div>
         <nav class="sidebar-menu">
             @for (item of itensMenu; track item.rota) {
                 <a class="menu-item" [routerLink]="item.rota" routerLinkActive="active"
                     [routerLinkActiveOptions]="{ exact: item.exato }"
-                    [attr.title]="preferencias.menuRecolhido() ? item.rotulo : null">
+                    [attr.aria-label]="item.rotulo">
                     <i class="fa-solid" [ngClass]="item.icone"></i>
                     <span>{{ item.rotulo }}</span>
                 </a>

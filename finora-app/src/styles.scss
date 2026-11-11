@@ -63,48 +63,50 @@
 @mixin tema-claro {
     color-scheme: light;
 
-    --bg-app: #d9dfe7;          /* cinza-azulado, sem branco puro */
-    --bg-surface: #e8ecf1;
-    --bg-elevated: #dde3ea;
-    --bg-table: #f1f3f6;
-    --bg-input: #e1e6ec;
-    --bg-hover: #e4e9ef;
-    --bg-active: #d9e2ed;
+    /* Claro moderno e minimalista: fundo ardósia suave, superfícies limpas que se
+       destacam dele com sombras discretas, e cores de destaque vivas (azul, esmeralda) */
+    --bg-app: #dce2ea;          /* fundo da página (ganha um brilho azul/verde da marca) */
+    --bg-surface: #e3ebf8;      /* moldura dos cards (azulada) */
+    --bg-elevated: #dbe6f6;     /* cabeçalho de tabela (azulado) */
+    --bg-table: #fbfcfe;        /* painel interno dos cards e tabelas */
+    --bg-input: #e8edf3;        /* campos e trilho das barras */
+    --bg-hover: #eef4fd;
+    --bg-active: #dfe9f9;
 
-    --border: #c7d0db;
-    --border-subtle: #d5dce4;
-    --border-hover: #a3afbf;
-    --linha: rgba(15, 23, 42, 0.09);
-    --grade-grafico: rgba(15, 23, 42, 0.07);
+    --border: #cfdcf0;
+    --border-subtle: #dfe7f3;
+    --border-hover: #9fb0c4;
+    --linha: rgba(15, 23, 42, 0.08);
+    --grade-grafico: rgba(15, 23, 42, 0.06);
     --superficie-sutil: rgba(15, 23, 42, 0.03);
-    --superficie-sutil-hover: rgba(15, 23, 42, 0.07);
+    --superficie-sutil-hover: rgba(15, 23, 42, 0.06);
 
-    --text: #334155;
-    --text-strong: #0f172a;
-    --text-muted: #64748b;
-    --text-soft: #5f6b7d;
-    --link: #2468bd;
+    --text: #273449;
+    --text-strong: #0b1324;
+    --text-muted: #5b6982;
+    --text-soft: #4f5d75;
+    --link: #2563eb;
 
-    --accent: #2468bd;
-    --accent-btn: #1f6fc4;
-    --accent-btn-hover: #2a80d8;
-    --focus: #2468bd;
-    --success: #0f9a72;
-    --success-bg: rgba(15, 154, 114, 0.12);
-    --warning: #a07c00;
-    --warning-bg: rgba(204, 167, 0, 0.16);
-    --danger: #d43535;
-    --danger-bg: rgba(212, 53, 53, 0.10);
-    --teal: #0d8a7f;
+    --accent: #2563eb;
+    --accent-btn: #2563eb;
+    --accent-btn-hover: #1d4ed8;
+    --focus: #2563eb;
+    --success: #059669;          /* esmeralda */
+    --success-bg: rgba(5, 150, 105, 0.12);
+    --warning: #c27803;          /* âmbar */
+    --warning-bg: rgba(217, 119, 6, 0.14);
+    --danger: #dc2626;
+    --danger-bg: rgba(220, 38, 38, 0.10);
+    --teal: #0f766e;             /* títulos dos painéis */
 
-    --texto-verde: #0f9a72;
-    --texto-azul: #2468bd;
-    --texto-amarelo: #9a7600;
+    --texto-verde: #059669;
+    --texto-azul: #2563eb;
+    --texto-amarelo: #b45309;
 
-    --btn-secundario: #d5dce5;
-    --btn-secundario-hover: #c9d1dc;
+    --btn-secundario: #dbe6f6;
+    --btn-secundario-hover: #c9daf2;
 
-    --shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 6px 16px rgba(15, 23, 42, 0.06);
 }
 
 :root {
@@ -137,6 +139,11 @@
 /* Tema claro na área do app; menu lateral e header voltam à paleta escura da marca */
 .app-container.tema-claro {
     @include tema-claro;
+
+    background:
+        radial-gradient(55% 45% at 100% 0%, rgba(37, 99, 235, 0.10), transparent 70%),
+        radial-gradient(50% 45% at 15% 100%, rgba(5, 150, 105, 0.08), transparent 70%),
+        var(--bg-app);
 
     .sidebar,
     .header {
@@ -190,13 +197,17 @@ body {
 /* ====== SIDEBAR ========== */
 /* ========================= */
 
-/* Degradê partindo do --brand-night (fundo do logo), com brilhos sutis
-   no azul e no verde da marca para dar contraste com a área de conteúdo */
+/* Menu sempre minimizado (só ícones, 60px) e fixo à esquerda. Ao passar o mouse
+   (ou navegar com Tab pelo teclado), expande para 240px POR CIMA do conteúdo, sem empurrar a página.
+   Degradê partindo do --brand-night (fundo do logo), com brilhos sutis no azul e no verde. */
 .sidebar {
-    position: relative;
-    z-index: 1;
-    width: 240px;
-    flex-shrink: 0;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 50;
+    width: 60px;
+    overflow: hidden;
     background:
         radial-gradient(130% 35% at 0% 12%, rgba(58, 138, 224, 0.16), transparent 70%),
         radial-gradient(120% 40% at 100% 100%, rgba(52, 211, 163, 0.12), transparent 70%),
@@ -206,50 +217,53 @@ body {
     box-shadow: 4px 0 18px rgba(0, 0, 0, 0.35);
     display: flex;
     flex-direction: column;
+    transition: width 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* O logo também é o botão que recolhe/expande o menu */
+/* Só expande em telas com mouse (no celular continua a barra de ícones) */
+@media (hover: hover) and (min-width: 769px) {
+    /* :has(:focus-visible) e não :focus-within: clicar num item deixa o link com foco,
+       e com :focus-within o menu ficava aberto depois de trocar de página */
+    .sidebar:hover,
+    .sidebar:has(:focus-visible) {
+        width: 240px;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.45);
+    }
+
+    .sidebar:hover .menu-item span,
+    .sidebar:has(:focus-visible) .menu-item span {
+        opacity: 1;
+    }
+
+    /* Aberta: mostra o logo inteiro */
+    .sidebar:hover .logo-img,
+    .sidebar:has(:focus-visible) .logo-img {
+        clip-path: inset(0);
+    }
+}
+
 .sidebar-logo {
-    display: block;
-    width: 100%;
     flex-shrink: 0;
     overflow: hidden;
     height: 56px; /* mesma altura do header */
-    padding: 0;
-    border: none;
-    border-bottom: 1px solid rgba(149, 190, 224, 0.13);
     background-color: var(--brand-night);
-    cursor: pointer;
+    border-bottom: 1px solid rgba(149, 190, 224, 0.13);
 }
 
-/* Destaque discreto ao passar o mouse: indica que o logo é clicável */
-.sidebar-logo .logo-img {
-    transition: filter var(--transition), transform var(--transition);
-}
-
-.sidebar-logo:hover .logo-img {
-    filter: brightness(1.18);
-}
-
-.sidebar-logo:active .logo-img {
-    transform: scale(0.97);
-}
-
-.sidebar-logo:focus-visible {
-    outline: none;
-    box-shadow: inset 0 0 0 2px var(--brand-blue);
-}
-
-/* finora-logo-sidebar@2x/@3x.png: recorte do finora-logo.png já reduzido
-   para 240x56 (reduzir o original no navegador deixava o logo serrilhado) */
+/* finora-logo-sidebar@2x/@3x.png: recorte do finora-logo.png em 240x56 (tamanho exato, sem escalar).
+   Largura fixa (não acompanha a barra): fechada, a barra de 60px mostra só o hexágono;
+   aberta, aparece o logo inteiro. */
 .logo-img {
     display: block;
-    /* O hexágono fica a ~51px da borda da imagem; puxa 31px para começar
-       na mesma coluna dos ícones do menu (padding de 20px) */
-    margin-left: -31px;
-    width: calc(100% + 31px);
-    height: 100%;
-    object-fit: cover;
+    /* O hexágono ocupa as colunas 51,5 a 83 da imagem (centro em ~67px): puxar 37px
+       põe o centro em 30px, no meio da barra fechada e alinhado com os ícones do menu */
+    margin-left: -37px;
+    width: 240px;
+    height: 56px;
+    /* Fechada: corta logo depois do hexágono (o "F" começa em ~53px e aparecia na borda).
+       87px da imagem = 50px da barra; o resto (240 - 87 = 153px) fica escondido */
+    clip-path: inset(0 153px 0 0);
+    transition: clip-path 0.2s ease;
 }
 
 .sidebar-menu {
@@ -258,49 +272,23 @@ body {
     margin-top: 12px;
 }
 
-/* ===== Menu recolhido (clique no logo) ===== */
-
-/* Só anima depois de um clique: ao abrir o app já recolhido, o menu não "desliza" */
-.menu-animado .sidebar {
-    transition: width 0.2s ease;
-}
-
-/* Ícones com largura fixa: o texto começa na mesma coluna e eles centralizam ao recolher */
+/* Ícone com largura fixa e centralizado nos 60px da barra fechada: (60 - 18) / 2 = 21px */
 .menu-item i {
     width: 18px;
+    flex-shrink: 0;
     text-align: center;
 }
 
+/* Nome do item: escondido com a barra fechada, aparece ao expandir */
 .menu-item span {
     white-space: nowrap;
-    overflow: hidden;
-}
-
-.menu-recolhido .sidebar {
-    width: 60px;
-}
-
-.menu-recolhido .sidebar span {
-    display: none;
-}
-
-.menu-recolhido .menu-item {
-    justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
-}
-
-/* Recolhido: mostra só o hexágono do logo (mesmo recorte da barra estreita do celular) */
-.menu-recolhido .logo-img {
-    margin-left: 0;
-    width: 100%;
-    object-position: 18% center;
-    clip-path: inset(0 10px 0 0);
+    opacity: 0;
+    transition: opacity 0.15s ease;
 }
 
 .menu-item {
     position: relative;
-    padding: 12px 20px;
+    padding: 12px 21px;
     text-decoration: none;
     color: var(--text);
     display: flex;
@@ -374,6 +362,8 @@ body {
     flex-direction: column;
     min-width: 0;
     overflow-y: auto;
+    /* Espaço da barra lateral fixa (fechada); aberta, ela passa por cima */
+    margin-left: 60px;
 }
 
 /* Continua o --brand-night do logo à esquerda e termina com um brilho
@@ -524,7 +514,13 @@ body {
     transition: background-color var(--transition);
 }
 
-.datatable tbody tr:hover {
+/* Tema claro: linhas alternadas em azul bem claro, para a tabela não ficar toda branca */
+.tema-claro .datatable tbody tr:nth-child(even) {
+    background-color: #f2f6fd;
+}
+
+.datatable tbody tr:hover,
+.tema-claro .datatable tbody tr:nth-child(even):hover {
     background-color: var(--bg-hover);
 }
 
@@ -826,32 +822,14 @@ body {
 
 @media (max-width: 768px) {
 
-    /* Sidebar vira uma barra de ícones, como a activity bar */
-    .sidebar {
-        width: 60px;
-    }
-
+    /* No celular a barra lateral fica sempre só com os ícones (sem expandir) */
     .sidebar span {
         display: none;
-    }
-
-    /* Na barra estreita mostra só o ícone do PNG */
-    .logo-img {
-        margin-left: 0;
-        width: 100%;
-        object-position: 18% center;
-        /* Esconde o começo do "F" de "Finora" que sobra à direita do ícone */
-        clip-path: inset(0 10px 0 0);
     }
 
     .menu-item {
         justify-content: center;
         padding: 14px 0;
-    }
-
-    /* No celular o menu já é sempre a barra de ícones: o logo não recolhe nada */
-    .sidebar-logo {
-        pointer-events: none;
     }
 
     .content {
@@ -976,6 +954,7 @@ body {
     .main-content {
         display: block;
         overflow: visible;
+        margin-left: 0; /* sem a barra lateral no papel */
     }
 
     .sidebar,
