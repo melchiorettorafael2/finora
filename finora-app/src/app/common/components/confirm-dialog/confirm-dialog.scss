@@ -1,3 +1,35 @@
+/* Cores do diálogo: escuras por padrão, claras quando o app está no tema claro */
+.dialog-overlay {
+    --dlg-fundo: #2f3033;
+    --dlg-borda: #45474b;
+    --dlg-destaque: #232427;
+    --dlg-titulo: #ffffff;
+    --dlg-texto: #e7e7e7;
+    --dlg-texto-suave: #b5b5b5;
+    --dlg-icone: #ff6b6b;
+    --dlg-aviso: #ffb3b3;
+    --dlg-botao: #4a4d52;
+    --dlg-botao-borda: #5c6066;
+    --dlg-botao-hover: #575b61;
+    --dlg-sombra: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 20px 50px rgba(0, 0, 0, 0.7);
+}
+
+:host-context(.tema-claro) .dialog-overlay {
+    --dlg-fundo: #ffffff;
+    --dlg-borda: #dde3eb;
+    --dlg-destaque: #f4f6f9;
+    --dlg-titulo: #0f172a;
+    --dlg-texto: #334155;
+    --dlg-texto-suave: #64748b;
+    --dlg-icone: #d43535;
+    --dlg-aviso: #a12a2a;
+    --dlg-botao: #eef1f5;
+    --dlg-botao-borda: #d3dbe6;
+    --dlg-botao-hover: #e2e8f0;
+    --dlg-sombra: 0 20px 50px rgba(15, 23, 42, 0.25);
+    background-color: rgba(15, 23, 42, 0.45);
+}
+
 .dialog-overlay {
     position: fixed;
     inset: 0;
@@ -18,11 +50,11 @@
     width: 100%;
     max-width: 460px;
     padding: 24px;
-    background-color: #2f3033;
-    border: 1px solid #45474b;
+    background-color: var(--dlg-fundo);
+    border: 1px solid var(--dlg-borda);
     border-top: 4px solid var(--danger);
     border-radius: var(--radius-lg);
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6), 0 20px 50px rgba(0, 0, 0, 0.7);
+    box-shadow: var(--dlg-sombra);
     animation: dialog-entrada 0.18s ease;
 }
 
@@ -43,7 +75,7 @@
     border-radius: 50%;
     background-color: rgba(241, 76, 76, 0.22);
     border: 1px solid rgba(241, 76, 76, 0.6);
-    color: #ff6b6b;
+    color: var(--dlg-icone);
     font-size: 20px;
 }
 
@@ -55,13 +87,13 @@
 
 .dialog-titulo {
     margin-bottom: 6px;
-    color: #ffffff;
+    color: var(--dlg-titulo);
     font-size: 18px;
     font-weight: 700;
 }
 
 .dialog-mensagem {
-    color: #e7e7e7;
+    color: var(--dlg-texto);
     font-size: 14px;
     line-height: 1.5;
 }
@@ -77,15 +109,15 @@
     border: none;
     border-radius: var(--radius);
     background-color: transparent;
-    color: #b5b5b5;
+    color: var(--dlg-texto-suave);
     font-size: 16px;
     cursor: pointer;
     transition: background-color var(--transition), color var(--transition);
 }
 
 .dialog-fechar:hover {
-    background-color: #45474b;
-    color: #ffffff;
+    background-color: var(--dlg-borda);
+    color: var(--dlg-titulo);
 }
 
 /* ===== Corpo ===== */
@@ -94,10 +126,10 @@
     align-items: center;
     gap: 12px;
     padding: 12px 14px;
-    border: 1px solid #45474b;
+    border: 1px solid var(--dlg-borda);
     border-radius: var(--radius);
-    background-color: #232427;
-    color: #ffffff;
+    background-color: var(--dlg-destaque);
+    color: var(--dlg-titulo);
     font-size: 15px;
     font-weight: 600;
 }
@@ -120,7 +152,7 @@
     border-left: 3px solid var(--danger);
     border-radius: var(--radius);
     background-color: rgba(241, 76, 76, 0.14);
-    color: #ffb3b3;
+    color: var(--dlg-aviso);
     font-size: 13px;
     line-height: 1.4;
 }
@@ -131,17 +163,17 @@
     justify-content: flex-end;
     gap: 10px;
     padding-top: 16px;
-    border-top: 1px solid #45474b;
+    border-top: 1px solid var(--dlg-borda);
 }
 
 .dialog-acoes .btn-secondary {
-    background-color: #4a4d52;
-    border-color: #5c6066;
-    color: #ffffff;
+    background-color: var(--dlg-botao);
+    border-color: var(--dlg-botao-borda);
+    color: var(--dlg-titulo);
 }
 
 .dialog-acoes .btn-secondary:hover {
-    background-color: #575b61;
+    background-color: var(--dlg-botao-hover);
 }
 
 .btn-danger {

@@ -59,13 +59,13 @@
 
 /* Ação neutra (cancelar, escolher foto): superfície com borda discreta */
 .btn-secondary {
-    background-color: rgba(255, 255, 255, 0.04);
+    background-color: var(--superficie-sutil);
     border-color: var(--border);
     color: var(--text-strong);
 
     &:hover:not(:disabled) {
-        background-color: rgba(255, 255, 255, 0.08);
-        border-color: #4a5a72;
+        background-color: var(--superficie-sutil-hover);
+        border-color: var(--border-hover);
     }
 }
 
@@ -77,12 +77,12 @@
     padding: 0 14px;
     border-color: rgba(58, 138, 224, 0.45);
     background-color: rgba(58, 138, 224, 0.08);
-    color: #8cc4ff;
+    color: var(--link);
 
     &:hover:not(:disabled) {
         background-color: rgba(58, 138, 224, 0.2);
         border-color: var(--brand-blue);
-        color: var(--brand-white);
+        color: var(--text-strong);
         box-shadow: 0 0 12px rgba(58, 138, 224, 0.3);
     }
 }

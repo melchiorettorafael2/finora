@@ -2,6 +2,7 @@ import { Component, ElementRef, computed, inject, input, signal } from '@angular
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../auth/auth-service/auth-service';
 import { UsuarioService } from '../../../features/usuario/services/usuario-service';
+import { PreferenciasService } from '../../services/preferencias-service';
 
 @Component({
   selector: 'app-header',
@@ -20,9 +21,12 @@ export class Header {
   private usuarioService = inject(UsuarioService);
   private elementRef = inject(ElementRef<HTMLElement>);
 
+  preferencias = inject(PreferenciasService);
+
   nomeUsuario = computed(() => this.authService.nomeUsuario() || 'Usuário');
   fotoUrl = this.usuarioService.fotoUrl;
   menuAberto = signal(false);
+  temaClaro = computed(() => this.preferencias.tema() === 'claro');
 
   constructor() {
     // Só faz a requisição na primeira vez da sessão; depois reaproveita a foto em memória

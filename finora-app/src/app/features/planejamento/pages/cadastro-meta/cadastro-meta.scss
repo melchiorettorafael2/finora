@@ -20,11 +20,11 @@
 
     &:hover {
         color: var(--text-strong);
-        border-color: #4a5a72;
+        border-color: var(--border-hover);
     }
 
     &.selecionado {
-        color: #6ee6be;
+        color: var(--texto-verde);
         border-color: rgba(79, 214, 168, 0.6);
         background-color: rgba(79, 214, 168, 0.14);
     }

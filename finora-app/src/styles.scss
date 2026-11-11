@@ -1,15 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 /* =========================================================
-   TEMA DARK — inspirado no VS Code (Dark+)
+   TEMAS — escuro (padrão, inspirado no VS Code Dark+) e claro.
+   O tema claro vale dentro do app (.app-container.tema-claro):
+   login, 2FA e recuperação de senha continuam sempre escuros,
+   e o menu lateral e o header mantêm o azul-noite da marca.
    ========================================================= */
-:root {
+
+@mixin tema-escuro {
     color-scheme: dark;
 
     /* Superfícies — tons azul-ardósia, da mesma família do --brand-night
        da sidebar/header, mantendo a hierarquia página < card < elevado */
     --bg-app: #141b26;          /* fundo das páginas */
-    --bg-sidebar: #1a2230;
-    --bg-sidebar-header: #263042;
     --bg-surface: #1b2330;      /* cards */
     --bg-elevated: #243042;     /* cabeçalho de tabela, botões neutros */
     --bg-table: #10161f;        /* fundo da área da tabela */
@@ -17,7 +19,98 @@
     --bg-hover: #212b3a;
     --bg-active: #2b374a;
 
-    /* Marca Finora (mesmas cores do logo) */
+    /* Bordas e linhas divisórias */
+    --border: #313d50;
+    --border-subtle: #232d3c;
+    --border-hover: #4a5a72;
+    --linha: rgba(255, 255, 255, 0.08);
+    --grade-grafico: rgba(255, 255, 255, 0.05);
+    --superficie-sutil: rgba(255, 255, 255, 0.04);
+    --superficie-sutil-hover: rgba(255, 255, 255, 0.08);
+
+    /* Texto */
+    --text: #cccccc;
+    --text-strong: #e7e7e7;
+    --text-muted: #8592a6;
+    --text-soft: #a8adb5;        /* rodapé dos cards */
+    --link: #8cc4ff;
+
+    /* Destaques */
+    --accent: #2f80d8;          /* azul do logo */
+    --accent-btn: #1f6fc4;      /* button.background */
+    --accent-btn-hover: #2a80d8;
+    --focus: #3a8ae0;           /* focusBorder */
+    --success: #4fd6a8;         /* verde-água do logo */
+    --success-bg: rgba(79, 214, 168, 0.12);
+    --warning: #cca700;
+    --warning-bg: rgba(204, 167, 0, 0.14);
+    --danger: #f14c4c;
+    --danger-bg: rgba(241, 76, 76, 0.15);
+    --teal: #5ed4c8;            /* entre o ciano e o verde do logo */
+
+    /* Valores em destaque (cards de métrica, metas) */
+    --texto-verde: #6ee6be;
+    --texto-azul: #6aaef0;
+    --texto-amarelo: #e0c040;
+
+    /* Botão secundário global */
+    --btn-secundario: #3a3d41;
+    --btn-secundario-hover: #45494e;
+
+    --shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+@mixin tema-claro {
+    color-scheme: light;
+
+    --bg-app: #eef2f7;
+    --bg-surface: #ffffff;
+    --bg-elevated: #eef2f6;
+    --bg-table: #f8fafc;
+    --bg-input: #e9eef4;
+    --bg-hover: #f1f5fa;
+    --bg-active: #e4ecf6;
+
+    --border: #d3dbe6;
+    --border-subtle: #e2e8f0;
+    --border-hover: #aab6c6;
+    --linha: rgba(15, 23, 42, 0.09);
+    --grade-grafico: rgba(15, 23, 42, 0.07);
+    --superficie-sutil: rgba(15, 23, 42, 0.03);
+    --superficie-sutil-hover: rgba(15, 23, 42, 0.07);
+
+    --text: #334155;
+    --text-strong: #0f172a;
+    --text-muted: #64748b;
+    --text-soft: #5f6b7d;
+    --link: #2468bd;
+
+    --accent: #2468bd;
+    --accent-btn: #1f6fc4;
+    --accent-btn-hover: #2a80d8;
+    --focus: #2468bd;
+    --success: #0f9a72;
+    --success-bg: rgba(15, 154, 114, 0.12);
+    --warning: #a07c00;
+    --warning-bg: rgba(204, 167, 0, 0.16);
+    --danger: #d43535;
+    --danger-bg: rgba(212, 53, 53, 0.10);
+    --teal: #0d8a7f;
+
+    --texto-verde: #0f9a72;
+    --texto-azul: #2468bd;
+    --texto-amarelo: #9a7600;
+
+    --btn-secundario: #e2e8f0;
+    --btn-secundario-hover: #d5dde8;
+
+    --shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+}
+
+:root {
+    @include tema-escuro;
+
+    /* Marca Finora (mesmas cores do logo) — iguais nos dois temas */
     --brand-night: #0e1622;
     --brand-white: #f4f8ff;
     --brand-muted: #9aacc3;
@@ -36,32 +129,19 @@
         linear-gradient(90deg, rgba(58, 138, 224, 0.68), rgba(52, 211, 163, 0.30) 85%),
         rgba(255, 255, 255, 0.10);
 
-    /* Bordas */
-    --border: #313d50;
-    --border-subtle: #232d3c;
-
-    /* Texto */
-    --text: #cccccc;
-    --text-strong: #e7e7e7;
-    --text-muted: #8592a6;
-
-    /* Destaques */
-    --accent: #2f80d8;          /* azul do logo */
-    --accent-btn: #1f6fc4;      /* button.background */
-    --accent-btn-hover: #2a80d8;
-    --focus: #3a8ae0;           /* focusBorder */
-    --success: #4fd6a8;         /* verde-água do logo */
-    --success-bg: rgba(79, 214, 168, 0.12);
-    --warning: #cca700;
-    --warning-bg: rgba(204, 167, 0, 0.14);
-    --danger: #f14c4c;
-    --danger-bg: rgba(241, 76, 76, 0.15);
-    --teal: #5ed4c8;            /* entre o ciano e o verde do logo */
-
     --radius: 6px;
     --radius-lg: 8px;
-    --shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
     --transition: 0.15s ease;
+}
+
+/* Tema claro na área do app; menu lateral e header voltam à paleta escura da marca */
+.app-container.tema-claro {
+    @include tema-claro;
+
+    .sidebar,
+    .header {
+        @include tema-escuro;
+    }
 }
 
 * {
@@ -97,6 +177,13 @@ body {
 .app-container {
     display: flex;
     height: 100vh;
+    /* O fundo fica aqui (e não só no body) para acompanhar o tema escolhido */
+    background:
+        radial-gradient(60% 50% at 100% 0%, rgba(58, 138, 224, 0.08), transparent 70%),
+        radial-gradient(50% 45% at 20% 100%, rgba(52, 211, 163, 0.05), transparent 70%),
+        var(--bg-app);
+    color: var(--text);
+    transition: background-color var(--transition);
 }
 
 /* ========================= */
@@ -144,6 +231,69 @@ body {
     display: flex;
     flex-direction: column;
     margin-top: 12px;
+}
+
+/* ===== Menu recolhido (botão no rodapé da sidebar) ===== */
+.sidebar {
+    transition: width 0.2s ease;
+}
+
+/* Ícones com largura fixa: o texto começa na mesma coluna e eles centralizam ao recolher */
+.menu-item i,
+.sidebar-recolher i {
+    width: 18px;
+    text-align: center;
+}
+
+.menu-item span,
+.sidebar-recolher span {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.sidebar-recolher {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border: none;
+    border-top: 1px solid rgba(149, 190, 224, 0.13);
+    background: transparent;
+    color: var(--brand-muted);
+    font: inherit;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.sidebar-recolher:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--brand-white);
+}
+
+.menu-recolhido .sidebar {
+    width: 60px;
+}
+
+.menu-recolhido .sidebar span {
+    display: none;
+}
+
+.menu-recolhido .menu-item,
+.menu-recolhido .sidebar-recolher {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Recolhido: mostra só o hexágono do logo (mesmo recorte da barra estreita do celular) */
+.menu-recolhido .logo-img {
+    margin-left: 0;
+    width: 100%;
+    object-position: 18% center;
+    clip-path: inset(0 10px 0 0);
 }
 
 .menu-item {
@@ -545,7 +695,7 @@ body {
 .form-group input:hover,
 .form-group select:hover,
 .form-group textarea:hover {
-    border-color: #4a4d52;
+    border-color: var(--border-hover);
 }
 
 /* Seta própria no select, no lugar da nativa */
@@ -654,12 +804,12 @@ body {
 
 /* Botão secundário no estilo "button.secondaryBackground" do VS Code */
 .btn-secondary {
-    background-color: #3a3d41;
+    background-color: var(--btn-secundario);
     color: var(--text-strong);
 }
 
 .btn-secondary:hover {
-    background-color: #45494e;
+    background-color: var(--btn-secundario-hover);
 }
 
 .btn-primary:disabled,
@@ -695,6 +845,11 @@ body {
     .menu-item {
         justify-content: center;
         padding: 14px 0;
+    }
+
+    /* No celular o menu já é sempre a barra de ícones: o botão de recolher não faz sentido */
+    .sidebar-recolher {
+        display: none;
     }
 
     .content {
@@ -794,6 +949,7 @@ body {
     .app-container {
         display: block;
         height: auto;
+        background: #ffffff !important;
     }
 
     .main-content {

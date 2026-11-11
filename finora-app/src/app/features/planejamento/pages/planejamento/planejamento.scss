@@ -85,7 +85,7 @@
     display: grid;
     place-items: center;
     border-radius: 10px;
-    color: #6ee6be;
+    color: var(--texto-verde);
     background-color: rgba(79, 214, 168, 0.14);
     border: 1px solid rgba(79, 214, 168, 0.3);
 }
@@ -110,7 +110,7 @@
 }
 
 .meta-percentual {
-    color: #6ee6be;
+    color: var(--texto-verde);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
 }

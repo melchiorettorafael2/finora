@@ -2,6 +2,18 @@
     <h1>{{ titulo() }}</h1>
 
     <div class="user-area">
+        <!-- Tema claro / escuro (vale para todas as telas do app) -->
+        <button type="button" class="tema-switch" role="switch"
+            [class.claro]="temaClaro()"
+            [attr.aria-checked]="temaClaro()"
+            aria-label="Modo claro"
+            [attr.title]="temaClaro() ? 'Mudar para o modo escuro' : 'Mudar para o modo claro'"
+            (click)="preferencias.alternarTema()">
+            <i class="fa-solid fa-moon tema-icone lua"></i>
+            <span class="tema-trilho"><span class="tema-bolinha"></span></span>
+            <i class="fa-solid fa-sun tema-icone sol"></i>
+        </button>
+
         <button
             type="button"
             class="user-trigger"

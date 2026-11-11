@@ -1,42 +1,31 @@
-<div class="app-container">
+<div class="app-container"
+    [class.tema-claro]="preferencias.tema() === 'claro'"
+    [class.menu-recolhido]="preferencias.menuRecolhido()">
     <aside class="sidebar">
         <div class="sidebar-logo">
             <img class="logo-img" src="finora-logo-sidebar@2x.png" srcset="finora-logo-sidebar@2x.png 2x, finora-logo-sidebar@3x.png 3x" alt="Finora" />
         </div>
-       <nav class="sidebar-menu" >
-            <a class="menu-item" routerLink="/paginas/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                <i class="fa-solid fa-chart-line"></i>
-                <span>Dashboard</span>
-            </a>
-            <a class="menu-item" routerLink="/paginas/listagem-cartoes" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                <i class="fa-solid fa-credit-card"></i>
-                <span>Meus Cartões</span>
-            </a>
-            <a class="menu-item" routerLink="/paginas/listagem-categorias" routerLinkActive="active">
-                <i class="fa-solid fa-tags"></i>
-                <span>Categorias</span>
-            </a>
-            <a class="menu-item" routerLink="/paginas/listagem-lancamentos" routerLinkActive="active">
-                <i class="fa-solid fa-money-bill-transfer"></i>
-                <span>Lançamentos</span>
-            </a>
-            <a class="menu-item" routerLink="/paginas/planejamento" routerLinkActive="active">
-                <i class="fa-solid fa-calendar-check"></i>
-                <span>Planejamento</span>
-            </a>
-            <a class="menu-item" routerLink="/paginas/relatorios" routerLinkActive="active">
-                <i class="fa-solid fa-file-lines"></i>
-                <span>Relatórios</span>
-            </a>
-            <a class="menu-item" routerLink="/paginas/configuracoes" routerLinkActive="active">
-                <i class="fa-solid fa-gear"></i>
-                <span>Configurações</span>
-            </a>
+        <nav class="sidebar-menu">
+            @for (item of itensMenu; track item.rota) {
+                <a class="menu-item" [routerLink]="item.rota" routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: item.exato }"
+                    [attr.title]="preferencias.menuRecolhido() ? item.rotulo : null">
+                    <i class="fa-solid" [ngClass]="item.icone"></i>
+                    <span>{{ item.rotulo }}</span>
+                </a>
+            }
         </nav>
+
+        <button type="button" class="sidebar-recolher" (click)="preferencias.alternarMenu()"
+            [attr.title]="preferencias.menuRecolhido() ? 'Expandir menu' : 'Recolher menu'"
+            [attr.aria-label]="preferencias.menuRecolhido() ? 'Expandir menu' : 'Recolher menu'"
+            [attr.aria-expanded]="!preferencias.menuRecolhido()">
+            <i class="fa-solid" [ngClass]="preferencias.menuRecolhido() ? 'fa-angles-right' : 'fa-angles-left'"></i>
+            <span>Recolher menu</span>
+        </button>
     </aside>
-    <div class="main-content">
-       
-        <main class="main-content">
-            <router-outlet></router-outlet>
-        </main>
+
+    <main class="main-content">
+        <router-outlet></router-outlet>
+    </main>
 </div>

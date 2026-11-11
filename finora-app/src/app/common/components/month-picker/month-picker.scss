@@ -32,7 +32,7 @@ button:focus-visible {
 }
 
 .month-picker:hover {
-    border-color: #4a4d52;
+    border-color: var(--border-hover);
 }
 
 .month-picker:focus-within,
