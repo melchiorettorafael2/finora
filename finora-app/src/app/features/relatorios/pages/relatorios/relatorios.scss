@@ -1,24 +1,39 @@
 @use '../../../../shared/styles/botoes';
 @use '../../../../shared/styles/paineis';
 
-/* ===== Cabeçalho da impressão / PDF (escondido na tela) ===== */
+/* ===== Cabeçalho da impressão / PDF (escondido na tela, só existe no papel) ===== */
 .cabecalho-impressao {
     display: none;
     align-items: center;
     gap: 24px;
     margin-bottom: 18px;
     padding: 14px 20px;
-    border: 1px solid var(--border-subtle);
+    border: 1px solid var(--border);
     border-radius: 14px;
-    background:
-        radial-gradient(45% 140% at 100% 50%, rgba(52, 211, 163, 0.10), transparent 70%),
-        linear-gradient(90deg, var(--brand-night) 0%, #101a29 60%, #0f1724 100%);
+    background-color: var(--bg-surface);
 }
 
-.cabecalho-marca img {
-    display: block;
-    height: 34px;
-    width: auto;
+.cabecalho-marca {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    img {
+        display: block;
+        width: 38px;
+        height: 38px;
+    }
+}
+
+.marca-texto {
+    color: #0e1622;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 1px;
+
+    span {
+        color: #12a37a;
+    }
 }
 
 .cabecalho-titulo {
@@ -55,7 +70,77 @@
     }
 }
 
+/* ===== Impressão / PDF: mesmo layout da página, em tema claro ===== */
 @media print {
+    // Paleta clara só para o papel: os cards e painéis usam estas variáveis
+    :host {
+        --bg-surface: #f3f5f8;   // moldura externa dos cards
+        --bg-table: #ffffff;     // painel interno
+        --bg-elevated: #eef1f5;
+        --bg-input: #e4e9ef;     // trilho das barras
+        --border: #d5dce5;
+        --border-subtle: #e2e7ed;
+        --text: #334155;
+        --text-strong: #0f172a;
+        --text-muted: #5f6b7d;
+        --teal: #0d8a7f;
+        --success: #0f9a72;
+        --danger: #d43535;
+        --brand-blue: #2468bd;
+    }
+
+    // Tons mais fortes nos valores dos cards, para ter contraste no branco
+    .metric-card {
+        --metric-text: #2468bd;
+    }
+
+    .metric-income {
+        --metric-text: #0f9a72;
+    }
+
+    .metric-expense {
+        --metric-text: #d43535;
+    }
+
+    // Cores fixas do tema escuro (texto claro, linhas brancas translúcidas)
+    .metric-label {
+        color: var(--text-strong);
+    }
+
+    .metric-rodape {
+        color: var(--text-muted);
+        border-top-color: var(--border-subtle);
+    }
+
+    .chart-header {
+        border-bottom-color: var(--border-subtle);
+    }
+
+    .evolucao-barras {
+        background-image: linear-gradient(to top, rgba(15, 23, 42, 0.07) 1px, transparent 1px);
+    }
+
+    // Degradês com cores opacas: os semitransparentes da tela saem acinzentados e desiguais no PDF
+    .evolucao-barra.income {
+        background: linear-gradient(0deg, #8ddcc2, #0f9a72);
+    }
+
+    .evolucao-barra.expense {
+        background: linear-gradient(0deg, #f3a7a7, #d43535);
+    }
+
+    .bar-fill.expense {
+        background: linear-gradient(90deg, #f3a7a7, #d43535);
+    }
+
+    .legenda-cor.income {
+        background-color: #0f9a72;
+    }
+
+    .legenda-cor.expense {
+        background-color: #d43535;
+    }
+
     .toolbar {
         display: none;
     }
@@ -64,14 +149,12 @@
         display: flex;
     }
 
-    /* A folha não tem margem (o fundo escuro vai até a borda): a quebra forçada
-       mantém o espaço em cima, que uma quebra automática descartaria */
+    // O ranking de categorias abre a segunda página
     .pagina-nova {
         break-before: page;
-        margin-top: 10mm;
     }
 
-    /* Não corta card nem painel no meio entre uma página e outra */
+    // Não corta card nem painel no meio entre uma página e outra
     .metric-card,
     .chart-panel,
     .cabecalho-impressao {

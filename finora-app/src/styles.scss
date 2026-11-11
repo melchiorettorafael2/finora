@@ -770,16 +770,22 @@ body {
 /* ========================= */
 
 /* Usado pelo "Imprimir / PDF" dos Relatórios: imprime só o conteúdo da página,
-   em A4 paisagem, mantendo o tema escuro e as cores dos cards e gráficos */
+   em A4 paisagem e fundo branco (a paleta clara dos cards fica no relatorios.scss) */
 @media print {
     @page {
         size: A4 landscape;
-        margin: 0;
+        margin: 10mm 12mm;
+    }
+
+    /* :root, e não html: o tema define color-scheme: dark no :root, e o Chrome usa isso para pintar a margem da folha */
+    :root {
+        color-scheme: light;
     }
 
     html,
     body {
-        background: var(--bg-app) !important;
+        background: #ffffff !important;
+        /* Mantém as cores das barras, ícones e cards (o navegador tiraria os fundos) */
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
@@ -802,6 +808,6 @@ body {
     }
 
     .content {
-        padding: 10mm 12mm;
+        padding: 0;
     }
 }
