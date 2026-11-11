@@ -6,10 +6,10 @@
             <app-month-picker inputId="mes-planejamento" [formControl]="mes" />
         </div>
         <div class="toolbar-acoes">
-            <a class="btn btn-secondary" routerLink="/paginas/planejamento/metas/nova">
+            <button type="button" class="btn btn-secondary" (click)="modalMeta.set({ id: null })">
                 <i class="fa-solid fa-bullseye"></i>
                 Nova meta
-            </a>
+            </button>
             <a class="btn btn-primary" routerLink="/paginas/planejamento/orcamento">
                 <i class="fa-solid fa-sliders"></i>
                 Definir orçamento
@@ -166,9 +166,9 @@
                                         </div>
                                     </div>
                                     <div class="item-acoes">
-                                        <a class="icon-btn" title="Editar meta" [routerLink]="['/paginas/planejamento/metas', meta.id]">
+                                        <button type="button" class="icon-btn" title="Editar meta" (click)="modalMeta.set({ id: meta.id })">
                                             <i class="fa-solid fa-pen"></i>
-                                        </a>
+                                        </button>
                                         <button type="button" class="icon-btn danger" title="Remover meta"
                                             (click)="pedirExclusao('meta', meta.id, meta.nome)">
                                             <i class="fa-solid fa-trash"></i>
@@ -181,7 +181,7 @@
                         <div class="empty-state">
                             <i class="fa-solid fa-flag-checkered"></i>
                             <span>Nenhuma meta cadastrada</span>
-                            <a class="btn btn-secondary" routerLink="/paginas/planejamento/metas/nova">Nova meta</a>
+                            <button type="button" class="btn btn-secondary" (click)="modalMeta.set({ id: null })">Nova meta</button>
                         </div>
                     }
                 </div>
@@ -190,6 +190,15 @@
         </section>
     }
 </main>
+
+<!-- Cadastro / edição de meta em modal -->
+@if (modalMeta(); as modal) {
+    <app-modal [titulo]="modal.id ? 'Editar meta' : 'Nova meta'"
+        [subtitulo]="modal.id ? 'Atualize o valor guardado para acompanhar o progresso.' : 'Defina quanto quer juntar e até quando.'"
+        icone="fa-bullseye" (fechar)="modalMeta.set(null)">
+        <app-cadastro-meta [idMeta]="modal.id" (salvo)="aoSalvarMeta()" (cancelado)="modalMeta.set(null)" />
+    </app-modal>
+}
 
 @if (itemParaExcluir(); as item) {
     <app-confirm-dialog

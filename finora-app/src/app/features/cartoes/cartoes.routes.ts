@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
-import { CadastroCartao } from './pages/cadastro-cartao/cadastro-cartao';
 import { ListagemCartoes } from './pages/listagem-cartoes/listagem-cartoes';
 
 export const CARTOES_ROUTES: Routes = [
     {
+        // O cadastro virou modal na listagem; o endereço antigo leva para lá
         path: 'cadastro-cartoes',
-        component: CadastroCartao
+        redirectTo: 'listagem-cartoes',
+        pathMatch: 'full'
     },
     {
         path: 'listagem-cartoes',

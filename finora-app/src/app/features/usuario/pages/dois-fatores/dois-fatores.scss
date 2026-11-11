@@ -11,13 +11,18 @@
     align-items: center;
     gap: 8px;
     width: fit-content;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
     font-size: 13px;
     color: var(--text-muted);
     text-decoration: none;
+    cursor: pointer;
     transition: color var(--transition);
 
     &:hover {
-        color: var(--brand-white);
+        color: var(--text-strong);
     }
 }
 

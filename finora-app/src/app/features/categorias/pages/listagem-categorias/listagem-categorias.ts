@@ -1,4 +1,4 @@
-import { Component, OnInit, inject} from '@angular/core';
+import { Component, OnInit, inject, signal} from '@angular/core';
 import { CategoriaService } from '../../services/categoria-service';
 import { Observable } from 'rxjs';
 import { DetalhesCategoria } from '../../models/dados-categoria';
@@ -8,11 +8,12 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
 import { Header } from '../../../../common/components/header/header';
-import { RouterLink } from '@angular/router';
+import { Modal } from '../../../../common/components/modal/modal';
+import { CadastroCategoria } from '../cadastro-categoria/cadastro-categoria';
 
 @Component({
   selector: 'app-listagem-categorias',
-  imports: [CommonModule, Header, RouterLink],
+  imports: [CommonModule, Header, Modal, CadastroCategoria],
   templateUrl: './listagem-categorias.html',
   styleUrl: './listagem-categorias.scss',
 })
@@ -24,6 +25,7 @@ export class ListagemCategorias implements OnInit {
   listagem$!: Observable<PageResult<DetalhesCategoria>>; 
   paginaAtual = 0;
   tamanhoPagina = 10;
+  modalCategoriaAberto = signal(false);
 
   ngOnInit(): void {
     this.listarCategorias();
@@ -54,6 +56,11 @@ export class ListagemCategorias implements OnInit {
     return Array.from({ length: listagem.totalPages }, (_, i) => i);
   }
 
+
+  aoSalvarCategoria(){
+    this.modalCategoriaAberto.set(false);
+    this.listarCategorias();
+  }
 
   mudarStatus(idCategoria: string){
     console.log('Preparando mudança de status da categoria com ID:', idCategoria);

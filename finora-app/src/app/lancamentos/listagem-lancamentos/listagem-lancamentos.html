@@ -2,7 +2,7 @@
 
 <main class="content">
     <div class="card-full">
-        <button class="btn btn-primary" type="button" (click)="router.navigate(['/paginas/cadastro-lancamentos'])">
+        <button class="btn btn-primary" type="button" (click)="modalLancamentoAberto.set(true)">
             <i class="fa-solid fa-plus"></i>
             Novo Lançamento
         </button>
@@ -113,3 +113,11 @@
         </div>
     </div>
 </main>
+
+<!-- Cadastro de lançamento em modal -->
+@if (modalLancamentoAberto()) {
+    <app-modal titulo="Novo lançamento" subtitulo="Preencha os dados para cadastrar um novo lançamento."
+        icone="fa-money-bill-transfer" (fechar)="modalLancamentoAberto.set(false)">
+        <app-cadastro-lancamento (salvo)="aoSalvarLancamento()" (cancelado)="modalLancamentoAberto.set(false)" />
+    </app-modal>
+}

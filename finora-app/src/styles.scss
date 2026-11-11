@@ -198,7 +198,7 @@ body {
 /* ========================= */
 
 /* Menu sempre minimizado (só ícones, 60px) e fixo à esquerda. Ao passar o mouse
-   (ou navegar com Tab pelo teclado), expande para 240px POR CIMA do conteúdo, sem empurrar a página.
+   (ou navegar com Tab pelo teclado), expande para 240px e a página se ajusta junto, sem ser coberta.
    Degradê partindo do --brand-night (fundo do logo), com brilhos sutis no azul e no verde. */
 .sidebar {
     position: fixed;
@@ -227,7 +227,13 @@ body {
     .sidebar:hover,
     .sidebar:has(:focus-visible) {
         width: 240px;
-        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.45);
+    }
+
+    /* A página acompanha o menu: a margem cresce junto (mesma duração da largura),
+       então o menu aberto empurra o conteúdo em vez de cobri-lo */
+    .sidebar:hover + .main-content,
+    .sidebar:has(:focus-visible) + .main-content {
+        margin-left: 240px;
     }
 
     .sidebar:hover .menu-item span,
@@ -264,6 +270,10 @@ body {
        87px da imagem = 50px da barra; o resto (240 - 87 = 153px) fica escondido */
     clip-path: inset(0 153px 0 0);
     transition: clip-path 0.2s ease;
+    /* A imagem termina em 203px da barra: esfuma a borda direita para não aparecer
+       a emenda entre o fundo do PNG e o fundo da barra aberta */
+    -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 82%, transparent 100%);
 }
 
 .sidebar-menu {
@@ -301,6 +311,15 @@ body {
 
 .menu-item i {
     transition: color var(--transition);
+}
+
+/* Configurações é um <button> (abre modal): mesmo visual dos links do menu */
+button.menu-item {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font: inherit;
+    text-align: left;
 }
 
 .menu-item:hover {
@@ -362,8 +381,9 @@ body {
     flex-direction: column;
     min-width: 0;
     overflow-y: auto;
-    /* Espaço da barra lateral fixa (fechada); aberta, ela passa por cima */
+    /* Espaço da barra lateral fixa; cresce junto quando ela abre (ver o hover da .sidebar) */
     margin-left: 60px;
+    transition: margin-left 0.2s ease;
 }
 
 /* Continua o --brand-night do logo à esquerda e termina com um brilho

@@ -1,35 +1,34 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CartaoService } from '../../services/cartao-service';
 import { DadosCartaoForm, DetalhesCartao } from '../../models/dados-cartao';
 import { ValidationErroResponse } from '../../../../shared/models/validation-error-models';
-import {CommonModule} from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Router } from '@angular/router';
-import { Header } from '../../../../common/components/header/header';
 
 interface CadastroCartaoForm{
   nome: FormControl<string>;
   bandeira: FormControl<string>;
 }
 
+/** Formulário de cartão, aberto em modal pela listagem (cadastro e edição). */
 @Component({
   selector: 'app-cadastro-cartao',
-  imports: [ReactiveFormsModule, Header],
+  imports: [ReactiveFormsModule],
   templateUrl: './cadastro-cartao.html',
   styleUrl: './cadastro-cartao.scss',
 
 })
-export class CadastroCartao {
+export class CadastroCartao implements OnInit {
+
+  /** Id do cartão a editar; vazio para um cartão novo */
+  idCartao = input<string | null>(null);
+  salvo = output<void>();
+  cancelado = output<void>();
 
   form!: FormGroup<CadastroCartaoForm>;
-  rotaAtiva = inject(ActivatedRoute);
-  router = inject(Router);
   service = inject(CartaoService);
   toast = inject(ToastrService);
-  idCartaoParaEdicao?: string | null;
 
 
   ngOnInit(): void {
@@ -42,13 +41,12 @@ export class CadastroCartao {
   }
 
   carregarDadosParaEdicao() {
-    this.idCartaoParaEdicao = this.rotaAtiva.snapshot.queryParamMap.get('id') || undefined;
-
-    if(!this.idCartaoParaEdicao){
+    const id = this.idCartao();
+    if(!id){
       return;
     }
 
-    this.service.obterPorId(this.idCartaoParaEdicao).subscribe({
+    this.service.obterPorId(id).subscribe({
       next: (cartao) => {
         this.form.patchValue({
           nome: cartao.nome,
@@ -59,7 +57,7 @@ export class CadastroCartao {
         this.toast.error('Erro ao carregar dados do cartão para edição!', 'Erro');
         console.error(error);
       }
-    }); 
+    });
   }
 
   isFormInvalid() : boolean {
@@ -76,25 +74,21 @@ export class CadastroCartao {
       return;
     }
 
-    console.log(this.form.value) 
     const dadosCartao : DadosCartaoForm = this.form.value as DadosCartaoForm;
 
-    // Guardado antes da requisição: o id de edição é zerado no sucesso
-    const editando = !!this.idCartaoParaEdicao;
-    const requisicao: Observable<DetalhesCartao | void> = this.idCartaoParaEdicao
-      ? this.service.atualizar(this.idCartaoParaEdicao, dadosCartao)
+    const id = this.idCartao();
+    const requisicao: Observable<DetalhesCartao | void> = id
+      ? this.service.atualizar(id, dadosCartao)
       : this.service.criar(dadosCartao);
 
     requisicao
       .subscribe({
-        next: (response: DetalhesCartao | void) => {
-          console.log('Cartão criado com sucesso:', response);
-          this.toast.success(editando ? 'Cartão atualizado com sucesso!' : 'Cartão cadastrado com sucesso!', 'Sucesso');
-          this.form.reset();
-          this.idCartaoParaEdicao = null;
+        next: () => {
+          this.toast.success(id ? 'Cartão atualizado com sucesso!' : 'Cartão cadastrado com sucesso!', 'Sucesso');
+          this.salvo.emit();
       },
         error: (error) => this.onApiError(error)
-    
+
       });
     }
 
@@ -120,5 +114,5 @@ export class CadastroCartao {
       this.toast.error('Erro ao Processar a Requisição!', 'Erro');
       console.error(error.error)
     }
-  } 
+  }
 }

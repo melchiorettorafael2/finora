@@ -7,6 +7,8 @@ import { BehaviorSubject, EMPTY, Observable, catchError, combineLatest, map, sta
 import { Header } from '../../../../common/components/header/header';
 import { MonthPicker } from '../../../../common/components/month-picker/month-picker';
 import { ConfirmDialog } from '../../../../common/components/confirm-dialog/confirm-dialog';
+import { Modal } from '../../../../common/components/modal/modal';
+import { CadastroMeta } from '../cadastro-meta/cadastro-meta';
 import { PlanejamentoService } from '../../services/planejamento-service';
 import { MetaEconomia, OrcamentoCategoria, Planejamento } from '../../models/dados-planejamento';
 
@@ -46,7 +48,7 @@ const LIMITE_ALERTA = 85;
 
 @Component({
   selector: 'app-planejamento',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, Header, MonthPicker, ConfirmDialog],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, Header, MonthPicker, ConfirmDialog, Modal, CadastroMeta],
   templateUrl: './planejamento.html',
   styleUrl: './planejamento.scss',
 })
@@ -75,6 +77,13 @@ export class PlanejamentoPage {
   );
 
   itemParaExcluir = signal<ItemExclusao | null>(null);
+  // Modal de meta: null = fechado; id null = meta nova
+  modalMeta = signal<{ id: string | null } | null>(null);
+
+  aoSalvarMeta() {
+    this.modalMeta.set(null);
+    this.recarregar$.next();
+  }
 
   rotuloStatus: Record<StatusOrcamento, string> = {
     ok: 'Dentro do limite',

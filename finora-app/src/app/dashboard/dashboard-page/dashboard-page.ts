@@ -1,14 +1,16 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { EMPTY, Observable, catchError, map, startWith, switchMap } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, catchError, combineLatest, map, startWith, switchMap } from 'rxjs';
 import { DashboardService } from '../dashboard-service';
 import { Dashboard, DespesaCategoriaResumo } from '../dados-dashboard';
 import { ResumoMensal } from '../../features/relatorios/models/dados-relatorio';
 import { Header } from '../../common/components/header/header';
 import { MonthPicker } from '../../common/components/month-picker/month-picker';
+import { Modal } from '../../common/components/modal/modal';
+import { CadastroLancamento } from '../../lancamentos/cadastro-lancamento/cadastro-lancamento';
 
 interface MesEvolucao extends ResumoMensal {
   alturaReceitas: number; // % da maior barra do gráfico
@@ -26,7 +28,7 @@ interface DashboardView extends Dashboard {
 
 @Component({
   selector: 'app-dashboard-page',
-  imports: [Header, CommonModule, ReactiveFormsModule, RouterLink, MonthPicker],
+  imports: [Header, CommonModule, ReactiveFormsModule, RouterLink, MonthPicker, Modal, CadastroLancamento],
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.scss',
 })
@@ -36,11 +38,15 @@ export class DashboardPage {
   private toast = inject(ToastrService);
 
   mes = new FormControl(this.mesAtual(), { nonNullable: true });
+  modalLancamentoAberto = signal(false);
+  private recarregar$ = new BehaviorSubject<void>(undefined);
 
-  dashboard$: Observable<DashboardView> = this.mes.valueChanges.pipe(
-    startWith(this.mes.value),
+  dashboard$: Observable<DashboardView> = combineLatest([
+    this.mes.valueChanges.pipe(startWith(this.mes.value)),
+    this.recarregar$,
+  ]).pipe(
     // "Todos os meses" não se aplica ao resumo mensal: volta para o mês atual
-    map(mes => mes || this.mesAtual()),
+    map(([mes]) => mes || this.mesAtual()),
     switchMap(mes => this.service.obterDashboard(mes).pipe(
       catchError(() => {
         this.toast.error('Erro ao carregar o dashboard.', 'Erro');
@@ -49,6 +55,12 @@ export class DashboardPage {
     )),
     map(dashboard => this.montarView(dashboard))
   );
+
+  // Depois de cadastrar pelo modal, recarrega o resumo para o lançamento novo aparecer
+  aoSalvarLancamento(){
+    this.modalLancamentoAberto.set(false);
+    this.recarregar$.next();
+  }
 
   percentual(valor: number, total: number){
 

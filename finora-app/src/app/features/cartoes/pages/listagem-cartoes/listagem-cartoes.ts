@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, inject} from '@angular/core';
+import { Component, HostListener, OnInit, inject, signal} from '@angular/core';
 import { CartaoService } from '../../services/cartao-service';
 import { Observable } from 'rxjs';
 import { DetalhesCartao } from '../../models/dados-cartao';
@@ -9,10 +9,12 @@ import { ToastrService } from 'ngx-toastr';
 import { ActivatedRoute } from '@angular/router';
 import { Header } from '../../../../common/components/header/header';
 import { ConfirmDialog } from '../../../../common/components/confirm-dialog/confirm-dialog';
+import { Modal } from '../../../../common/components/modal/modal';
+import { CadastroCartao } from '../cadastro-cartao/cadastro-cartao';
 
 @Component({
   selector: 'app-listagem-cartoes',
-  imports: [CommonModule, Header, ConfirmDialog],
+  imports: [CommonModule, Header, ConfirmDialog, Modal, CadastroCartao],
   templateUrl: './listagem-cartoes.html',
   styleUrl: './listagem-cartoes.scss',
 })
@@ -27,6 +29,8 @@ export class ListagemCartoes implements OnInit {
   menuAberto: string | null = null;
   menuPosicao = { top: 0, left: 0 };
   cartaoParaExcluir: DetalhesCartao | null = null;
+  // Modal de cadastro/edição: null = fechado; id null = cartão novo
+  modalCartao = signal<{ id: string | null } | null>(null);
 
   ngOnInit(): void {
     this.listarCartoes();
@@ -58,12 +62,12 @@ export class ListagemCartoes implements OnInit {
   }
 
   prepararEdicao(idCartao: string){
-    console.log('Preparando edição do cartão com ID:', idCartao); 
-    this.router.navigate(['/paginas/cadastro-cartoes'],{ 
-      queryParams:{
-        id: idCartao
-      }
-  });
+    this.modalCartao.set({ id: idCartao });
+  }
+
+  aoSalvarCartao(){
+    this.modalCartao.set(null);
+    this.listarCartoes();
   }
 
   alternarMenu(event: MouseEvent, idCartao: string){

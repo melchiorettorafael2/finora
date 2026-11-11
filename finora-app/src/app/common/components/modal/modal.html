@@ -1,0 +1,20 @@
+<div class="modal-overlay">
+    <div class="modal" [class.media]="largura() === 'media'" [class.grande]="largura() === 'grande'" role="dialog" aria-modal="true" [attr.aria-label]="titulo()">
+        <header class="modal-header">
+            <span class="modal-icone"><i class="fa-solid" [class]="icone()"></i></span>
+            <div class="modal-titulos">
+                <h2>{{ titulo() }}</h2>
+                @if (subtitulo()) {
+                    <p>{{ subtitulo() }}</p>
+                }
+            </div>
+            <button type="button" class="modal-fechar" title="Fechar" aria-label="Fechar" (click)="fechar.emit()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </header>
+
+        <div class="modal-corpo">
+            <ng-content />
+        </div>
+    </div>
+</div>

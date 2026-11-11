@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { PlanejamentoPage } from './pages/planejamento/planejamento';
 import { CadastroOrcamento } from './pages/cadastro-orcamento/cadastro-orcamento';
-import { CadastroMeta } from './pages/cadastro-meta/cadastro-meta';
 
 export const PLANEJAMENTO_ROUTES: Routes = [
     {
@@ -14,11 +13,14 @@ export const PLANEJAMENTO_ROUTES: Routes = [
         component: CadastroOrcamento
     },
     {
+        // Nova meta e edição de meta viraram modal no Planejamento; os endereços antigos levam para lá
         path: 'planejamento/metas/nova',
-        component: CadastroMeta
+        redirectTo: 'planejamento',
+        pathMatch: 'full'
     },
     {
         path: 'planejamento/metas/:id',
-        component: CadastroMeta
+        redirectTo: 'planejamento',
+        pathMatch: 'full'
     }
 ];

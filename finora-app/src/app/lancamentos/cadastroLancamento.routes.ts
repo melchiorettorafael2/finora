@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
-import { CadastroLancamento } from './cadastro-lancamento/cadastro-lancamento';
 
 export const CADASTROLANCAMENTO_ROUTES: Routes = [
     {
+        // O cadastro virou modal (listagem e dashboard); o endereço antigo leva para a listagem
         path: 'cadastro-lancamentos',
-        component: CadastroLancamento
+        redirectTo: 'listagem-lancamentos',
+        pathMatch: 'full'
     }
 ];

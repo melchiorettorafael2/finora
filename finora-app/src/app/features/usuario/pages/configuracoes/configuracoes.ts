@@ -21,7 +21,7 @@ import {
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Header } from '../../../../common/components/header/header';
+import { ModaisService } from '../../../../common/services/modais-service';
 import { ValidationErroResponse } from '../../../../shared/models/validation-error-models';
 import { UsuarioService } from '../../services/usuario-service';
 import { AlterarSenhaForm, DadosUsuarioForm } from '../../models/dados-usuario';
@@ -48,11 +48,14 @@ const senhasIguais: ValidatorFn = (grupo: AbstractControl): ValidationErrors | n
 
 @Component({
   selector: 'app-configuracoes',
-  imports: [ReactiveFormsModule, RouterLink, Header],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './configuracoes.html',
   styleUrl: './configuracoes.scss',
 })
 export class Configuracoes implements OnInit, OnDestroy {
+  /** Configurações abre em modal (ver ModaisService e o layout Template) */
+  modais = inject(ModaisService);
+
   private service = inject(UsuarioService);
   private toast = inject(ToastrService);
   private injector = inject(Injector);

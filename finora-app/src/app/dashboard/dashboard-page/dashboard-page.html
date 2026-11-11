@@ -6,10 +6,10 @@
             <app-month-picker inputId="mes-dashboard" [formControl]="mes" />
         </div>
         <div class="toolbar-acoes">
-            <a class="btn btn-primary" routerLink="/paginas/cadastro-lancamentos">
+            <button type="button" class="btn btn-primary" (click)="modalLancamentoAberto.set(true)">
                 <i class="fa-solid fa-plus"></i>
                 Novo lançamento
-            </a>
+            </button>
         </div>
     </div>
 
@@ -231,7 +231,7 @@
                     <div class="empty-state">
                         <i class="fa-solid fa-receipt"></i>
                         <span>Nenhum lançamento neste mês</span>
-                        <a class="btn btn-secondary" routerLink="/paginas/cadastro-lancamentos">Novo lançamento</a>
+                        <button type="button" class="btn btn-secondary" (click)="modalLancamentoAberto.set(true)">Novo lançamento</button>
                     </div>
                 }
             </div>
@@ -239,3 +239,11 @@
     </section>
     }
 </main>
+
+<!-- Cadastro de lançamento em modal -->
+@if (modalLancamentoAberto()) {
+    <app-modal titulo="Novo lançamento" subtitulo="Preencha os dados para cadastrar um novo lançamento."
+        icone="fa-money-bill-transfer" (fechar)="modalLancamentoAberto.set(false)">
+        <app-cadastro-lancamento (salvo)="aoSalvarLancamento()" (cancelado)="modalLancamentoAberto.set(false)" />
+    </app-modal>
+}

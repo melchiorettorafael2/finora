@@ -1,34 +1,33 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CategoriaService } from '../../services/categoria-service';
 import { DadosCategoriaForm, DetalhesCategoria } from '../../models/dados-categoria';
 import { ValidationErroResponse } from '../../../../shared/models/validation-error-models';
-import {CommonModule} from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
-import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Router } from '@angular/router';
-import { Header } from '../../../../common/components/header/header';
 
 interface CadastroCategoriaForm{
   nome: FormControl<string>;
 }
 
+/** Formulário de categoria, aberto em modal pela listagem. */
 @Component({
   selector: 'app-cadastro-categoria',
-  imports: [ReactiveFormsModule, RouterLink, Header],
+  imports: [ReactiveFormsModule],
   templateUrl: './cadastro-categoria.html',
   styleUrl: './cadastro-categoria.scss',
 
 })
-export class CadastroCategoria {
+export class CadastroCategoria implements OnInit {
+
+  /** Id da categoria a editar; vazio para uma categoria nova */
+  idCategoria = input<string | null>(null);
+  salvo = output<void>();
+  cancelado = output<void>();
 
   form!: FormGroup<CadastroCategoriaForm>;
-  rotaAtiva = inject(ActivatedRoute);
-  router = inject(Router);
   service = inject(CategoriaService);
   toast = inject(ToastrService);
-  idCategoriaParaEdicao?: string | null;
 
 
   ngOnInit(): void {
@@ -40,13 +39,12 @@ export class CadastroCategoria {
   }
 
   carregarDadosParaEdicao() {
-    this.idCategoriaParaEdicao = this.rotaAtiva.snapshot.queryParamMap.get('id') || undefined;
-
-    if(!this.idCategoriaParaEdicao){
+    const id = this.idCategoria();
+    if(!id){
       return;
     }
 
-    this.service.obterPorId(this.idCategoriaParaEdicao).subscribe({
+    this.service.obterPorId(id).subscribe({
       next: (categoria) => {
         this.form.patchValue({
           nome: categoria.nome
@@ -56,7 +54,7 @@ export class CadastroCategoria {
         this.toast.error('Erro ao carregar dados da categoria para edição!', 'Erro');
         console.error(error);
       }
-    }); 
+    });
   }
 
   isFormInvalid() : boolean {
@@ -73,25 +71,21 @@ export class CadastroCategoria {
       return;
     }
 
-    console.log(this.form.value) 
     const dadosCategoria : DadosCategoriaForm = this.form.value as DadosCategoriaForm;
 
-    // Guardado antes da requisição: o id de edição é zerado no sucesso
-    const editando = !!this.idCategoriaParaEdicao;
-    const requisicao: Observable<DetalhesCategoria | void> = this.idCategoriaParaEdicao
-      ? this.service.atualizar(this.idCategoriaParaEdicao, dadosCategoria)
+    const id = this.idCategoria();
+    const requisicao: Observable<DetalhesCategoria | void> = id
+      ? this.service.atualizar(id, dadosCategoria)
       : this.service.criar(dadosCategoria);
 
     requisicao
       .subscribe({
-        next: (response: DetalhesCategoria | void) => {
-          console.log('Categoria criada com sucesso:', response);
-          this.toast.success(editando ? 'Categoria atualizada com sucesso!' : 'Categoria cadastrada com sucesso!', 'Sucesso');
-          this.form.reset();
-          this.idCategoriaParaEdicao = null;
+        next: () => {
+          this.toast.success(id ? 'Categoria atualizada com sucesso!' : 'Categoria cadastrada com sucesso!', 'Sucesso');
+          this.salvo.emit();
       },
         error: (error) => this.onApiError(error)
-    
+
       });
     }
 
@@ -117,5 +111,5 @@ export class CadastroCategoria {
       this.toast.error('Erro ao Processar a Requisição!', 'Erro');
       console.error(error.error)
     }
-  } 
+  }
 }

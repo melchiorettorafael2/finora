@@ -1,29 +1,30 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, input, output, signal } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { NgxMaskDirective } from 'ngx-mask';
-import { Header } from '../../../../common/components/header/header';
 import { PlanejamentoService } from '../../services/planejamento-service';
 import { ICONES_META, MetaEconomiaForm } from '../../models/dados-planejamento';
 import { formularioInvalido, tratarErroApi, valorParaApi, valorParaMascara } from '../../../../shared/utils/formulario';
 
+/** Formulário de meta de economia, aberto em modal pelo Planejamento (nova e edição). */
 @Component({
   selector: 'app-cadastro-meta',
-  imports: [Header, ReactiveFormsModule, NgxMaskDirective, RouterLink, NgClass],
+  imports: [ReactiveFormsModule, NgxMaskDirective, NgClass],
   templateUrl: './cadastro-meta.html',
   styleUrl: './cadastro-meta.scss',
 })
 export class CadastroMeta implements OnInit {
 
+  /** Id da meta a editar; vazio para uma meta nova */
+  idMeta = input<string | null>(null);
+  salvo = output<void>();
+  cancelado = output<void>();
+
   private service = inject(PlanejamentoService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private toast = inject(ToastrService);
 
   icones = ICONES_META;
-  idMeta: string | null = null;
   salvando = signal(false);
 
   form = new FormGroup({
@@ -35,12 +36,12 @@ export class CadastroMeta implements OnInit {
   });
 
   ngOnInit(): void {
-    this.idMeta = this.route.snapshot.paramMap.get('id');
-    if (!this.idMeta) {
+    const id = this.idMeta();
+    if (!id) {
       return;
     }
 
-    this.service.buscarMeta(this.idMeta).subscribe({
+    this.service.buscarMeta(id).subscribe({
       next: meta => this.form.patchValue({
         nome: meta.nome,
         icone: meta.icone,
@@ -50,7 +51,7 @@ export class CadastroMeta implements OnInit {
       }),
       error: () => {
         this.toast.error('Meta não encontrada.', 'Erro');
-        this.router.navigate(['/paginas/planejamento']);
+        this.cancelado.emit();
       },
     });
   }
@@ -66,15 +67,16 @@ export class CadastroMeta implements OnInit {
       objetivo: valorParaApi(valores.objetivo),
       acumulado: valorParaApi(valores.acumulado) || '0',
     };
-    const requisicao = this.idMeta
-      ? this.service.atualizarMeta(this.idMeta, dados)
+    const id = this.idMeta();
+    const requisicao = id
+      ? this.service.atualizarMeta(id, dados)
       : this.service.criarMeta(dados);
 
     this.salvando.set(true);
     requisicao.subscribe({
       next: () => {
-        this.toast.success(this.idMeta ? 'Meta atualizada com sucesso!' : 'Meta cadastrada com sucesso!', 'Sucesso');
-        this.router.navigate(['/paginas/planejamento']);
+        this.toast.success(id ? 'Meta atualizada com sucesso!' : 'Meta cadastrada com sucesso!', 'Sucesso');
+        this.salvo.emit();
       },
       error: erro => {
         this.salvando.set(false);

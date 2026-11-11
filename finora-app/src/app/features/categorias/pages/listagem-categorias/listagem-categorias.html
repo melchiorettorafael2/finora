@@ -2,7 +2,7 @@
 
 <main class="content">
     <div class="card-full">
-        <button class="btn btn-primary" (click)="router.navigate(['/paginas/cadastro-categorias'])">
+        <button class="btn btn-primary" (click)="modalCategoriaAberto.set(true)">
             <i class="fa-solid fa-plus"></i> 
             Nova Categoria
         </button>
@@ -69,3 +69,11 @@
         </div>
     </div>
 </main>
+
+<!-- Cadastro de categoria em modal -->
+@if (modalCategoriaAberto()) {
+    <app-modal titulo="Nova categoria" subtitulo="Preencha os dados para cadastrar uma nova categoria."
+        icone="fa-tags" (fechar)="modalCategoriaAberto.set(false)">
+        <app-cadastro-categoria (salvo)="aoSalvarCategoria()" (cancelado)="modalCategoriaAberto.set(false)" />
+    </app-modal>
+}

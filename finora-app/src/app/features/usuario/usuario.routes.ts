@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
-import { Configuracoes } from './pages/configuracoes/configuracoes';
 
 export const USUARIO_ROUTES: Routes = [
     {
+        // Configurações virou modal (menu lateral e menu do usuário); o endereço antigo leva ao dashboard
         path: 'configuracoes',
-        component: Configuracoes
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
     },
     {
         // Carregada sob demanda: assim a lib de QR code fica fora do bundle inicial

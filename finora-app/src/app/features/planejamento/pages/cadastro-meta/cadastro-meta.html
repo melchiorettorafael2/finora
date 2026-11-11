@@ -1,96 +1,78 @@
-<app-header titulo="Planejamento"></app-header>
+<form [formGroup]="form" (ngSubmit)="salvar()" class="form form-card form-modal">
+    <div class="form-group">
+        <label for="nome">Nome da meta <span class="required">*</span></label>
+        <div class="input-icon">
+            <i class="fa-solid fa-flag-checkered"></i>
+            <input id="nome" formControlName="nome" type="text" placeholder="Ex: Viagem de férias" />
+        </div>
+        @if (form.controls.nome.touched && form.controls.nome.hasError('required')) {
+            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> O nome é obrigatório.</span>
+        }
+        @if (form.controls.nome.touched && form.controls.nome.hasError('apiError')) {
+            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> {{ form.controls.nome.errors?.['apiError'] }}</span>
+        }
+    </div>
 
-<main class="content">
-    <div class="card">
-        <div class="form-header">
-            <div class="form-header-icon">
-                <i class="fa-solid fa-bullseye"></i>
+    <div class="form-group">
+        <label>Ícone</label>
+        <div class="icones" role="radiogroup" aria-label="Ícone da meta">
+            @for (icone of icones; track icone.valor) {
+                <button type="button" class="icone-opcao" role="radio"
+                    [class.selecionado]="form.controls.icone.value === icone.valor"
+                    [attr.aria-checked]="form.controls.icone.value === icone.valor"
+                    [attr.title]="icone.rotulo" [attr.aria-label]="icone.rotulo"
+                    (click)="form.controls.icone.setValue(icone.valor)">
+                    <i class="fa-solid" [ngClass]="icone.valor"></i>
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="form-linha">
+        <div class="form-group">
+            <label for="objetivo">Valor do objetivo <span class="required">*</span></label>
+            <div class="input-icon">
+                <i class="fa-solid fa-sack-dollar"></i>
+                <input id="objetivo" formControlName="objetivo" type="text" mask="separator.2"
+                    thousandSeparator="." decimalMarker="," placeholder="R$" />
             </div>
-            <div>
-                <h2>{{ idMeta ? 'Editar meta' : 'Nova meta' }}</h2>
-                <p class="form-subtitle">
-                    {{ idMeta ? 'Atualize o valor guardado para acompanhar o progresso.' : 'Defina quanto quer juntar e até quando.' }}
-                </p>
-            </div>
+            @if (form.controls.objetivo.touched && form.controls.objetivo.hasError('required')) {
+                <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> O objetivo é obrigatório.</span>
+            }
+            @if (form.controls.objetivo.touched && form.controls.objetivo.hasError('apiError')) {
+                <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> {{ form.controls.objetivo.errors?.['apiError'] }}</span>
+            }
         </div>
 
-        <form [formGroup]="form" (ngSubmit)="salvar()" class="form form-card">
-            <div class="form-group">
-                <label for="nome">Nome da meta <span class="required">*</span></label>
-                <div class="input-icon">
-                    <i class="fa-solid fa-flag-checkered"></i>
-                    <input id="nome" formControlName="nome" type="text" placeholder="Ex: Viagem de férias" />
-                </div>
-                @if (form.controls.nome.touched && form.controls.nome.hasError('required')) {
-                    <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> O nome é obrigatório.</span>
-                }
-                @if (form.controls.nome.touched && form.controls.nome.hasError('apiError')) {
-                    <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> {{ form.controls.nome.errors?.['apiError'] }}</span>
-                }
+        <div class="form-group">
+            <label for="acumulado">Já guardado</label>
+            <div class="input-icon">
+                <i class="fa-solid fa-piggy-bank"></i>
+                <input id="acumulado" formControlName="acumulado" type="text" mask="separator.2"
+                    thousandSeparator="." decimalMarker="," placeholder="R$" />
             </div>
-
-            <div class="form-group">
-                <label>Ícone</label>
-                <div class="icones" role="radiogroup" aria-label="Ícone da meta">
-                    @for (icone of icones; track icone.valor) {
-                        <button type="button" class="icone-opcao" role="radio"
-                            [class.selecionado]="form.controls.icone.value === icone.valor"
-                            [attr.aria-checked]="form.controls.icone.value === icone.valor"
-                            [attr.title]="icone.rotulo" [attr.aria-label]="icone.rotulo"
-                            (click)="form.controls.icone.setValue(icone.valor)">
-                            <i class="fa-solid" [ngClass]="icone.valor"></i>
-                        </button>
-                    }
-                </div>
-            </div>
-
-            <div class="form-linha">
-                <div class="form-group">
-                    <label for="objetivo">Valor do objetivo <span class="required">*</span></label>
-                    <div class="input-icon">
-                        <i class="fa-solid fa-sack-dollar"></i>
-                        <input id="objetivo" formControlName="objetivo" type="text" mask="separator.2"
-                            thousandSeparator="." decimalMarker="," placeholder="R$" />
-                    </div>
-                    @if (form.controls.objetivo.touched && form.controls.objetivo.hasError('required')) {
-                        <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> O objetivo é obrigatório.</span>
-                    }
-                    @if (form.controls.objetivo.touched && form.controls.objetivo.hasError('apiError')) {
-                        <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> {{ form.controls.objetivo.errors?.['apiError'] }}</span>
-                    }
-                </div>
-
-                <div class="form-group">
-                    <label for="acumulado">Já guardado</label>
-                    <div class="input-icon">
-                        <i class="fa-solid fa-piggy-bank"></i>
-                        <input id="acumulado" formControlName="acumulado" type="text" mask="separator.2"
-                            thousandSeparator="." decimalMarker="," placeholder="R$" />
-                    </div>
-                    @if (form.controls.acumulado.touched && form.controls.acumulado.hasError('apiError')) {
-                        <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> {{ form.controls.acumulado.errors?.['apiError'] }}</span>
-                    }
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="prazo">Prazo <span class="required">*</span></label>
-                <div class="input-icon">
-                    <i class="fa-solid fa-calendar-days"></i>
-                    <input id="prazo" formControlName="prazo" type="date" />
-                </div>
-                @if (form.controls.prazo.touched && form.controls.prazo.hasError('required')) {
-                    <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> O prazo é obrigatório.</span>
-                }
-            </div>
-
-            <div class="form-actions">
-                <button type="button" class="btn btn-secondary" routerLink="/paginas/planejamento">Cancelar</button>
-                <button type="submit" class="btn btn-primary" [disabled]="salvando()">
-                    <i class="fa-solid fa-check"></i>
-                    {{ idMeta ? 'Atualizar' : 'Salvar' }}
-                </button>
-            </div>
-        </form>
+            @if (form.controls.acumulado.touched && form.controls.acumulado.hasError('apiError')) {
+                <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> {{ form.controls.acumulado.errors?.['apiError'] }}</span>
+            }
+        </div>
     </div>
-</main>
+
+    <div class="form-group">
+        <label for="prazo">Prazo <span class="required">*</span></label>
+        <div class="input-icon">
+            <i class="fa-solid fa-calendar-days"></i>
+            <input id="prazo" formControlName="prazo" type="date" />
+        </div>
+        @if (form.controls.prazo.touched && form.controls.prazo.hasError('required')) {
+            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> O prazo é obrigatório.</span>
+        }
+    </div>
+
+    <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="cancelado.emit()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="salvando()">
+            <i class="fa-solid fa-check"></i>
+            {{ idMeta() ? 'Atualizar' : 'Salvar' }}
+        </button>
+    </div>
+</form>

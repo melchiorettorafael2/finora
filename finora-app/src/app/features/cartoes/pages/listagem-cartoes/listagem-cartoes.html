@@ -2,7 +2,7 @@
 
 <main class="content">
     <div class="card-full">
-        <button class="btn btn-primary" (click)="router.navigate(['/paginas/cadastro-cartoes'])">
+        <button class="btn btn-primary" (click)="modalCartao.set({ id: null })">
             <i class="fa-solid fa-plus"></i> 
             Novo Cartão
         </button>
@@ -90,6 +90,15 @@
         </div>
     </div>
 </main>
+
+<!-- Cadastro / edição de cartão em modal -->
+@if (modalCartao(); as modal) {
+    <app-modal [titulo]="modal.id ? 'Editar cartão' : 'Novo cartão'"
+        [subtitulo]="modal.id ? 'Altere os dados do cartão e salve.' : 'Preencha os dados para cadastrar um novo cartão.'"
+        icone="fa-credit-card" (fechar)="modalCartao.set(null)">
+        <app-cadastro-cartao [idCartao]="modal.id" (salvo)="aoSalvarCartao()" (cancelado)="modalCartao.set(null)" />
+    </app-modal>
+}
 
 @if (cartaoParaExcluir) {
     <app-confirm-dialog

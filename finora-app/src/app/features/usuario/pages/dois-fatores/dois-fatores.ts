@@ -1,10 +1,11 @@
 import { Component, ElementRef, Injector, OnDestroy, OnInit, afterNextRender, computed, inject, signal, viewChild } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { toDataURL } from 'qrcode';
 import { Header } from '../../../../common/components/header/header';
+import { ModaisService } from '../../../../common/services/modais-service';
 import { ConfiguracaoDoisFatores } from '../../models/dados-usuario';
 import { DoisFatoresService } from '../../services/dois-fatores-service';
 
@@ -12,7 +13,7 @@ type Estado = 'carregando' | 'inativo' | 'configurando' | 'ativo' | 'erro';
 
 @Component({
   selector: 'app-dois-fatores',
-  imports: [ReactiveFormsModule, RouterLink, NgTemplateOutlet, Header],
+  imports: [ReactiveFormsModule, NgTemplateOutlet, Header],
   templateUrl: './dois-fatores.html',
   styleUrl: './dois-fatores.scss',
 })
@@ -20,6 +21,8 @@ export class DoisFatores implements OnInit, OnDestroy {
   private service = inject(DoisFatoresService);
   private toast = inject(ToastrService);
   private injector = inject(Injector);
+  private router = inject(Router);
+  private modais = inject(ModaisService);
 
   estado = signal<Estado>('carregando');
   processando = signal(false);
@@ -179,6 +182,11 @@ export class DoisFatores implements OnInit, OnDestroy {
       this.codigoControl.setValue(somenteDigitos);
     }
     this.erroCodigo.set(null);
+  }
+
+  // Configurações é um modal: volta para o Dashboard já com ele aberto
+  voltarParaConfiguracoes(): void {
+    this.router.navigate(['/paginas/dashboard']).then(() => this.modais.abrirConfiguracoes());
   }
 
   private codigoValido(): boolean {

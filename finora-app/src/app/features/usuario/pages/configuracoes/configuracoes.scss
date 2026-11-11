@@ -1,10 +1,35 @@
 @use '../../../../shared/styles/botoes';
 
-/* Cards de foto, dados e senha empilhados numa coluna de largura confortável */
+/* Uma coluna só: Perfil (foto e dados pessoais) e, abaixo, Segurança (2FA e senha).
+   Fica dentro do modal de Configurações, que tem a largura certa para isso. */
 .config-grid {
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.config-coluna {
+    display: flex;
+    flex-direction: column;
     gap: 20px;
-    max-width: 720px;
+    min-width: 0;
+}
+
+.config-coluna-titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: -6px;
+    color: var(--text-muted);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+
+    i {
+        color: var(--teal);
+        font-size: 13px;
+    }
 }
 
 /* Status do 2FA ao lado do título do card */

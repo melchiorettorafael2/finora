@@ -54,10 +54,11 @@
 
                 <div class="user-menu-divider"></div>
 
-                <a class="user-menu-item" role="menuitem" routerLink="/paginas/configuracoes" (click)="menuAberto.set(false)">
+                <!-- Configurações abre em modal, por cima da página atual -->
+                <button type="button" class="user-menu-item" role="menuitem" (click)="abrirConfiguracoes()">
                     <i class="fa-solid fa-gear"></i>
                     <span>Configurações</span>
-                </a>
+                </button>
 
                 <button type="button" class="user-menu-item danger" role="menuitem" (click)="sair()">
                     <i class="fa-solid fa-right-from-bracket"></i>

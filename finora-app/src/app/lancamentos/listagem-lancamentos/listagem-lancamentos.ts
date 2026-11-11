@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Header } from '../../common/components/header/header';
 import { MonthPicker } from '../../common/components/month-picker/month-picker';
+import { Modal } from '../../common/components/modal/modal';
+import { CadastroLancamento } from '../cadastro-lancamento/cadastro-lancamento';
 import { LancamentoService } from '../lancamento-service';
 import { ToastrService } from 'ngx-toastr';
 import { PageResult } from '../../shared/models/page-result';
@@ -20,13 +22,14 @@ interface FiltrosForm{
 
 @Component({
   selector: 'app-listagem-lancamentos',
-  imports: [CommonModule, ReactiveFormsModule, Header, MonthPicker],
+  imports: [CommonModule, ReactiveFormsModule, Header, MonthPicker, Modal, CadastroLancamento],
   templateUrl: './listagem-lancamentos.html',
   styleUrl: './listagem-lancamentos.scss',
 })
 export class ListagemLancamentos implements OnInit {
   service = inject(LancamentoService);
   router = inject(Router);
+  modalLancamentoAberto = signal(false);
   toast = inject(ToastrService);
 
   listagem$!: Observable<PageResult<DetalhesLancamento>>
@@ -52,6 +55,11 @@ export class ListagemLancamentos implements OnInit {
       }
     });
 
+    this.listarLancamentos();
+  }
+
+  aoSalvarLancamento(){
+    this.modalLancamentoAberto.set(false);
     this.listarLancamentos();
   }
 

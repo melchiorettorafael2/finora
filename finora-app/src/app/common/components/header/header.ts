@@ -1,12 +1,12 @@
 import { Component, ElementRef, computed, inject, input, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../auth/auth-service/auth-service';
 import { UsuarioService } from '../../../features/usuario/services/usuario-service';
 import { PreferenciasService } from '../../services/preferencias-service';
+import { ModaisService } from '../../services/modais-service';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink],
+  imports: [],
   templateUrl: './header.html',
   styleUrl: './header.scss',
   host: {
@@ -22,6 +22,7 @@ export class Header {
   private elementRef = inject(ElementRef<HTMLElement>);
 
   preferencias = inject(PreferenciasService);
+  private modais = inject(ModaisService);
 
   nomeUsuario = computed(() => this.authService.nomeUsuario() || 'Usuário');
   fotoUrl = this.usuarioService.fotoUrl;
@@ -35,6 +36,11 @@ export class Header {
   constructor() {
     // Só faz a requisição na primeira vez da sessão; depois reaproveita a foto em memória
     this.usuarioService.carregarFoto();
+  }
+
+  abrirConfiguracoes(): void {
+    this.menuAberto.set(false);
+    this.modais.abrirConfiguracoes();
   }
 
   alternarTema(): void {

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, output, signal } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { DadosLancamentoForm, TipoLancamento } from '../dados-lancamentos';
 import { ToastrService } from 'ngx-toastr';
@@ -7,10 +7,8 @@ import { LancamentoService } from '../lancamento-service';
 import { DetalhesCategoria } from '../../features/categorias/models/dados-categoria';
 import { DetalhesCartao } from '../../features/cartoes/models/dados-cartao';
 import { forkJoin } from 'rxjs';
-import { Header } from '../../common/components/header/header';
 import { CommonModule } from '@angular/common';
 import { NgxMaskDirective } from 'ngx-mask';
-import { RouterLink } from '@angular/router';
 import { ValidationErroResponse } from '../../shared/models/validation-error-models';
 
 
@@ -24,13 +22,17 @@ interface CadastroLancamentoForm {
   cartaoId: FormControl<string>;
 }
 
+/** Formulário de lançamento, aberto em modal (listagem de lançamentos e dashboard). */
 @Component({
   selector: 'app-cadastro-lancamento',
-  imports: [Header, ReactiveFormsModule, CommonModule, NgxMaskDirective, RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, NgxMaskDirective],
   templateUrl: './cadastro-lancamento.html',
   styleUrl: './cadastro-lancamento.scss',
 })
 export class CadastroLancamento implements OnInit {
+
+  salvo = output<void>();
+  cancelado = output<void>();
 
   form!: FormGroup<CadastroLancamentoForm>;
   toast = inject(ToastrService);
@@ -96,8 +98,8 @@ export class CadastroLancamento implements OnInit {
     dados.cartaoId = dados.cartaoId || null;
     this.service.criar(dados).subscribe({
       next: () => {
-        this.toast.success('Lançamento Cadastrado com Sucesso!')
-        this.form.reset();
+        this.toast.success('Lançamento cadastrado com sucesso!', 'Sucesso');
+        this.salvo.emit();
       },
       error: (error) => this.onApiError(error)
     })

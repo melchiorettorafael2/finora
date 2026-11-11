@@ -13,10 +13,24 @@
                     <span>{{ item.rotulo }}</span>
                 </a>
             }
+
+            <!-- Configurações abre em modal, por cima da página atual -->
+            <button type="button" class="menu-item" [class.active]="modais.configuracoesAberta()"
+                aria-label="Configurações" (click)="modais.abrirConfiguracoes()">
+                <i class="fa-solid fa-gear"></i>
+                <span>Configurações</span>
+            </button>
         </nav>
     </aside>
 
     <main class="main-content">
         <router-outlet></router-outlet>
     </main>
+
+    @if (modais.configuracoesAberta()) {
+        <app-modal titulo="Configurações" subtitulo="Seu perfil e a segurança da conta."
+            icone="fa-gear" largura="media" (fechar)="modais.fecharConfiguracoes()">
+            <app-configuracoes />
+        </app-modal>
+    }
 </div>
