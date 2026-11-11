@@ -765,3 +765,43 @@ body {
         flex-wrap: wrap;
     }
 }
+/* ========================= */
+/* ====== IMPRESSÃO ======== */
+/* ========================= */
+
+/* Usado pelo "Imprimir / PDF" dos Relatórios: imprime só o conteúdo da página,
+   em A4 paisagem, mantendo o tema escuro e as cores dos cards e gráficos */
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 0;
+    }
+
+    html,
+    body {
+        background: var(--bg-app) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Sem altura fixa nem rolagem interna: o conteúdo flui por quantas páginas precisar */
+    .app-container {
+        display: block;
+        height: auto;
+    }
+
+    .main-content {
+        display: block;
+        overflow: visible;
+    }
+
+    .sidebar,
+    .header,
+    #toast-container {
+        display: none !important;
+    }
+
+    .content {
+        padding: 10mm 12mm;
+    }
+}

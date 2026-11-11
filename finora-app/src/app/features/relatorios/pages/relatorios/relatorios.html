@@ -14,9 +14,34 @@
                 }
             </div>
         </div>
+        <div class="toolbar-acoes">
+            <button type="button" class="btn btn-primary" (click)="imprimir()" title="Imprimir ou salvar em PDF">
+                <i class="fa-solid fa-print"></i>
+                Imprimir / PDF
+            </button>
+        </div>
     </div>
 
     @if (relatorio$ | async; as r) {
+        <!-- Só aparece na impressão / PDF -->
+        <header class="cabecalho-impressao">
+            <div class="cabecalho-marca">
+                <img src="finora-wordmark@2x.png" srcset="finora-wordmark@2x.png 2x, finora-wordmark@3x.png 3x" alt="Finora" />
+            </div>
+            <div class="cabecalho-titulo">
+                <h1>Relatório financeiro</h1>
+                <span>
+                    {{ r.primeiroMes + '-01' | date: 'MMMM yyyy' | titlecase }}
+                    a {{ r.ultimoMes + '-01' | date: 'MMMM yyyy' | titlecase }}
+                    · últimos {{ periodo() }} meses
+                </span>
+            </div>
+            <div class="cabecalho-info">
+                <span><i class="fa-solid fa-user"></i> {{ nomeUsuario() }}</span>
+                <span><i class="fa-regular fa-calendar"></i> Gerado em {{ geradoEm() | date: "dd/MM/yyyy 'às' HH:mm" }}</span>
+            </div>
+        </header>
+
         <!-- Totais do período -->
         <section class="metricas-grid">
             <div class="metric-card metric-income">
@@ -95,8 +120,8 @@
                 </div>
             </div>
 
-            <!-- Ranking de categorias -->
-            <div class="chart-panel painel-largo">
+            <!-- Ranking de categorias (na impressão, começa numa página nova) -->
+            <div class="chart-panel painel-largo pagina-nova">
                 <div class="chart-body">
                     <div class="chart-header">
                         <span class="chart-icon"><i class="fa-solid fa-ranking-star"></i></span>

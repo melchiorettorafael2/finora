@@ -1,4 +1,84 @@
+@use '../../../../shared/styles/botoes';
 @use '../../../../shared/styles/paineis';
+
+/* ===== Cabeçalho da impressão / PDF (escondido na tela) ===== */
+.cabecalho-impressao {
+    display: none;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 18px;
+    padding: 14px 20px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    background:
+        radial-gradient(45% 140% at 100% 50%, rgba(52, 211, 163, 0.10), transparent 70%),
+        linear-gradient(90deg, var(--brand-night) 0%, #101a29 60%, #0f1724 100%);
+}
+
+.cabecalho-marca img {
+    display: block;
+    height: 34px;
+    width: auto;
+}
+
+.cabecalho-titulo {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding-left: 24px;
+    border-left: 1px solid var(--border);
+
+    h1 {
+        color: var(--teal);
+        font-size: 19px;
+        font-weight: 600;
+    }
+
+    span {
+        color: var(--text-muted);
+        font-size: 13px;
+    }
+}
+
+.cabecalho-info {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    color: var(--text-muted);
+    font-size: 12.5px;
+
+    i {
+        margin-right: 5px;
+        color: var(--teal);
+    }
+}
+
+@media print {
+    .toolbar {
+        display: none;
+    }
+
+    .cabecalho-impressao {
+        display: flex;
+    }
+
+    /* A folha não tem margem (o fundo escuro vai até a borda): a quebra forçada
+       mantém o espaço em cima, que uma quebra automática descartaria */
+    .pagina-nova {
+        break-before: page;
+        margin-top: 10mm;
+    }
+
+    /* Não corta card nem painel no meio entre uma página e outra */
+    .metric-card,
+    .chart-panel,
+    .cabecalho-impressao {
+        break-inside: avoid;
+        box-shadow: none;
+    }
+}
 
 /* ===== Ranking de categorias ===== */
 .ranking {

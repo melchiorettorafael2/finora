@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT, formatDate } from '@angular/common';
+import { AuthService } from '../../../../auth/auth-service/auth-service';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable, catchError, map, switchMap } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
@@ -26,6 +27,8 @@ interface RelatorioView {
   taxaEconomia: number;
   meses: MesView[];
   categorias: CategoriaView[];
+  primeiroMes: string; // 'yyyy-MM', para o cabeçalho da impressão
+  ultimoMes: string;
 }
 
 @Component({
@@ -38,6 +41,11 @@ export class RelatoriosPage {
 
   private service = inject(RelatorioService);
   private toast = inject(ToastrService);
+  private authService = inject(AuthService);
+  private document = inject(DOCUMENT);
+
+  nomeUsuario = this.authService.nomeUsuario;
+  geradoEm = signal(new Date());
 
   periodos: { valor: PeriodoRelatorio; rotulo: string }[] = [
     { valor: 3, rotulo: '3 meses' },
@@ -56,6 +64,23 @@ export class RelatoriosPage {
     )),
     map(relatorio => this.montarView(relatorio))
   );
+
+  /**
+   * Abre a impressão do navegador (onde dá para "Salvar como PDF"). O layout de impressão
+   * fica nos estilos @media print. O título da aba vira o nome sugerido para o arquivo PDF.
+   */
+  imprimir() {
+    this.geradoEm.set(new Date());
+    const tituloOriginal = this.document.title;
+    const hoje = formatDate(this.geradoEm(), 'yyyy-MM-dd', 'pt-BR');
+    this.document.title = `Finora - Relatorio ${this.periodo()} meses - ${hoje}`;
+
+    // Espera o Angular atualizar a data de geração na tela antes de abrir a impressão
+    setTimeout(() => {
+      window.print();
+      this.document.title = tituloOriginal;
+    });
+  }
 
   private montarView(r: Relatorio): RelatorioView {
     const totalReceitas = this.somar(r.meses.map(m => m.receitas));
@@ -84,6 +109,8 @@ export class RelatoriosPage {
           percentualTotal: this.percentual(categoria.valor, totalCategorias),
           largura: this.percentual(categoria.valor, maiorCategoria),
         })),
+      primeiroMes: r.meses[0]?.mes ?? '',
+      ultimoMes: r.meses[r.meses.length - 1]?.mes ?? '',
     };
   }
 
