@@ -1,16 +1,20 @@
 @use '../../../../shared/styles/botoes';
 @use '../../../../shared/styles/paineis';
 
-/* ===== Cabeçalho da impressão / PDF (escondido na tela, só existe no papel) ===== */
+/* ===== Cabeçalho da impressão / PDF (escondido na tela, só existe no papel) =====
+   Faixa azul-escura igual ao header do sistema; o resto da folha é branco.
+   Cores fixas (não as variáveis), porque no papel as variáveis viram a paleta clara. */
 .cabecalho-impressao {
     display: none;
     align-items: center;
     gap: 24px;
     margin-bottom: 18px;
-    padding: 14px 20px;
-    border: 1px solid var(--border);
+    padding: 16px 22px;
     border-radius: 14px;
-    background-color: var(--bg-surface);
+    background:
+        radial-gradient(45% 140% at 100% 50%, rgba(52, 211, 163, 0.16), transparent 70%),
+        radial-gradient(40% 160% at 75% 0%, rgba(58, 138, 224, 0.22), transparent 70%),
+        linear-gradient(90deg, #0e1622 0%, #101a29 60%, #13203a 100%);
 }
 
 .cabecalho-marca {
@@ -26,13 +30,13 @@
 }
 
 .marca-texto {
-    color: #0e1622;
+    color: #f4f8ff;
     font-size: 24px;
     font-weight: 800;
     letter-spacing: 1px;
 
     span {
-        color: #12a37a;
+        color: #34d3a3;
     }
 }
 
@@ -41,16 +45,16 @@
     flex-direction: column;
     gap: 3px;
     padding-left: 24px;
-    border-left: 1px solid var(--border);
+    border-left: 1px solid rgba(149, 190, 224, 0.25);
 
     h1 {
-        color: var(--teal);
+        color: #5ed4c8;
         font-size: 19px;
         font-weight: 600;
     }
 
     span {
-        color: var(--text-muted);
+        color: #9aacc3;
         font-size: 13px;
     }
 }
@@ -61,12 +65,12 @@
     flex-direction: column;
     align-items: flex-end;
     gap: 4px;
-    color: var(--text-muted);
+    color: #c4d0e0;
     font-size: 12.5px;
 
     i {
         margin-right: 5px;
-        color: var(--teal);
+        color: #5ed4c8;
     }
 }
 
