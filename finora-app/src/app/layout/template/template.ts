@@ -23,6 +23,8 @@ export class Template {
   preferencias = inject(PreferenciasService);
   modais = inject(ModaisService);
 
+  anoAtual = new Date().getFullYear();
+
   // Configurações não é rota: abre em modal (botão separado no template)
   itensMenu: ItemMenu[] = [
     { rota: '/paginas/dashboard', icone: 'fa-chart-line', rotulo: 'Dashboard', exato: true },

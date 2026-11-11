@@ -1,0 +1,56 @@
+/* ===== Rodapé das telas internas =====
+   Centralizado, em três linhas: logo + descrição, copyright e autoria.
+   O .main-content é uma coluna flex: margin-top: auto empurra o rodapé para o fim
+   da tela quando a página é curta; em páginas longas ele vem depois do conteúdo. */
+.app-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 16px 25px 18px;
+    border-top: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    font-size: 12.5px;
+    text-align: center;
+}
+
+.footer-marca {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    img {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+
+    strong {
+        color: var(--text);
+        font-weight: 600;
+    }
+}
+
+.footer-autor {
+    font-size: 12px;
+
+    strong {
+        color: var(--teal);
+        font-weight: 600;
+    }
+}
+
+@media (max-width: 600px) {
+    .app-footer {
+        padding: 14px 16px 16px;
+    }
+}
+
+/* Não sai no PDF do relatório */
+@media print {
+    .app-footer {
+        display: none;
+    }
+}

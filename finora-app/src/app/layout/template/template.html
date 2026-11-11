@@ -25,6 +25,16 @@
 
     <main class="main-content">
         <router-outlet></router-outlet>
+
+        <!-- Rodapé de todas as telas internas (fica no fim da tela mesmo em páginas curtas) -->
+        <footer class="app-footer">
+            <div class="footer-marca">
+                <img src="finora-logo.svg" alt="" />
+                <span><strong>Finora</strong> · Sistema de Gestão Financeira</span>
+            </div>
+            <span class="footer-copy">© {{ anoAtual }} Finora. Todos os direitos reservados.</span>
+            <span class="footer-autor">Developed by <strong>Rafael Melchioretto</strong></span>
+        </footer>
     </main>
 
     @if (modais.configuracoesAberta()) {
