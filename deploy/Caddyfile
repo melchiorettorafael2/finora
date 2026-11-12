@@ -3,6 +3,11 @@
 {$SITE_HOST} {
 	encode gzip
 
+	# Console do H2 nunca pela internet (só por túnel SSH: deploy/h2-console.sh)
+	handle /api/h2-console* {
+		respond 404
+	}
+
 	# API: o front chama /api/... e o Caddy repassa sem o prefixo (/api/auth/signin -> api:8080/auth/signin)
 	handle_path /api/* {
 		reverse_proxy api:8080

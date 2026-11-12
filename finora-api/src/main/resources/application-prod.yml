@@ -12,7 +12,13 @@ spring:
         format_sql: false
   h2:
     console:
-      enabled: false
+      # Desligado por padrão. H2_CONSOLE=true no .env liga o console, que só é acessível
+      # por túnel SSH (deploy/h2-console.sh): o Caddy bloqueia /api/h2-console e a porta 8080
+      # só é publicada no localhost do servidor.
+      enabled: ${H2_CONSOLE:false}
+      settings:
+        # Pelo túnel a requisição chega do gateway do Docker, não de 127.0.0.1
+        web-allow-others: ${H2_CONSOLE:false}
 app:
   migracao:
     dono-dados-antigos: ""

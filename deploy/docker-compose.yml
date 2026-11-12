@@ -12,6 +12,9 @@ services:
     env_file: .env
     environment:
       SPRING_PROFILES_ACTIVE: prod
+    # Só no localhost do servidor (nunca exposta na internet): usada pelo túnel SSH do console do H2
+    ports:
+      - "127.0.0.1:8080:8080"
     volumes:
       - ./api:/app:ro
       - ./data:/data
