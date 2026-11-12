@@ -58,6 +58,8 @@ EOF
 fi
 # IP do servidor (redireciona http://IP para o endereço com HTTPS); adicionado se faltar
 grep -q '^SITE_IP=' .env || echo "SITE_IP=$SITE_IP" >> .env
+# Outros nomes que redirecionam para o principal (o Caddyfile exige a variável)
+grep -q '^SITE_ALIASES=' .env || echo "SITE_ALIASES=www.$SITE_HOST" >> .env
 
 # Atualiza o conteúdo das pastas no lugar (os containers montam as pastas, não os arquivos)
 find site -mindepth 1 -delete && tar -C site -xzf .site.tgz && rm .site.tgz

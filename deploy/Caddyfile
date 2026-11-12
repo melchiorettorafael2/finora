@@ -28,3 +28,9 @@
 http://{$SITE_IP} {
 	redir https://{$SITE_HOST}{uri} permanent
 }
+
+# Outros nomes do site (www, endereço sslip.io antigo) redirecionam para o principal.
+# SITE_ALIASES vem do .env, separado por vírgula (ex.: "www.finoratec.com, 34-235-101-139.sslip.io")
+{$SITE_ALIASES} {
+	redir https://{$SITE_HOST}{uri} permanent
+}
