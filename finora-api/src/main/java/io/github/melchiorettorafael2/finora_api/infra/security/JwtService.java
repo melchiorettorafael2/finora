@@ -31,7 +31,8 @@ public class JwtService {
 
     // "Esqueci minha senha": só serve em /auth/senha/redefinir, nunca para acessar a API
     private static final String ESCOPO_REDEFINICAO_SENHA = "senha";
-    public static final long EXPIRACAO_REDEFINICAO_SENHA_SEGUNDOS = 600;
+    // Validade do link enviado por e-mail
+    public static final long EXPIRACAO_REDEFINICAO_SENHA_SEGUNDOS = 1800;
 
     private final ObjectMapper objectMapper;
 

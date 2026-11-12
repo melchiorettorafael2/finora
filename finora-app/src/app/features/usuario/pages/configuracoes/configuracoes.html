@@ -12,7 +12,7 @@
             </div>
             <div>
                 <h2>Foto de perfil</h2>
-                <p class="form-subtitle">Ela aparece no topo da tela, ao lado do seu nome.</p>
+                <p class="form-subtitle">Aparece ao lado do seu nome.</p>
             </div>
         </div>
 
@@ -30,7 +30,7 @@
                     <span class="foto-nome-arquivo">
                         <i class="fa-solid fa-image"></i> {{ arquivo.name }}
                     </span>
-                    <span class="form-subtitle">Pré-visualização. Clique em salvar para confirmar.</span>
+                    <span class="form-subtitle">Prévia. Clique em Salvar para usar.</span>
                 } @else {
                     <span class="form-subtitle">JPG, PNG ou WEBP com até 2 MB.</span>
                 }
@@ -77,7 +77,7 @@
             </div>
             <div>
                 <h2>Dados pessoais</h2>
-                <p class="form-subtitle">O nome e o email também servem para entrar no sistema.</p>
+                <p class="form-subtitle">Você entra com o nome ou o email.</p>
             </div>
             @if (!editandoDados()) {
                 <button type="button" class="btn btn-editar" (click)="editarDados()" [disabled]="carregando()">
@@ -96,7 +96,7 @@
                 @if (campoInvalido(dadosForm, 'nome')) {
                     <span class="form-hint form-hint-error">
                         <i class="fa-solid fa-circle-exclamation"></i>
-                        {{ erroApi(dadosForm, 'nome') ?? 'O nome é obrigatório.' }}
+                        {{ erroApi(dadosForm, 'nome') ?? 'Informe o nome.' }}
                     </span>
                 }
             </div>
@@ -149,7 +149,7 @@
                         <span class="badge badge-warning badge-titulo">Desativada</span>
                     }
                 </h2>
-                <p class="form-subtitle">Opcional: peça um código do Google Authenticator além da senha ao entrar.</p>
+                <p class="form-subtitle">Pede um código do celular ao entrar.</p>
             </div>
             <!-- Ligar abre o passo a passo do QR code; desligar pede o código atual para confirmar -->
             <button type="button" class="switch-2fa" role="switch" [attr.aria-checked]="!!doisFatoresAtivo()"
@@ -170,7 +170,7 @@
             </div>
             <div>
                 <h2>Alterar senha</h2>
-                <p class="form-subtitle">Confirme sua senha atual para definir uma nova.</p>
+                <p class="form-subtitle">Informe a senha atual para trocar.</p>
             </div>
             @if (!editandoSenha()) {
                 <button type="button" class="btn btn-editar" (click)="editarSenha()">
@@ -207,7 +207,7 @@
                 @if (campoInvalido(senhaForm, 'novaSenha')) {
                     <span class="form-hint form-hint-error">
                         <i class="fa-solid fa-circle-exclamation"></i>
-                        {{ erroApi(senhaForm, 'novaSenha') ?? 'A nova senha deve ter pelo menos 6 caracteres.' }}
+                        {{ erroApi(senhaForm, 'novaSenha') ?? 'Use pelo menos 6 caracteres.' }}
                     </span>
                 }
             </div>

@@ -50,7 +50,7 @@ export class ListagemLancamentos implements OnInit {
     .subscribe({
       next: (categorias) => this.categorias.set(categorias),
       error: (error) => {
-        this.toast.error('Erro ao carregar categorias!', 'Erro');
+        this.toast.error('Não foi possível carregar as categorias.', 'Erro');
         console.error(error);
       }
     });
@@ -113,7 +113,7 @@ export class ListagemLancamentos implements OnInit {
   deletar(id: string, listagem: PageResult<DetalhesLancamento>) : void {
     this.service.deletar(id).subscribe({
       next: () =>{
-        this.toast.success('Lançamento excluído com sucesso!');
+        this.toast.success('Lançamento excluído.', 'Sucesso');
 
         if(listagem.content.length === 1 && !listagem.first){
           this.paginaAtual = listagem.number - 1;
@@ -121,7 +121,7 @@ export class ListagemLancamentos implements OnInit {
 
         this.listarLancamentos();
       },
-      error: () => this.toast.error('Erro ao excluir lançamento.')
+      error: () => this.toast.error('Não foi possível excluir o lançamento.', 'Erro')
     });
   }
 

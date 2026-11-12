@@ -26,9 +26,9 @@ public class LancamentoValidator {
 
         if(form.tipo() == TipoLancamento.DESPESA && form.cartaoId() != null){
             if(cartao == null ){
-                result.add(new CampoInvalido("cartaoId", "Cartao não encontrado!"));
+                result.add(new CampoInvalido("cartaoId", "Cartão não encontrado."));
             }else if(Boolean.FALSE.equals(cartao.getAtivo())){
-                result.add(new CampoInvalido("cartaoId", "Cartao inativo!"));
+                result.add(new CampoInvalido("cartaoId", "Cartão inativo."));
             }
         }
 

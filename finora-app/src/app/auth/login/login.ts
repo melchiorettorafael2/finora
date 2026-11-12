@@ -68,7 +68,7 @@ export class Login implements OnInit {
         next: (response) => {
           // Conta nova entra direto (a verificação em duas etapas é opcional, em Configurações)
           this.onAuthSuccess(response);
-          this.toast.success('Cadastro realizado com sucesso!', 'Sucesso');
+          this.toast.success('Conta criada. Bem-vindo!', 'Sucesso');
         },
         error: (error) => {
           this.onAuthError(error);
@@ -86,7 +86,7 @@ export class Login implements OnInit {
           return;
         }
         this.onAuthSuccess(response);
-        this.toast.success('Login realizado com sucesso!', 'Sucesso');
+        this.toast.success('Bem-vindo de volta!', 'Sucesso');
       },
       error: (error) => {
         this.onAuthError(error);
@@ -112,11 +112,11 @@ export class Login implements OnInit {
 
     //validation
     if(response.status === 422) {
-      this.toast.error('Erro de validação. Verifique os dados informados.', 'Erro');
+      this.toast.error('Confira os campos destacados.', 'Erro');
       return;
     }
       console.error('Erro na autenticação:', response);
-      this.toast.error('Erro na autenticação. Verifique suas credenciais e tente novamente.', 'Erro');
+      this.toast.error('Não foi possível entrar. Tente de novo.', 'Erro');
   } 
 
 }

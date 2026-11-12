@@ -19,18 +19,7 @@ export class AuthResponse{
     tokenDesafio?: string;
 }
 
-// "Esqueci minha senha", 1ª etapa: confirma a identidade com o Google Authenticator
-export interface VerificarIdentidadeForm {
-    login: string;
-    codigo: string;
-}
-
-export interface TokenRedefinicaoSenha {
-    tokenRedefinicao: string;
-    expiraEm: number;
-}
-
-// 2ª etapa: nova senha com o token da 1ª
+// "Esqueci minha senha": nova senha com o token do link enviado por e-mail
 export interface RedefinirSenhaForm {
     tokenRedefinicao: string;
     novaSenha: string;

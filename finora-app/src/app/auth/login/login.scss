@@ -7,7 +7,9 @@
     justify-content: center;
     gap: 24px;
     padding: 32px 16px;
-    overflow: hidden;
+    /* clip e não hidden: com hidden o navegador ainda rola esta área ao focar um campo
+       (os brilhos do fundo passam da tela) e o painel aparecia deslocado */
+    overflow: clip;
 }
 
 /* ========== Fundo decorativo ========== */
@@ -447,12 +449,31 @@
 
 /* ========== Rodapé ========== */
 
+/* Duas linhas centradas uma sob a outra: copyright e autoria */
 .auth-footer {
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
     font-size: 12px;
+    text-align: center;
     color: var(--text-muted);
     opacity: 0.8;
+}
+
+.auth-footer-autor {
+    font-size: 11.5px;
+    letter-spacing: 0.2px;
+
+    strong {
+        font-weight: 600;
+        background: linear-gradient(90deg, var(--brand-cyan), var(--brand-green));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
 }
 
 /* ========== Responsivo ========== */

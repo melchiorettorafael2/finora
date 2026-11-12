@@ -116,7 +116,7 @@
 
 <!-- Cadastro de lançamento em modal -->
 @if (modalLancamentoAberto()) {
-    <app-modal titulo="Novo lançamento" subtitulo="Preencha os dados para cadastrar um novo lançamento."
+    <app-modal titulo="Novo lançamento" subtitulo="Registre uma receita ou despesa."
         icone="fa-money-bill-transfer" (fechar)="modalLancamentoAberto.set(false)">
         <app-cadastro-lancamento (salvo)="aoSalvarLancamento()" (cancelado)="modalLancamentoAberto.set(false)" />
     </app-modal>

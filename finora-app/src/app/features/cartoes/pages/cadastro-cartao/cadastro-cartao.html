@@ -7,7 +7,7 @@
         </div>
         @if(form.controls.nome.hasError('required') && form.controls.nome.touched){
             <span class="form-hint form-hint-error">
-                <i class="fa-solid fa-circle-exclamation"></i> O nome do Cartão é obrigatório.
+                <i class="fa-solid fa-circle-exclamation"></i> Informe o nome.
             </span>
         }
         @if(form.controls.nome.hasError('apiError') && form.controls.nome.touched){
@@ -32,7 +32,7 @@
         </div>
         @if(form.controls.bandeira.hasError('required') && form.controls.bandeira.touched){
             <span class="form-hint form-hint-error">
-                <i class="fa-solid fa-circle-exclamation"></i> A bandeira do Cartão é obrigatória.
+                <i class="fa-solid fa-circle-exclamation"></i> Escolha a bandeira.
             </span>
         }
     </div>

@@ -31,7 +31,7 @@
                         @if (p.receitasMes) {
                             {{ p.percentualReceita }}% das receitas do mês ({{ p.receitasMes | currency }})
                         } @else {
-                            Nenhuma receita lançada neste mês
+                            Nenhuma receita neste mês
                         }
                     </small>
                 </div>
@@ -78,7 +78,7 @@
                         <span class="chart-icon"><i class="fa-solid fa-list-check"></i></span>
                         <div class="chart-title">
                             <h2>Orçamento por categoria</h2>
-                            <span>Quanto já foi gasto do limite mensal de cada categoria</span>
+                            <span>Gasto do mês em cada categoria</span>
                         </div>
                     </div>
 
@@ -129,7 +129,7 @@
                     } @else {
                         <div class="empty-state">
                             <i class="fa-solid fa-list-check"></i>
-                            <span>Nenhum orçamento definido ainda</span>
+                            <span>Nenhum orçamento ainda</span>
                             <button type="button" class="btn btn-secondary" (click)="novoOrcamento()">Definir orçamento</button>
                         </div>
                     }
@@ -143,7 +143,7 @@
                         <span class="chart-icon"><i class="fa-solid fa-flag-checkered"></i></span>
                         <div class="chart-title">
                             <h2>Metas de economia</h2>
-                            <span>Progresso dos seus objetivos</span>
+                            <span>Quanto já foi guardado</span>
                         </div>
                     </div>
 
@@ -194,7 +194,7 @@
 <!-- Definir / alterar orçamento em modal -->
 @if (modalOrcamento(); as modal) {
     <app-modal [titulo]="modal.categoriaId ? 'Alterar orçamento' : 'Definir orçamento'"
-        subtitulo="Limite de gastos por mês para a categoria. Se ela já tiver um limite, ele será atualizado."
+        subtitulo="Quanto você quer gastar por mês nesta categoria."
         icone="fa-sliders" (fechar)="modalOrcamento.set(null)">
         <app-cadastro-orcamento [categoriaId]="modal.categoriaId" [limite]="modal.limite"
             (salvo)="aoSalvarOrcamento()" (cancelado)="modalOrcamento.set(null)" />
@@ -204,7 +204,7 @@
 <!-- Cadastro / edição de meta em modal -->
 @if (modalMeta(); as modal) {
     <app-modal [titulo]="modal.id ? 'Editar meta' : 'Nova meta'"
-        [subtitulo]="modal.id ? 'Atualize o valor guardado para acompanhar o progresso.' : 'Defina quanto quer juntar e até quando.'"
+        [subtitulo]="modal.id ? 'Atualize quanto já guardou.' : 'Quanto quer juntar e até quando.'"
         icone="fa-bullseye" (fechar)="modalMeta.set(null)">
         <app-cadastro-meta [idMeta]="modal.id" (salvo)="aoSalvarMeta()" (cancelado)="modalMeta.set(null)" />
     </app-modal>
@@ -213,9 +213,9 @@
 @if (itemParaExcluir(); as item) {
     <app-confirm-dialog
         [titulo]="tituloExclusao(item)"
-        mensagem="Deseja remover o item selecionado?"
+        mensagem="Remover este item?"
         [destaque]="item.nome"
-        aviso="Esta ação não poderá ser desfeita."
+        aviso="Não dá para desfazer."
         textoConfirmar="Remover"
         (confirmar)="confirmarExclusao()"
         (cancelar)="itemParaExcluir.set(null)">

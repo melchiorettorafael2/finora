@@ -63,7 +63,7 @@ export class CadastroLancamento implements OnInit {
         this.categoriasAtivas.set(resultado.categorias);
         this.cartoesAtivos.set(resultado.cartoes);
       },
-      error: () => this.toast.error('Erro ao carregar categorias e cartões.')
+      error: () => this.toast.error('Não foi possível carregar categorias e cartões.', 'Erro')
     })
   }
 
@@ -81,7 +81,7 @@ export class CadastroLancamento implements OnInit {
   isFormInvalid(): boolean {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.toast.error('Erro de Validação. Verifique os valores informados!', 'Erro');
+      this.toast.error('Confira os campos destacados.', 'Erro');
       return true;
     }
     return false;
@@ -98,7 +98,7 @@ export class CadastroLancamento implements OnInit {
     dados.cartaoId = dados.cartaoId || null;
     this.service.criar(dados).subscribe({
       next: () => {
-        this.toast.success('Lançamento cadastrado com sucesso!', 'Sucesso');
+        this.toast.success('Lançamento salvo.', 'Sucesso');
         this.salvo.emit();
       },
       error: (error) => this.onApiError(error)
@@ -120,11 +120,11 @@ export class CadastroLancamento implements OnInit {
       const validationError: ValidationErroResponse = error.error;
       this.aplicarErrosValidacao(validationError);
       validationError.camposInvalidos.forEach(ci => {
-        this.toast.error(`${ci.campo}: ${ci.erro}`, 'Erro de Validação');
+        this.toast.error(ci.erro, 'Erro');
       });
       return;
     } else {
-      this.toast.error('Erro ao Processar a Requisição!', 'Erro');
+      this.toast.error('Algo deu errado. Tente de novo.', 'Erro');
       console.error(error.error)
     }
   }

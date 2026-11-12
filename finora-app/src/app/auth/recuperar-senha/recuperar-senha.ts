@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector, OnDestroy, afterNextRender, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, Injector, OnDestroy, OnInit, afterNextRender, inject, signal, viewChild } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -8,21 +8,17 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { jwtDecode } from 'jwt-decode';
 import { AuthService } from '../auth-service/auth-service';
-
-interface IdentidadeForm {
-  login: FormControl<string>;
-  codigo: FormControl<string>;
-}
 
 interface NovaSenhaForm {
   novaSenha: FormControl<string>;
   confirmarSenha: FormControl<string>;
 }
 
-type Etapa = 'identidade' | 'nova-senha' | 'concluido';
+type Etapa = 'email' | 'enviado' | 'nova-senha' | 'link-invalido' | 'concluido';
 
 const senhasIguais: ValidatorFn = (grupo: AbstractControl): ValidationErrors | null => {
   const nova = grupo.get('novaSenha')?.value;
@@ -31,9 +27,9 @@ const senhasIguais: ValidatorFn = (grupo: AbstractControl): ValidationErrors | n
 };
 
 /**
- * "Esqueci minha senha" em duas etapas, cada uma com seu formulário:
- * 1. nome/email + código do Google Authenticator, conferidos pela API;
- * 2. só depois disso, nova senha + confirmação (com o token devolvido na etapa 1).
+ * "Esqueci minha senha" por e-mail:
+ * 1. a pessoa informa o email e a API envia um link (/recuperar-senha?token=...);
+ * 2. o link abre esta mesma tela já na etapa da nova senha.
  */
 @Component({
   selector: 'app-recuperar-senha',
@@ -42,29 +38,36 @@ const senhasIguais: ValidatorFn = (grupo: AbstractControl): ValidationErrors | n
   // Mesmo visual da tela de login (fundo, painel, marca, campos e botões)
   styleUrls: ['../login/login.scss', './recuperar-senha.scss'],
 })
-export class RecuperarSenha implements OnDestroy {
+export class RecuperarSenha implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private toast = inject(ToastrService);
   private injector = inject(Injector);
 
   anoAtual = new Date().getFullYear();
-  etapa = signal<Etapa>('identidade');
+  etapa = signal<Etapa>('email');
   enviando = signal(false);
-  erroIdentidade = signal<string | null>(null);
   mostrarSenha = signal(false);
+  emailEnviado = signal('');
+  // Erro vindo da API (ex.: email sem conta), mostrado embaixo do campo
+  erroEmail = signal<string | null>(null);
 
-  // Fica só em memória: recarregar a página recomeça pela etapa 1
+  // Reenviar só depois de alguns segundos (a API também limita a um e-mail por minuto)
+  private static readonly ESPERA_REENVIO_S = 60;
+  esperaReenvio = signal(0);
+  private timerReenvio?: ReturnType<typeof setInterval>;
+
   private tokenRedefinicao: string | null = null;
-  loginConfirmado = signal('');
   private timerRedirecionamento?: ReturnType<typeof setTimeout>;
-
   private inputNovaSenha = viewChild<ElementRef<HTMLInputElement>>('inputNovaSenha');
 
-  identidadeForm = new FormGroup<IdentidadeForm>({
-    login: new FormControl('', { nonNullable: true, validators: Validators.required }),
-    codigo: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.pattern(/^\d{6}$/)] }),
-  });
+  emailControl = new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] });
+
+  constructor() {
+    // Digitou de novo: some o aviso da API
+    this.emailControl.valueChanges.subscribe(() => this.erroEmail.set(null));
+  }
 
   novaSenhaForm = new FormGroup<NovaSenhaForm>(
     {
@@ -74,62 +77,78 @@ export class RecuperarSenha implements OnDestroy {
     { validators: senhasIguais }
   );
 
-  ngOnDestroy(): void {
-    clearTimeout(this.timerRedirecionamento);
+  ngOnInit(): void {
+    const token = this.route.snapshot.queryParamMap.get('token');
+    if (!token) {
+      return;
+    }
+    // Tira o token da barra de endereço (histórico, prints, compartilhar a tela)
+    this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+
+    if (this.tokenExpirado(token)) {
+      this.etapa.set('link-invalido');
+      return;
+    }
+    this.tokenRedefinicao = token;
+    this.etapa.set('nova-senha');
+    afterNextRender(() => this.inputNovaSenha()?.nativeElement.focus(), { injector: this.injector });
   }
 
-  campoInvalido(form: FormGroup, campo: string): boolean {
-    const controle = form.get(campo);
+  ngOnDestroy(): void {
+    clearTimeout(this.timerRedirecionamento);
+    clearInterval(this.timerReenvio);
+  }
+
+  campoInvalido(controle: AbstractControl | null): boolean {
     return !!controle && controle.invalid && controle.touched;
   }
 
-  // ===== Etapa 1: identidade =====
+  // ===== Etapa 1: pedir o link =====
 
-  // Aceita só dígitos no código (inclusive ao colar "123 456")
-  onCodigoInput(): void {
-    const controle = this.identidadeForm.controls.codigo;
-    const somenteDigitos = controle.value.replace(/\D/g, '').slice(0, 6);
-    if (somenteDigitos !== controle.value) {
-      controle.setValue(somenteDigitos);
-    }
-    this.erroIdentidade.set(null);
-  }
-
-  verificarIdentidade(): void {
-    if (this.enviando()) {
+  enviarLink(): void {
+    if (this.enviando() || this.esperaReenvio() > 0) {
       return;
     }
-    if (this.identidadeForm.invalid) {
-      this.identidadeForm.markAllAsTouched();
+    if (this.emailControl.invalid) {
+      this.emailControl.markAsTouched();
       return;
     }
 
-    const login = this.identidadeForm.controls.login.value.trim();
-    const codigo = this.identidadeForm.controls.codigo.value;
+    const email = this.emailControl.value.trim();
     this.enviando.set(true);
-    this.authService.verificarIdentidadeParaSenha({ login, codigo }).subscribe({
-      next: resposta => {
+    this.authService.solicitarRedefinicaoSenha(email).subscribe({
+      next: () => {
         this.enviando.set(false);
-        this.tokenRedefinicao = resposta.tokenRedefinicao;
-        this.loginConfirmado.set(login);
-        this.etapa.set('nova-senha');
-        afterNextRender(() => this.inputNovaSenha()?.nativeElement.focus(), { injector: this.injector });
+        this.emailEnviado.set(email);
+        this.etapa.set('enviado');
+        this.iniciarEsperaReenvio();
       },
       error: erro => {
         this.enviando.set(false);
         if (erro.status === 422 && erro.error?.camposInvalidos?.length) {
-          this.erroIdentidade.set(erro.error.camposInvalidos[0].erro);
-          // O código não pode ser reaproveitado: limpa para digitar o próximo do app
-          this.identidadeForm.controls.codigo.reset();
+          // Email sem conta (ou inválido): volta para o campo com o aviso
+          this.erroEmail.set(erro.error.camposInvalidos[0].erro);
+          this.etapa.set('email');
           return;
         }
-        this.toast.error('Não foi possível verificar. Tente novamente.', 'Erro');
+        this.toast.error('Não foi possível enviar o link. Tente de novo.', 'Erro');
         console.error(erro);
       },
     });
   }
 
-  // ===== Etapa 2: nova senha =====
+  private iniciarEsperaReenvio(): void {
+    clearInterval(this.timerReenvio);
+    this.esperaReenvio.set(RecuperarSenha.ESPERA_REENVIO_S);
+    this.timerReenvio = setInterval(() => {
+      this.esperaReenvio.update(s => s - 1);
+      if (this.esperaReenvio() <= 0) {
+        clearInterval(this.timerReenvio);
+      }
+    }, 1000);
+  }
+
+  // ===== Etapa 2: nova senha (aberta pelo link) =====
 
   redefinir(): void {
     if (this.enviando()) {
@@ -140,7 +159,7 @@ export class RecuperarSenha implements OnDestroy {
       return;
     }
     if (!this.tokenRedefinicao) {
-      this.recomecar();
+      this.etapa.set('link-invalido');
       return;
     }
 
@@ -153,35 +172,42 @@ export class RecuperarSenha implements OnDestroy {
         this.enviando.set(false);
         this.tokenRedefinicao = null;
         this.etapa.set('concluido');
-        this.toast.success('Senha redefinida! Entre com a nova senha.', 'Sucesso');
+        this.toast.success('Senha alterada. Já pode entrar com ela.', 'Sucesso');
         this.timerRedirecionamento = setTimeout(() => this.router.navigate(['/login']), 2000);
       },
       error: erro => {
         this.enviando.set(false);
-        // Token de redefinição expirou (10 min) ou já foi usado
+        // Link expirou ou já foi usado
         if (erro.status === 401) {
-          this.toast.error('A confirmação de identidade expirou. Comece novamente.', 'Erro');
-          this.recomecar();
+          this.tokenRedefinicao = null;
+          this.etapa.set('link-invalido');
           return;
         }
         if (erro.status === 422 && erro.error?.camposInvalidos?.length) {
-          this.toast.error(erro.error.camposInvalidos[0].erro, 'Erro de Validação');
+          this.toast.error(erro.error.camposInvalidos[0].erro, 'Erro');
           return;
         }
-        this.toast.error('Não foi possível redefinir a senha. Tente novamente.', 'Erro');
+        this.toast.error('Não foi possível trocar a senha. Tente de novo.', 'Erro');
         console.error(erro);
       },
     });
   }
 
-  /** Volta para a etapa 1 descartando a confirmação de identidade. */
-  recomecar(): void {
+  /** Volta para o pedido do link (outro email ou link vencido). */
+  pedirOutroLink(): void {
     this.tokenRedefinicao = null;
-    this.loginConfirmado.set('');
-    this.identidadeForm.controls.codigo.reset();
     this.novaSenhaForm.reset();
     this.mostrarSenha.set(false);
-    this.erroIdentidade.set(null);
-    this.etapa.set('identidade');
+    this.etapa.set('email');
+  }
+
+  // Só para mostrar a mensagem certa sem esperar a API; quem decide de verdade é o servidor
+  private tokenExpirado(token: string): boolean {
+    try {
+      const { exp } = jwtDecode<{ exp?: number }>(token);
+      return !!exp && Date.now() >= exp * 1000;
+    } catch {
+      return true;
+    }
   }
 }

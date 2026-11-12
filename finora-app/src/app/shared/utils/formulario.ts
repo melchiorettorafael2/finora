@@ -16,7 +16,7 @@ export function valorParaMascara(valor: number | null | undefined): string {
 export function formularioInvalido(form: FormGroup, toast: ToastrService): boolean {
   if (form.invalid) {
     form.markAllAsTouched();
-    toast.error('Erro de Validação. Verifique os valores informados!', 'Erro');
+    toast.error('Confira os campos destacados.', 'Erro');
     return true;
   }
   return false;
@@ -32,10 +32,10 @@ export function tratarErroApi(error: any, form: FormGroup, toast: ToastrService)
         control.setErrors({ apiError: ci.erro });
         control.markAsTouched();
       }
-      toast.error(`${ci.campo}: ${ci.erro}`, 'Erro de Validação');
+      toast.error(ci.erro, 'Erro');
     });
     return;
   }
-  toast.error('Erro ao Processar a Requisição!', 'Erro');
+  toast.error('Algo deu errado. Tente de novo.', 'Erro');
   console.error(error);
 }

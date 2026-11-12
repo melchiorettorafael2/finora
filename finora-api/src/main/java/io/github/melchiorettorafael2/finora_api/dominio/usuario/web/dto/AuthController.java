@@ -35,13 +35,14 @@ public class AuthController {
     }
 
 
-    // "Esqueci minha senha", 1ª etapa: nome/email + código do Google Authenticator
-    @PostMapping("/senha/verificar")
-    public TokenRedefinicaoSenha verificarIdentidadeParaSenha(@RequestBody @Valid VerificarIdentidadeForm form){
-        return service.verificarIdentidadeParaSenha(form);
+    // "Esqueci minha senha": envia o link por e-mail (422 se o email não for de uma conta cadastrada)
+    @PostMapping("/senha/esqueci")
+    public ResponseEntity<Void> solicitarRedefinicaoSenha(@RequestBody @Valid SolicitarRedefinicaoSenhaForm form){
+        service.solicitarRedefinicaoSenha(form);
+        return ResponseEntity.noContent().build();
     }
 
-    // "Esqueci minha senha", 2ª etapa: grava a nova senha com o token da 1ª (não inicia sessão)
+    // Grava a nova senha com o token do link do e-mail (não inicia sessão)
     @PostMapping("/senha/redefinir")
     public ResponseEntity<Void> redefinirSenha(@RequestBody @Valid RedefinirSenhaForm form){
         service.redefinirSenha(form);

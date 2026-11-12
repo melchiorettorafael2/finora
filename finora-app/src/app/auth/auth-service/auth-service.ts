@@ -4,9 +4,7 @@ import {
   AuthResponse,
   CadastroUsuarioForm,
   RedefinirSenhaForm,
-  TokenRedefinicaoSenha,
   VerificacaoDoisFatoresForm,
-  VerificarIdentidadeForm,
 } from '../dados-auth';
 import { Observable, tap } from 'rxjs';
 import { LoginForm } from '../dados-auth';
@@ -66,12 +64,12 @@ export class AuthService {
            .pipe(tap(response => this.salvarSessao(response)));
   }
 
-  /** "Esqueci minha senha", 1ª etapa: nome/email + código do Google Authenticator. */
-  verificarIdentidadeParaSenha(dados: VerificarIdentidadeForm) : Observable<TokenRedefinicaoSenha> {
-    return this.http.post<TokenRedefinicaoSenha>(`${this.baseUrl}/senha/verificar`, dados);
+  /** "Esqueci minha senha": a API envia um link por e-mail (responde igual exista ou não a conta). */
+  solicitarRedefinicaoSenha(email: string) : Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/senha/esqueci`, { email });
   }
 
-  /** 2ª etapa: grava a nova senha com o token da 1ª. Não inicia sessão. */
+  /** Grava a nova senha com o token do link do e-mail. Não inicia sessão. */
   redefinirSenha(dados: RedefinirSenhaForm) : Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/senha/redefinir`, dados);
   }

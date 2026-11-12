@@ -6,9 +6,9 @@ import jakarta.validation.constraints.NotNull;
 
 //Data Access Object
 public record CartaoForm(
-        @NotBlank(message = "Campo Obrigatório!")
+        @NotBlank(message = "Campo obrigatório")
         String nome,
-        @NotNull(message = "Campo Obrigatório!")
+        @NotNull(message = "Campo obrigatório")
         BandeiraCartao bandeira) {
 
 }

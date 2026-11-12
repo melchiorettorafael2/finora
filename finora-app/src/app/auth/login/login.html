@@ -14,7 +14,7 @@
             </div>
             <span class="brand-tagline"><span class="brand-tagline-text">Sistema de Gestão Financeira</span></span>
             <span class="brand-subtitle">
-                {{ modo === 'login' ? 'Acesse sua conta para continuar' : 'Crie sua conta para começar' }}
+                {{ modo === 'login' ? 'Entre na sua conta' : 'Crie sua conta para começar' }}
             </span>
         </div>
 
@@ -78,5 +78,8 @@
         </form>
     </section>
 
-    <footer class="auth-footer">© {{ anoAtual }} Finora · Sistema de Gestão Financeira</footer>
+    <footer class="auth-footer">
+        <span>© {{ anoAtual }} Finora · Sistema de Gestão Financeira</span>
+        <span class="auth-footer-autor">Developed by <strong>Rafael Melchioretto</strong></span>
+    </footer>
 </main>

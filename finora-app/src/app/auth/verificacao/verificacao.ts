@@ -61,7 +61,7 @@ export class Verificacao implements OnDestroy {
       return;
     }
     if (this.codigoControl.invalid) {
-      this.erroCodigo.set('Digite os 6 dígitos do aplicativo autenticador.');
+      this.erroCodigo.set('Digite os 6 dígitos do app.');
       return;
     }
 
@@ -77,7 +77,7 @@ export class Verificacao implements OnDestroy {
       next: () => {
         this.verificando.set(false);
         this.autenticado.set(true);
-        this.toast.success('Login realizado com sucesso!', 'Sucesso');
+        this.toast.success('Bem-vindo de volta!', 'Sucesso');
         // Pausa para o usuário ver a confirmação antes de trocar de tela
         this.timerRedirecionamento = setTimeout(
           () => this.router.navigate(['/paginas/dashboard']),
@@ -94,7 +94,7 @@ export class Verificacao implements OnDestroy {
         if (erro.status === 422) {
           this.erroCodigo.set(erro.error?.camposInvalidos?.[0]?.erro ?? 'Código inválido.');
         } else {
-          this.toast.error('Erro ao verificar o código. Tente novamente.', 'Erro');
+          this.toast.error('Não foi possível verificar o código. Tente de novo.', 'Erro');
           console.error(erro);
         }
         this.codigoControl.reset();
@@ -109,7 +109,7 @@ export class Verificacao implements OnDestroy {
   }
 
   private sessaoExpirada(): void {
-    this.toast.error('A verificação expirou. Faça login novamente.', 'Erro');
+    this.toast.error('O tempo acabou. Entre de novo.', 'Erro');
     this.voltarParaLogin();
   }
 

@@ -54,7 +54,7 @@ export class CadastroCartao implements OnInit {
         });
       },
       error: (error) => {
-        this.toast.error('Erro ao carregar dados do cartão para edição!', 'Erro');
+        this.toast.error('Não foi possível abrir o cartão.', 'Erro');
         console.error(error);
       }
     });
@@ -63,7 +63,7 @@ export class CadastroCartao implements OnInit {
   isFormInvalid() : boolean {
     if(this.form.invalid){
       this.form.markAllAsTouched();
-      this.toast.error('Erro de Validação. Verifique os valores informados!', 'Erro');
+      this.toast.error('Confira os campos destacados.', 'Erro');
       return true;
      }
     return false;
@@ -84,7 +84,7 @@ export class CadastroCartao implements OnInit {
     requisicao
       .subscribe({
         next: () => {
-          this.toast.success(id ? 'Cartão atualizado com sucesso!' : 'Cartão cadastrado com sucesso!', 'Sucesso');
+          this.toast.success(id ? 'Cartão atualizado.' : 'Cartão cadastrado.', 'Sucesso');
           this.salvo.emit();
       },
         error: (error) => this.onApiError(error)
@@ -107,11 +107,11 @@ export class CadastroCartao implements OnInit {
       const validationError: ValidationErroResponse = error.error;
       this.aplicarErrosValidacao(validationError);
       validationError.camposInvalidos.forEach(ci => {
-        this.toast.error(`${ci.campo}: ${ci.erro}`, 'Erro de Validação');
+        this.toast.error(ci.erro, 'Erro');
       });
       return;
     } else {
-      this.toast.error('Erro ao Processar a Requisição!', 'Erro');
+      this.toast.error('Algo deu errado. Tente de novo.', 'Erro');
       console.error(error.error)
     }
   }

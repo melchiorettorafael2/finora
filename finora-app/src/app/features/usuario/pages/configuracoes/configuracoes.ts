@@ -112,7 +112,7 @@ export class Configuracoes implements OnInit, OnDestroy {
       },
       error: erro => {
         this.carregando.set(false);
-        this.toast.error('Erro ao carregar os dados do usuário!', 'Erro');
+        this.toast.error('Não foi possível carregar seus dados.', 'Erro');
         console.error(erro);
       },
     });
@@ -163,7 +163,7 @@ export class Configuracoes implements OnInit, OnDestroy {
       next: () => {
         this.salvandoFoto.set(false);
         this.limparPreview();
-        this.toast.success('Foto atualizada com sucesso!', 'Sucesso');
+        this.toast.success('Foto atualizada.', 'Sucesso');
       },
       error: erro => {
         this.salvandoFoto.set(false);
@@ -225,7 +225,7 @@ export class Configuracoes implements OnInit, OnDestroy {
         this.dadosForm.reset(this.dadosOriginais);
         this.dadosForm.disable();
         this.editandoDados.set(false);
-        this.toast.success('Dados atualizados com sucesso!', 'Sucesso');
+        this.toast.success('Dados atualizados.', 'Sucesso');
       },
       error: erro => {
         this.salvandoDados.set(false);
@@ -262,7 +262,7 @@ export class Configuracoes implements OnInit, OnDestroy {
       next: () => {
         this.salvandoSenha.set(false);
         this.cancelarEdicaoSenha();
-        this.toast.success('Senha alterada com sucesso!', 'Sucesso');
+        this.toast.success('Senha alterada.', 'Sucesso');
       },
       error: erro => {
         this.salvandoSenha.set(false);
@@ -302,7 +302,7 @@ export class Configuracoes implements OnInit, OnDestroy {
   private formInvalido(form: FormGroup): boolean {
     if (form.invalid) {
       form.markAllAsTouched();
-      this.toast.error('Erro de Validação. Verifique os valores informados!', 'Erro');
+      this.toast.error('Confira os campos destacados.', 'Erro');
       return true;
     }
     return false;
@@ -322,11 +322,11 @@ export class Configuracoes implements OnInit, OnDestroy {
           control.setErrors({ apiError: ci.erro });
           control.markAsTouched();
         }
-        this.toast.error(ci.erro, 'Erro de Validação');
+        this.toast.error(ci.erro, 'Erro');
       });
       return;
     }
-    this.toast.error('Erro ao Processar a Requisição!', 'Erro');
+    this.toast.error('Algo deu errado. Tente de novo.', 'Erro');
     console.error(erro.error);
   }
 }

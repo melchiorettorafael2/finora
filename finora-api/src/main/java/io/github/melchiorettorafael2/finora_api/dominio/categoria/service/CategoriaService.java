@@ -80,7 +80,7 @@ public class CategoriaService {
 
         // Com lançamentos, excluir apagaria o histórico: a saída é desativar
         if (lancamentoRepository.existsByCategoriaIdAndUsuarioId(id, usuarioLogado.id())) {
-            throw new RegraNegocioException("Esta categoria tem lançamentos. Desative-a para escondê-la sem perder o histórico.");
+            throw new RegraNegocioException("Essa categoria tem lançamentos. Desative em vez de excluir.");
         }
 
         // O orçamento da categoria (se houver) deixa de fazer sentido e sai junto

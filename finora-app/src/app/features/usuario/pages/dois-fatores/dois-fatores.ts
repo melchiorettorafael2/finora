@@ -127,7 +127,7 @@ export class DoisFatores implements OnInit, OnDestroy {
         this.processando.set(false);
         this.descartarConfiguracao();
         this.estado.set('ativo');
-        this.toast.success('Verificação em duas etapas ativada!', 'Sucesso');
+        this.toast.success('Verificação em duas etapas ativada.', 'Sucesso');
       },
       error: erro => {
         this.processando.set(false);
@@ -147,7 +147,7 @@ export class DoisFatores implements OnInit, OnDestroy {
       clearTimeout(this.timerCopia);
       this.timerCopia = setTimeout(() => this.chaveCopiada.set(false), 2000);
     } catch {
-      this.toast.error('Não foi possível copiar. Selecione a chave e copie manualmente.', 'Erro');
+      this.toast.error('Não deu para copiar. Copie a chave à mão.', 'Erro');
     }
   }
 
@@ -175,7 +175,7 @@ export class DoisFatores implements OnInit, OnDestroy {
         this.confirmandoDesativacao.set(false);
         this.limparCodigo();
         this.estado.set('inativo');
-        this.toast.success('Verificação em duas etapas desativada. O login volta a pedir só a senha.', 'Sucesso');
+        this.toast.success('Verificação em duas etapas desativada.', 'Sucesso');
       },
       error: erro => {
         this.processando.set(false);
@@ -202,7 +202,7 @@ export class DoisFatores implements OnInit, OnDestroy {
 
   private codigoValido(): boolean {
     if (this.codigoControl.invalid) {
-      this.erroCodigo.set('Digite os 6 dígitos do aplicativo.');
+      this.erroCodigo.set('Digite os 6 dígitos do app.');
       this.focarCodigo();
       return false;
     }
@@ -235,7 +235,7 @@ export class DoisFatores implements OnInit, OnDestroy {
       this.focarCodigo();
       return;
     }
-    this.toast.error('Erro ao Processar a Requisição!', 'Erro');
+    this.toast.error('Algo deu errado. Tente de novo.', 'Erro');
     console.error(erro);
   }
 }

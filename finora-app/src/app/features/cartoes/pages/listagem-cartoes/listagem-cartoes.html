@@ -94,7 +94,7 @@
 <!-- Cadastro / edição de cartão em modal -->
 @if (modalCartao(); as modal) {
     <app-modal [titulo]="modal.id ? 'Editar cartão' : 'Novo cartão'"
-        [subtitulo]="modal.id ? 'Altere os dados do cartão e salve.' : 'Preencha os dados para cadastrar um novo cartão.'"
+        [subtitulo]="modal.id ? 'Altere o que precisar.' : 'Nome e bandeira do cartão.'"
         icone="fa-credit-card" (fechar)="modalCartao.set(null)">
         <app-cadastro-cartao [idCartao]="modal.id" (salvo)="aoSalvarCartao()" (cancelado)="modalCartao.set(null)" />
     </app-modal>
@@ -103,9 +103,9 @@
 @if (cartaoParaExcluir) {
     <app-confirm-dialog
         titulo="Excluir cartão"
-        mensagem="Deseja excluir o cartão selecionado?"
+        mensagem="Excluir este cartão?"
         [destaque]="cartaoParaExcluir.nome"
-        aviso="Esta ação não poderá ser desfeita."
+        aviso="Não dá para desfazer."
         textoConfirmar="Excluir"
         (confirmar)="confirmarExclusao()"
         (cancelar)="cancelarExclusao()">

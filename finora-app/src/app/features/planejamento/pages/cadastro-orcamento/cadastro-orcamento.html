@@ -11,7 +11,7 @@
             </select>
         </div>
         @if (form.controls.categoriaId.touched && form.controls.categoriaId.hasError('required')) {
-            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> A categoria é obrigatória.</span>
+            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> Escolha a categoria.</span>
         }
         @if (form.controls.categoriaId.touched && form.controls.categoriaId.hasError('apiError')) {
             <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> {{ form.controls.categoriaId.errors?.['apiError'] }}</span>
@@ -26,7 +26,7 @@
                 thousandSeparator="." decimalMarker="," placeholder="R$" />
         </div>
         @if (form.controls.limite.touched && form.controls.limite.hasError('required')) {
-            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> O limite é obrigatório.</span>
+            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> Informe o limite.</span>
         }
         @if (form.controls.limite.touched && form.controls.limite.hasError('apiError')) {
             <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> {{ form.controls.limite.errors?.['apiError'] }}</span>

@@ -6,7 +6,7 @@
             <input id="nome" formControlName="nome" type="text" placeholder="Ex: Viagem de férias" />
         </div>
         @if (form.controls.nome.touched && form.controls.nome.hasError('required')) {
-            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> O nome é obrigatório.</span>
+            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> Informe o nome.</span>
         }
         @if (form.controls.nome.touched && form.controls.nome.hasError('apiError')) {
             <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> {{ form.controls.nome.errors?.['apiError'] }}</span>
@@ -37,7 +37,7 @@
                     thousandSeparator="." decimalMarker="," placeholder="R$" />
             </div>
             @if (form.controls.objetivo.touched && form.controls.objetivo.hasError('required')) {
-                <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> O objetivo é obrigatório.</span>
+                <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> Informe o objetivo.</span>
             }
             @if (form.controls.objetivo.touched && form.controls.objetivo.hasError('apiError')) {
                 <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> {{ form.controls.objetivo.errors?.['apiError'] }}</span>
@@ -64,7 +64,7 @@
             <input id="prazo" formControlName="prazo" type="date" />
         </div>
         @if (form.controls.prazo.touched && form.controls.prazo.hasError('required')) {
-            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> O prazo é obrigatório.</span>
+            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> Informe o prazo.</span>
         }
     </div>
 

@@ -405,6 +405,9 @@ button.menu-item {
     flex-direction: column;
     min-width: 0;
     overflow-y: auto;
+    /* Reserva sempre o espaço da barra de rolagem: sem isso, quando os dados chegam e a página
+       passa a rolar (Planejamento, Relatórios), a largura diminui e o header "pula" */
+    scrollbar-gutter: stable;
     /* Espaço da barra lateral fixa; cresce junto quando ela abre (ver o hover da .sidebar) */
     margin-left: 60px;
     transition: margin-left 0.2s ease;

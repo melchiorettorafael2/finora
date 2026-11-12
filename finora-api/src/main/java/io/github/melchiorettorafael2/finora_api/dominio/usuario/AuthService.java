@@ -10,18 +10,23 @@ import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.LoginFor
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.UsuarioCadastroForm;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.VerificacaoDoisFatoresForm;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.RedefinirSenhaForm;
-import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.TokenRedefinicaoSenha;
-import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.VerificarIdentidadeForm;
+import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.SolicitarRedefinicaoSenhaForm;
+import io.github.melchiorettorafael2.finora_api.infra.email.EmailService;
 import io.github.melchiorettorafael2.finora_api.infra.security.JwtService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class AuthService {
@@ -37,6 +42,17 @@ public class AuthService {
 
     @Autowired
     private DoisFatoresService doisFatoresService;
+
+    @Autowired
+    private EmailService emailService;
+
+    // Endereço do front que abre a tela de nova senha (o link do e-mail aponta para lá)
+    @Value("${app.front-url}")
+    private String frontUrl;
+
+    // Um e-mail de redefinição por conta a cada minuto (evita encher a caixa de alguém com pedidos)
+    private static final Duration INTERVALO_ENTRE_EMAILS = Duration.ofMinutes(1);
+    private final Map<UUID, Instant> ultimoEmailRedefinicao = new ConcurrentHashMap<>();
 
     public AuthResponse cadastrar(UsuarioCadastroForm form){
 
@@ -94,35 +110,32 @@ public class AuthService {
     }
 
     /**
-     * 1ª etapa do "Esqueci minha senha" (sem e-mail): o código atual do Google Authenticator
-     * comprova que é o dono da conta, por isso só funciona para contas com 2FA ativo. Usa o mesmo limite de tentativas e a
-     * mesma proteção contra reuso de código do login. Se conferir, devolve o token de redefinição.
+     * "Esqueci minha senha": envia por e-mail um link com o token de redefinição.
+     * Só para emails cadastrados: outro endereço recebe erro de validação e nenhum e-mail sai.
      */
-    @Transactional
-    public TokenRedefinicaoSenha verificarIdentidadeParaSenha(VerificarIdentidadeForm form){
-        // Mesma mensagem do código errado (DoisFatoresService.confirmarCodigo) para usuário
-        // inexistente ou sem 2FA: assim a resposta não revela quais contas existem
-        final String msg = "Código inválido ou já utilizado.";
-        String login = form.login().trim();
-        UsuarioEntity usuario = usuarioRepository.findByLogin(login)
-                .or(() -> buscarPorNome(login))
-                .filter(UsuarioEntity::possuiDoisFatoresAtivo)
-                .orElseThrow(() -> new ValidationException(List.of(new CampoInvalido("codigo", msg))));
+    public void solicitarRedefinicaoSenha(SolicitarRedefinicaoSenhaForm form){
+        UsuarioEntity usuario = usuarioRepository.findByLogin(form.email().trim())
+                .orElseThrow(() -> new ValidationException(List.of(
+                        new CampoInvalido("email", "Nenhuma conta com esse email."))));
 
-        doisFatoresService.confirmarCodigo(usuario, form.codigo());
+        Instant agora = Instant.now();
+        Instant ultimo = ultimoEmailRedefinicao.get(usuario.getId());
+        if (ultimo != null && ultimo.plus(INTERVALO_ENTRE_EMAILS).isAfter(agora)) {
+            return; // o link anterior ainda está a caminho
+        }
+        ultimoEmailRedefinicao.put(usuario.getId(), agora);
 
-        return new TokenRedefinicaoSenha(
-                jwtService.gerarTokenRedefinicaoSenha(usuario),
-                JwtService.EXPIRACAO_REDEFINICAO_SENHA_SEGUNDOS
-        );
+        String link = frontUrl + "/recuperar-senha?token=" + jwtService.gerarTokenRedefinicaoSenha(usuario);
+        emailService.enviarRedefinicaoSenha(usuario.getLogin(), usuario.getNome(), link,
+                JwtService.EXPIRACAO_REDEFINICAO_SENHA_SEGUNDOS / 60);
     }
 
-    /** 2ª etapa: grava a nova senha. O token deixa de valer depois disso (uso único). */
+    /** Grava a nova senha com o token do link. O token deixa de valer depois disso (uso único). O token deixa de valer depois disso (uso único). */
     @Transactional
     public void redefinirSenha(RedefinirSenhaForm form){
         UsuarioEntity usuario = jwtService.validarTokenRedefinicaoSenha(form.tokenRedefinicao())
                 .flatMap(usuarioRepository::findById)
-                .orElseThrow(() -> new UnauthorizedException("A confirmação de identidade expirou. Comece novamente."));
+                .orElseThrow(() -> new UnauthorizedException("Esse link expirou ou já foi usado. Peça outro."));
 
         usuario.setSenha(encoder.encode(form.novaSenha()));
         usuarioRepository.save(usuario);
@@ -130,7 +143,7 @@ public class AuthService {
 
     // O desafio só vale enquanto o 2FA continuar ativo
     private UsuarioEntity usuarioDoDesafio(String tokenDesafio){
-        final String msg = "Sessão de verificação expirada. Faça login novamente.";
+        final String msg = "O tempo acabou. Entre de novo.";
         UUID usuarioId = jwtService.validarTokenDesafio(tokenDesafio)
                 .orElseThrow(() -> new UnauthorizedException(msg));
 

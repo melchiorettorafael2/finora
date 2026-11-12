@@ -17,13 +17,13 @@
         </div>
 
         <!-- Indicador das duas etapas -->
-        @if (etapa() !== 'concluido') {
+        @if (etapa() === 'email' || etapa() === 'enviado' || etapa() === 'nova-senha') {
             <ol class="etapas" aria-label="Etapas">
-                <li [class.ativa]="etapa() === 'identidade'" [class.feita]="etapa() === 'nova-senha'">
+                <li [class.ativa]="etapa() !== 'nova-senha'" [class.feita]="etapa() === 'nova-senha'">
                     <span class="etapa-num">
                         @if (etapa() === 'nova-senha') { <i class="fa-solid fa-check"></i> } @else { 1 }
                     </span>
-                    Identidade
+                    Email
                 </li>
                 <li class="etapa-linha" aria-hidden="true"></li>
                 <li [class.ativa]="etapa() === 'nova-senha'">
@@ -34,43 +34,33 @@
         }
 
         @switch (etapa()) {
-            <!-- ===== Etapa 1: nome/email + código do Google Authenticator ===== -->
-            @case ('identidade') {
-                <form class="auth-form field-enter" [formGroup]="identidadeForm" (ngSubmit)="verificarIdentidade()">
-                    <p class="instrucao">
-                        Informe sua conta e o código atual do <strong>Google Authenticator</strong> para confirmar que é você.
-                        <small class="instrucao-obs">Disponível para contas com a verificação em duas etapas ativada.</small>
-                    </p>
+            <!-- ===== Etapa 1: email para receber o link ===== -->
+            @case ('email') {
+                <form class="auth-form field-enter" (submit)="$event.preventDefault(); enviarLink()">
+                    <p class="instrucao">Informe o email da sua conta. Vamos enviar um link para criar uma nova senha.</p>
 
                     <div class="form-group">
-                        <label for="login">Email ou nome de usuário:</label>
+                        <label for="email">Email:</label>
                         <div class="input-icon">
-                            <i class="fa-solid fa-user"></i>
-                            <input type="text" id="login" formControlName="login" placeholder="Digite seu email ou nome de usuário" autocomplete="username">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" id="email" [formControl]="emailControl" [class.invalido]="erroEmail()" placeholder="seu@email.com" autocomplete="email">
                         </div>
-                        @if (campoInvalido(identidadeForm, 'login')) {
-                            <span class="erro-campo">Informe o email ou nome de usuário.</span>
+                        @if (erroEmail(); as erro) {
+                            <span class="erro-campo"><i class="fa-solid fa-circle-exclamation"></i> {{ erro }}</span>
+                        } @else if (campoInvalido(emailControl)) {
+                            <span class="erro-campo">
+                                {{ emailControl.hasError('required') ? 'Informe o email.' : 'Email inválido.' }}
+                            </span>
                         }
                     </div>
 
-                    <div class="form-group">
-                        <label for="codigo">Código do Google Authenticator:</label>
-                        <div class="input-icon">
-                            <i class="fa-solid fa-shield-halved"></i>
-                            <input type="text" id="codigo" class="input-codigo-compacto" [class.invalido]="erroIdentidade()"
-                                formControlName="codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="7"
-                                placeholder="000000" (input)="onCodigoInput()" aria-describedby="codigo-erro">
-                        </div>
-                        @if (erroIdentidade(); as erro) {
-                            <span id="codigo-erro" class="erro-campo"><i class="fa-solid fa-circle-exclamation"></i> {{ erro }}</span>
-                        } @else if (campoInvalido(identidadeForm, 'codigo')) {
-                            <span id="codigo-erro" class="erro-campo">Digite os 6 dígitos do aplicativo.</span>
+                    <button type="submit" class="btn-submit" [disabled]="enviando() || esperaReenvio() > 0">
+                        @if (esperaReenvio() > 0) {
+                            Aguarde {{ esperaReenvio() }}s
+                        } @else {
+                            {{ enviando() ? 'Enviando...' : 'Enviar link' }}
+                            <i class="fa-solid fa-paper-plane"></i>
                         }
-                    </div>
-
-                    <button type="submit" class="btn-submit" [disabled]="enviando()">
-                        {{ enviando() ? 'Verificando...' : 'Continuar' }}
-                        <i class="fa-solid fa-arrow-right"></i>
                     </button>
 
                     <a class="btn-voltar" routerLink="/login">
@@ -79,13 +69,40 @@
                 </form>
             }
 
-            <!-- ===== Etapa 2: só aparece depois que a API confirmou a identidade ===== -->
+            <!-- ===== Link pedido: confira o email ===== -->
+            @case ('enviado') {
+                <div class="auth-form field-enter">
+                    <div class="concluido" role="status">
+                        <i class="fa-solid fa-envelope-circle-check"></i>
+                        <div>
+                            <strong>Confira seu email</strong>
+                            <span>Enviamos o link para <b>{{ emailEnviado() }}</b>.</span>
+                        </div>
+                    </div>
+                    <p class="enviado-dica">O link vale por 30 minutos. Não achou? Olhe no spam.</p>
+
+                    <button type="button" class="btn-submit" [disabled]="enviando() || esperaReenvio() > 0" (click)="enviarLink()">
+                        @if (esperaReenvio() > 0) {
+                            Reenviar em {{ esperaReenvio() }}s
+                        } @else {
+                            {{ enviando() ? 'Enviando...' : 'Reenviar link' }}
+                            <i class="fa-solid fa-rotate-right"></i>
+                        }
+                    </button>
+
+                    <button type="button" class="btn-voltar" (click)="pedirOutroLink()">
+                        <i class="fa-solid fa-pen"></i> Usar outro email
+                    </button>
+                    <a class="btn-voltar" routerLink="/login">
+                        <i class="fa-solid fa-arrow-left"></i> Voltar para o login
+                    </a>
+                </div>
+            }
+
+            <!-- ===== Etapa 2: aberta pelo link do email ===== -->
             @case ('nova-senha') {
                 <form class="auth-form field-enter" [formGroup]="novaSenhaForm" (ngSubmit)="redefinir()">
-                    <div class="identidade-ok">
-                        <i class="fa-solid fa-circle-check"></i>
-                        <span>Identidade confirmada para <strong>{{ loginConfirmado() }}</strong></span>
-                    </div>
+                    <p class="instrucao">Escolha a nova senha.</p>
 
                     <div class="form-group">
                         <label for="novaSenha">Nova senha:</label>
@@ -98,8 +115,8 @@
                                 <i class="fa-solid" [class.fa-eye]="!mostrarSenha()" [class.fa-eye-slash]="mostrarSenha()"></i>
                             </button>
                         </div>
-                        @if (campoInvalido(novaSenhaForm, 'novaSenha')) {
-                            <span class="erro-campo">A senha deve ter pelo menos 6 caracteres.</span>
+                        @if (campoInvalido(novaSenhaForm.controls.novaSenha)) {
+                            <span class="erro-campo">Use pelo menos 6 caracteres.</span>
                         }
                     </div>
 
@@ -116,21 +133,40 @@
                     </div>
 
                     <button type="submit" class="btn-submit" [disabled]="enviando()">
-                        {{ enviando() ? 'Salvando...' : 'Redefinir senha' }}
+                        {{ enviando() ? 'Salvando...' : 'Salvar nova senha' }}
                         <i class="fa-solid fa-check"></i>
                     </button>
 
-                    <button type="button" class="btn-voltar" (click)="recomecar()">
-                        <i class="fa-solid fa-arrow-left"></i> Usar outra conta
-                    </button>
+                    <a class="btn-voltar" routerLink="/login">
+                        <i class="fa-solid fa-arrow-left"></i> Voltar para o login
+                    </a>
                 </form>
+            }
+
+            <!-- ===== Link vencido ou já usado ===== -->
+            @case ('link-invalido') {
+                <div class="auth-form field-enter">
+                    <div class="concluido aviso" role="alert">
+                        <i class="fa-solid fa-link-slash"></i>
+                        <div>
+                            <strong>Link expirado</strong>
+                            <span>Esse link venceu ou já foi usado. Peça outro.</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-submit espaco-topo" (click)="pedirOutroLink()">
+                        Pedir outro link <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                    <a class="btn-voltar" routerLink="/login">
+                        <i class="fa-solid fa-arrow-left"></i> Voltar para o login
+                    </a>
+                </div>
             }
 
             @case ('concluido') {
                 <div class="concluido field-enter" role="status">
                     <i class="fa-solid fa-circle-check"></i>
                     <div>
-                        <strong>Senha redefinida!</strong>
+                        <strong>Senha alterada</strong>
                         <span>Voltando para o login...</span>
                     </div>
                 </div>

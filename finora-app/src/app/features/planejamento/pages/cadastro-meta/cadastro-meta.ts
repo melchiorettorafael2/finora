@@ -75,7 +75,7 @@ export class CadastroMeta implements OnInit {
     this.salvando.set(true);
     requisicao.subscribe({
       next: () => {
-        this.toast.success(id ? 'Meta atualizada com sucesso!' : 'Meta cadastrada com sucesso!', 'Sucesso');
+        this.toast.success(id ? 'Meta atualizada.' : 'Meta criada.', 'Sucesso');
         this.salvo.emit();
       },
       error: erro => {

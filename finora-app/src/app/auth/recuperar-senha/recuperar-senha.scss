@@ -1,6 +1,6 @@
 /* Complementa o login.scss com o que só a tela de redefinir senha usa */
 
-/* ===== Indicador de etapas: 1 Identidade —— 2 Nova senha ===== */
+/* ===== Indicador de etapas: 1 Email —— 2 Nova senha ===== */
 .etapas {
     display: flex;
     align-items: center;
@@ -58,29 +58,6 @@
     background-color: var(--border);
 }
 
-/* Faixa verde no topo da etapa 2 */
-.identidade-ok {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 18px;
-    padding: 10px 14px;
-    border: 1px solid rgba(52, 211, 163, 0.3);
-    border-radius: 8px;
-    background-color: rgba(52, 211, 163, 0.08);
-    font-size: 13px;
-    color: var(--text);
-
-    i {
-        color: var(--brand-green);
-    }
-
-    strong {
-        color: var(--text-strong);
-        overflow-wrap: anywhere;
-    }
-}
-
 .instrucao {
     margin-bottom: 18px;
     font-size: 13.5px;
@@ -96,18 +73,6 @@
 /* Espaço para o botão de mostrar/ocultar dentro do campo */
 .auth-form .form-group input.input-com-toggle {
     padding-right: 44px;
-}
-
-/* Código com dígitos espaçados, sem ocupar a altura do campo grande da verificação */
-.auth-form .form-group input.input-codigo-compacto {
-    font-size: 17px;
-    font-weight: 600;
-    letter-spacing: 0.35em;
-    font-variant-numeric: tabular-nums;
-
-    &.invalido {
-        border-color: var(--danger);
-    }
 }
 
 .erro-campo {
@@ -150,10 +115,30 @@ a.btn-voltar {
     }
 }
 
-/* Recuperação depende do Google Authenticator (2FA é opcional) */
-.instrucao-obs {
-    display: block;
-    margin-top: 6px;
-    font-size: 12px;
-    opacity: 0.85;
+/* Link com problema (expirado ou já usado): mesma caixa da conclusão, em âmbar */
+.concluido.aviso {
+    border-color: rgba(245, 166, 35, 0.4);
+    background-color: rgba(245, 166, 35, 0.1);
+
+    > i {
+        color: #f5a623;
+    }
+}
+
+/* Depois de pedir o link: email em destaque e dica do spam */
+.enviado-dica {
+    margin: 12px 0 16px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.espaco-topo {
+    margin-top: 16px;
+}
+
+/* Email sem conta: borda vermelha no campo */
+.auth-form .form-group input.invalido {
+    border-color: var(--danger);
 }

@@ -24,7 +24,7 @@ public class CartaoValidator {
         // Nome único entre os cartões do próprio usuário
         var isListaNaoVazia = !repository.findByNomeAndNotId(form.nome(), id, usuarioLogado.id()).isEmpty();
         if(isListaNaoVazia){
-            result.add(new CampoInvalido("nome", "Já cadastrado!"));
+            result.add(new CampoInvalido("nome", "Já existe um cartão com esse nome."));
         }
 
         return result;

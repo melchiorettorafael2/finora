@@ -47,14 +47,14 @@
     </main>
 
     @if (modais.configuracoesAberta()) {
-        <app-modal titulo="Configurações" subtitulo="Seu perfil e a segurança da conta."
+        <app-modal titulo="Configurações" subtitulo="Perfil e segurança."
             icone="fa-gear" largura="media" (fechar)="modais.fecharConfiguracoes()">
             <app-configuracoes />
         </app-modal>
     }
 
     @if (modais.doisFatoresAberta()) {
-        <app-modal titulo="Verificação em duas etapas" subtitulo="Proteja sua conta com um código do Google Authenticator além da senha."
+        <app-modal titulo="Verificação em duas etapas" subtitulo="Um código do celular além da senha."
             icone="fa-shield-halved" largura="media" (fechar)="modais.fecharDoisFatores()">
             <!-- @defer: a biblioteca de QR code só é baixada quando este modal abre -->
             @defer {

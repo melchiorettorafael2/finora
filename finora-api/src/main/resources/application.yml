@@ -17,11 +17,29 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 5MB
+  # SMTP do envio de e-mail (recuperação de senha). Sem MAIL_HOST o e-mail não sai: o link vai para o log.
+  # Gmail: MAIL_HOST=smtp.gmail.com, MAIL_USERNAME=seu@gmail.com e MAIL_PASSWORD=senha de app (16 letras)
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: true
   h2:
     console:
       enabled: true
       path: /h2-console
 app:
+  # Endereço do front, usado no link do e-mail de redefinição de senha
+  front-url: ${APP_FRONT_URL:http://localhost:4200}
+  mail:
+    # Por padrão usa a própria conta do SMTP (o Gmail exige que o remetente seja ela)
+    remetente: ${MAIL_REMETENTE:${MAIL_USERNAME:no-reply@finora.local}}
   jwt:
     secret: QVdTIENlcnRpZmllZCBEZXZlbG9wZXI=
     expiration-seconds: 3600

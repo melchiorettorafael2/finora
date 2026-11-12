@@ -58,7 +58,7 @@ export class RelatoriosPage {
   relatorio$: Observable<RelatorioView> = toObservable(this.periodo).pipe(
     switchMap(periodo => this.service.obterRelatorio(periodo).pipe(
       catchError(() => {
-        this.toast.error('Erro ao carregar o relatório.', 'Erro');
+        this.toast.error('Não foi possível carregar o relatório.', 'Erro');
         return EMPTY;
       })
     )),

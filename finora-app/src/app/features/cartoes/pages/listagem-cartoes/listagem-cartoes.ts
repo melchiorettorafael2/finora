@@ -107,11 +107,11 @@ export class ListagemCartoes {
     this.service.deletar(idCartao)
     .subscribe({
       next: () => {
-        this.toast.success('Cartão excluído com sucesso!', 'Sucesso');
+        this.toast.success('Cartão excluído.', 'Sucesso');
         this.listarCartoes();
       },
       error: (error) => {
-        this.toast.error('Erro ao excluir cartão!', 'Erro');
+        this.toast.error('Não foi possível excluir o cartão.', 'Erro');
         console.error(error);
       }
     });
@@ -123,11 +123,11 @@ export class ListagemCartoes {
     this.service.mudarStatus(idCartao) 
     .subscribe({
       next: () => {
-        this.toast.success('Status do cartão alterado com sucesso!', 'Sucesso');
+        this.toast.success('Status do cartão alterado.', 'Sucesso');
         this.listarCartoes();
       },
       error: (error) => {
-        this.toast.error('Erro ao alterar status do cartão!', 'Erro');
+        this.toast.error('Não foi possível alterar o status.', 'Erro');
         console.error(error);
       }
     });

@@ -73,7 +73,7 @@ public class DoisFatoresService {
         OptionalLong passo = totpService.validar(usuario.getTotpSegredoPendente(), codigo, null);
         if (passo.isEmpty()) {
             limiteTentativas.registrarFalha(usuarioId);
-            throw erro("Código inválido. Confira o código no aplicativo e tente novamente.");
+            throw erro("Código inválido. Tente de novo.");
         }
 
         limiteTentativas.limpar(usuarioId);
@@ -121,7 +121,7 @@ public class DoisFatoresService {
 
     private void verificarBloqueio(UUID usuarioId) {
         if (limiteTentativas.isBloqueado(usuarioId)) {
-            throw erro("Muitas tentativas inválidas. Aguarde alguns minutos e tente novamente.");
+            throw erro("Muitas tentativas. Espere alguns minutos.");
         }
     }
 

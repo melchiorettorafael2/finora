@@ -10,14 +10,14 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record LancamentoForm(
-        @NotNull(message = "Campo obrigatorio")
+        @NotNull(message = "Campo obrigatório")
         UUID categoriaId,
         @NotBlank(message = "Campo obrigatório")
         String descricao,
-        @NotNull(message = "Campo obrigatorio")
+        @NotNull(message = "Campo obrigatório")
         TipoLancamento tipo,
         LocalDate data,
-        @NotNull(message = "Campo obrigatorio")
+        @NotNull(message = "Campo obrigatório")
         @DecimalMin(value = "0.01", message = "Valor deve ser maior que zero.")
         BigDecimal valor,
         UUID cartaoId

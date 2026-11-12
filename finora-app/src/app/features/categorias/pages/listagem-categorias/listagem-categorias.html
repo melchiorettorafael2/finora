@@ -97,7 +97,7 @@
 <!-- Cadastro / edição de categoria em modal -->
 @if (modalCategoria(); as modal) {
     <app-modal [titulo]="modal.id ? 'Editar categoria' : 'Nova categoria'"
-        [subtitulo]="modal.id ? 'Altere o nome ou o ícone e salve.' : 'Dê um nome e escolha um ícone para a categoria.'"
+        [subtitulo]="modal.id ? 'Altere o nome ou o ícone.' : 'Escolha um nome e um ícone.'"
         icone="fa-tags" (fechar)="modalCategoria.set(null)">
         <app-cadastro-categoria [idCategoria]="modal.id" (salvo)="aoSalvarCategoria()" (cancelado)="modalCategoria.set(null)" />
     </app-modal>
@@ -106,9 +106,9 @@
 @if (categoriaParaExcluir(); as categoriaExcluir) {
     <app-confirm-dialog
         titulo="Excluir categoria"
-        mensagem="Deseja excluir a categoria selecionada?"
+        mensagem="Excluir esta categoria?"
         [destaque]="categoriaExcluir.nome"
-        aviso="O orçamento dela também será removido. Categorias com lançamentos não podem ser excluídas: desative-as."
+        aviso="O orçamento dela sai junto. Se tiver lançamentos, desative em vez de excluir."
         textoConfirmar="Excluir"
         (confirmar)="confirmarExclusao()"
         (cancelar)="cancelarExclusao()">

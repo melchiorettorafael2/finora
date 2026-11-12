@@ -12,7 +12,7 @@
         </div>
         @if(form.controls.tipo.hasError('required') && form.controls.tipo.touched){
         <span class="form-hint form-hint-error">
-            <i class="fa-solid fa-circle-exclamation"></i> O tipo do Lançamento é obrigatório.
+            <i class="fa-solid fa-circle-exclamation"></i> Escolha o tipo.
         </span>
         }
 
@@ -37,7 +37,7 @@
         </div>
         @if(form.controls.categoriaId.hasError('required') && form.controls.categoriaId.touched){
         <span class="form-hint form-hint-error">
-            <i class="fa-solid fa-circle-exclamation"></i> A categoria do Lançamento é obrigatória.
+            <i class="fa-solid fa-circle-exclamation"></i> Escolha a categoria.
         </span>
         }
 
@@ -58,7 +58,7 @@
         </div>
         @if(form.controls.data.hasError('required') && form.controls.data.touched){
         <span class="form-hint form-hint-error">
-            <i class="fa-solid fa-circle-exclamation"></i> A data do Lançamento é obrigatória.
+            <i class="fa-solid fa-circle-exclamation"></i> Informe a data.
         </span>
         }
 
@@ -78,7 +78,7 @@
         </div>
         @if(form.controls.valor.hasError('required') && form.controls.valor.touched){
         <span class="form-hint form-hint-error">
-            <i class="fa-solid fa-circle-exclamation"></i> O valor do Lançamento é obrigatório.
+            <i class="fa-solid fa-circle-exclamation"></i> Informe o valor.
         </span>
         }
 
@@ -113,11 +113,11 @@
     <div class="form-group">
         <label for="lancamento-descricao">Descrição <span class="required">*</span></label>
         <div class="input-icon">
-            <textarea id="lancamento-descricao" name="descricao" formControlName="descricao" rows="4" cols="50" placeholder="Descreva o Lançamento..."></textarea>
+            <textarea id="lancamento-descricao" name="descricao" formControlName="descricao" rows="4" cols="50" placeholder="Ex: Mercado"></textarea>
         </div>
         @if(form.controls.descricao.hasError('required') && form.controls.descricao.touched){
         <span class="form-hint form-hint-error">
-            <i class="fa-solid fa-circle-exclamation"></i> A descrição do Lançamento é obrigatória.
+            <i class="fa-solid fa-circle-exclamation"></i> Informe a descrição.
         </span>
         }
     </div>

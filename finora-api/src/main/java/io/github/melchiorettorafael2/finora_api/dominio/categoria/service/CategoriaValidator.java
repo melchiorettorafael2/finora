@@ -34,7 +34,7 @@ public class CategoriaValidator {
                 : repository.existsByNomeAndUsuarioIdAndIdNot(nova.nome(), usuarioLogado.id(), id);
 
         if(existeCategoriaCadastrada){
-            result.add(new CampoInvalido("nome","Já existe uma Categoria cadastrada com esse nome!"));
+            result.add(new CampoInvalido("nome","Já existe uma categoria com esse nome."));
         }
 
         return result;

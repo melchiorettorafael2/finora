@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 public record VerificacaoDoisFatoresForm(
         @NotBlank(message = "Sessão de verificação inválida. Faça login novamente.")
         String tokenDesafio,
-        @NotBlank(message = "Informe o código do aplicativo autenticador")
+        @NotBlank(message = "Informe o código do app")
         @Pattern(regexp = "\\d{6}", message = "O código deve ter 6 dígitos")
         String codigo
 ) {

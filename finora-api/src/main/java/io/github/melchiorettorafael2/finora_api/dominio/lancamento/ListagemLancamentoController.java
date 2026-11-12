@@ -56,7 +56,7 @@ public class ListagemLancamentoController {
             return TipoLancamento.valueOf(tipo);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT,
-                    "Parametros 'tipo' invalido, valores aceitos: RECEITA ou DESPESA.");
+                    "Parâmetro 'tipo' inválido, valores aceitos: RECEITA ou DESPESA.");
         }
     }
 
@@ -69,7 +69,7 @@ public class ListagemLancamentoController {
             return YearMonth.parse(mes);
         } catch (DateTimeParseException e) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT,
-            "Parametros 'mes' invalido, use o formato yyyy-MM.");
+            "Parâmetro 'mes' inválido, use o formato yyyy-MM.");
         }
     }
 }

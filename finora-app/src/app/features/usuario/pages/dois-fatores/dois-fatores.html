@@ -8,11 +8,11 @@
                 <i class="fa-solid" [class.fa-shield-halved]="estado() === 'ativo'" [class.fa-shield]="estado() !== 'ativo'"></i>
             </span>
             <div class="status-textos">
-                <strong>{{ estado() === 'ativo' ? 'Sua conta está protegida' : 'Proteção extra desativada' }}</strong>
+                <strong>{{ estado() === 'ativo' ? 'Sua conta está protegida' : 'Verificação desativada' }}</strong>
                 <span>
                     {{ estado() === 'ativo'
-                        ? 'Depois da senha, o Finora pede o código do Google Authenticator.'
-                        : 'É opcional: ative para pedir um código do celular além da senha.' }}
+                        ? 'O login pede o código do app.'
+                        : 'Ative para pedir um código do celular ao entrar.' }}
                 </span>
             </div>
             @if (estado() === 'ativo') {
@@ -42,15 +42,15 @@
             <ul class="beneficios">
                 <li>
                     <i class="fa-solid fa-lock"></i>
-                    <span>Mesmo que alguém descubra sua senha, não consegue entrar sem o código do seu celular.</span>
+                    <span>Sem o código do seu celular, ninguém entra, mesmo sabendo a senha.</span>
                 </li>
                 <li>
                     <i class="fa-solid fa-clock-rotate-left"></i>
-                    <span>O código muda a cada 30 segundos e funciona sem internet no celular.</span>
+                    <span>O código muda a cada 30 segundos e não precisa de internet.</span>
                 </li>
                 <li>
                     <i class="fa-solid fa-mobile-screen"></i>
-                    <span>Funciona com Google Authenticator, Microsoft Authenticator, Authy e similares.</span>
+                    <span>Funciona com Google Authenticator, Authy e similares.</span>
                 </li>
             </ul>
         }
@@ -63,7 +63,7 @@
                         <span class="passo-numero">1</span>
                         <div class="passo-conteudo">
                             <h3>Instale o aplicativo</h3>
-                            <p class="form-subtitle">Baixe o Google Authenticator no seu celular, se ainda não tiver.</p>
+                            <p class="form-subtitle">Baixe o Google Authenticator, se ainda não tiver.</p>
                             <div class="lojas">
                                 <a class="btn btn-secondary" [href]="linkPlayStore" target="_blank" rel="noopener noreferrer">
                                     <i class="fa-brands fa-google-play"></i> Google Play
@@ -116,7 +116,7 @@
                         <span class="passo-numero">3</span>
                         <div class="passo-conteudo">
                             <h3>Confirme o código</h3>
-                            <p class="form-subtitle">Digite o código de 6 dígitos que aparece no app para a conta Finora.</p>
+                            <p class="form-subtitle">Digite o código de 6 dígitos do app.</p>
 
                             <!-- O botão "Ativar" fica no rodapé e envia este form (atributo form) -->
                             <form id="form-codigo-2fa" class="form-codigo" (submit)="$event.preventDefault(); ativar()">
@@ -132,10 +132,9 @@
         @case ('ativo') {
             @if (confirmandoDesativacao()) {
                 <form id="form-codigo-2fa" class="form-codigo desativar-form form-entrada" (submit)="$event.preventDefault(); desativar()">
-                    <h3>Desativar a verificação</h3>
+                    <h3>Desativar</h3>
                     <p class="form-subtitle">
-                        Confirme com o código atual do aplicativo. Depois disso, o login volta a pedir só a senha
-                        (você pode ativar de novo quando quiser).
+                        Digite o código do app para confirmar.
                     </p>
                     <ng-container *ngTemplateOutlet="campoCodigo"></ng-container>
                 </form>
@@ -143,11 +142,11 @@
                 <ul class="beneficios">
                     <li>
                         <i class="fa-solid fa-circle-check"></i>
-                        <span>Sua senha sozinha não basta para entrar: o código do celular é pedido em todo login.</span>
+                        <span>Todo login pede o código do celular.</span>
                     </li>
                     <li>
                         <i class="fa-solid fa-mobile-screen"></i>
-                        <span>Vai trocar de celular? Desative e ative de novo, escaneando o QR code no aparelho novo.</span>
+                        <span>Trocou de celular? Desative e ative de novo no aparelho novo.</span>
                     </li>
                 </ul>
             }
@@ -186,7 +185,7 @@
                 </button>
                 <button type="button" class="btn btn-primary" (click)="iniciarConfiguracao()" [disabled]="processando()">
                     <i class="fa-solid fa-qrcode"></i>
-                    {{ processando() ? 'Gerando QR code...' : 'Ativar com Google Authenticator' }}
+                    {{ processando() ? 'Gerando QR code...' : 'Ativar' }}
                 </button>
             }
             @case ('erro') {

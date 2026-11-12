@@ -49,7 +49,7 @@ export class DashboardPage {
     map(([mes]) => mes || this.mesAtual()),
     switchMap(mes => this.service.obterDashboard(mes).pipe(
       catchError(() => {
-        this.toast.error('Erro ao carregar o dashboard.', 'Erro');
+        this.toast.error('Não foi possível carregar o dashboard.', 'Erro');
         return EMPTY;
       })
     )),

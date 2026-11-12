@@ -43,7 +43,7 @@ export class CadastroOrcamento implements OnInit {
 
     this.service.listarCategoriasDisponiveis().subscribe({
       next: categorias => this.categorias.set(categorias),
-      error: () => this.toast.error('Erro ao carregar as categorias.', 'Erro'),
+      error: () => this.toast.error('Não foi possível carregar as categorias.', 'Erro'),
     });
   }
 
@@ -56,7 +56,7 @@ export class CadastroOrcamento implements OnInit {
     this.salvando.set(true);
     this.service.definirOrcamento({ ...dados, limite: valorParaApi(dados.limite) }).subscribe({
       next: () => {
-        this.toast.success(this.editando ? 'Orçamento atualizado com sucesso!' : 'Orçamento cadastrado com sucesso!', 'Sucesso');
+        this.toast.success(this.editando ? 'Orçamento atualizado.' : 'Orçamento definido.', 'Sucesso');
         this.salvo.emit();
       },
       error: erro => {

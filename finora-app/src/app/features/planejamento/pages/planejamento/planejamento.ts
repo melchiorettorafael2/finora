@@ -68,7 +68,7 @@ export class PlanejamentoPage {
     map(([mes]) => mes || this.mesAtual()),
     switchMap(mes => this.service.obterPlanejamento(mes).pipe(
       catchError(() => {
-        this.toast.error('Erro ao carregar o planejamento.', 'Erro');
+        this.toast.error('Não foi possível carregar o planejamento.', 'Erro');
         return EMPTY;
       })
     )),
@@ -132,12 +132,12 @@ export class PlanejamentoPage {
 
     requisicao[item.tipo].subscribe({
       next: () => {
-        this.toast.success(`${this.capitalizar(this.rotuloTipo[item.tipo])} removido(a) com sucesso!`, 'Sucesso');
+        this.toast.success(item.tipo === 'meta' ? 'Meta removida.' : 'Orçamento removido.', 'Sucesso');
         this.itemParaExcluir.set(null);
         this.recarregar$.next();
       },
       error: () => {
-        this.toast.error(`Erro ao remover ${this.rotuloTipo[item.tipo]}.`, 'Erro');
+        this.toast.error(`Não foi possível remover ${item.tipo === 'meta' ? 'a meta' : 'o orçamento'}.`, 'Erro');
         this.itemParaExcluir.set(null);
       },
     });
@@ -186,9 +186,6 @@ export class PlanejamentoPage {
     return valores.reduce((total, valor) => total + valor, 0);
   }
 
-  private capitalizar(texto: string) {
-    return texto.charAt(0).toUpperCase() + texto.slice(1);
-  }
 
   private mesAtual() {
     const hoje = new Date();

@@ -108,7 +108,7 @@ export class ListagemCategorias {
     this.categoriaParaExcluir.set(null);
     this.service.deletar(idCategoria).subscribe({
       next: () => {
-        this.toast.success('Categoria excluída com sucesso!', 'Sucesso');
+        this.toast.success('Categoria excluída.', 'Sucesso');
         this.listarCategorias();
       },
       error: (error) => {
@@ -117,7 +117,7 @@ export class ListagemCategorias {
           this.toast.error(error.error.message, 'Não foi possível excluir');
           return;
         }
-        this.toast.error('Erro ao excluir categoria!', 'Erro');
+        this.toast.error('Não foi possível excluir a categoria.', 'Erro');
         console.error(error);
       }
     });
@@ -127,11 +127,11 @@ export class ListagemCategorias {
     this.fecharMenu();
     this.service.mudarStatus(idCategoria).subscribe({
       next: () => {
-        this.toast.success('Status da categoria alterado com sucesso!', 'Sucesso');
+        this.toast.success('Status da categoria alterado.', 'Sucesso');
         this.listarCategorias();
       },
       error: (error) => {
-        this.toast.error('Erro ao alterar status da categoria!', 'Erro');
+        this.toast.error('Não foi possível alterar o status.', 'Erro');
         console.error(error);
       }
     });
