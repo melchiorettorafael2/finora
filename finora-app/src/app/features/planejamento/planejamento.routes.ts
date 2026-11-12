@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { PlanejamentoPage } from './pages/planejamento/planejamento';
-import { CadastroOrcamento } from './pages/cadastro-orcamento/cadastro-orcamento';
 
 export const PLANEJAMENTO_ROUTES: Routes = [
     {
@@ -8,12 +7,12 @@ export const PLANEJAMENTO_ROUTES: Routes = [
         component: PlanejamentoPage
     },
     {
-        // ?categoriaId=...&limite=... preenche o formulário para alterar um limite existente
+        // Orçamento, nova meta e edição de meta viraram modais no Planejamento; os endereços antigos levam para lá
         path: 'planejamento/orcamento',
-        component: CadastroOrcamento
+        redirectTo: 'planejamento',
+        pathMatch: 'full'
     },
     {
-        // Nova meta e edição de meta viraram modal no Planejamento; os endereços antigos levam para lá
         path: 'planejamento/metas/nova',
         redirectTo: 'planejamento',
         pathMatch: 'full'

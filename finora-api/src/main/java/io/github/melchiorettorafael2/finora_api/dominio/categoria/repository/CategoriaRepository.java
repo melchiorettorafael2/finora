@@ -18,5 +18,8 @@ public interface CategoriaRepository extends JpaRepository<CategoriaEntity, UUID
 
     boolean existsByNomeAndUsuarioId(String nome, UUID usuarioId);
 
+    // Na edição a própria categoria não conta como duplicada
+    boolean existsByNomeAndUsuarioIdAndIdNot(String nome, UUID usuarioId, UUID id);
+
     List<CategoriaEntity> findByAtivoTrueAndUsuarioId(UUID usuarioId);
 }

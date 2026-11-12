@@ -134,7 +134,7 @@
     <div class="config-coluna">
     <h3 class="config-coluna-titulo"><i class="fa-solid fa-shield-halved"></i> Segurança</h3>
 
-    <!-- ===== Verificação em duas etapas (atalho para a página do Google Authenticator) ===== -->
+    <!-- ===== Verificação em duas etapas (opcional): switch liga/desliga ===== -->
     <section class="card-full config-card">
         <div class="form-header sem-conteudo">
             <div class="form-header-icon">
@@ -149,12 +149,16 @@
                         <span class="badge badge-warning badge-titulo">Desativada</span>
                     }
                 </h2>
-                <p class="form-subtitle">Peça um código do Google Authenticator além da senha ao entrar.</p>
+                <p class="form-subtitle">Opcional: peça um código do Google Authenticator além da senha ao entrar.</p>
             </div>
-            <!-- Abre a página do Google Authenticator e fecha este modal -->
-            <a class="btn btn-editar" routerLink="/paginas/configuracoes/dois-fatores" (click)="modais.fecharConfiguracoes()">
-                <i class="fa-solid fa-mobile-screen"></i> {{ doisFatoresAtivo() ? 'Gerenciar' : 'Configurar' }}
-            </a>
+            <!-- Ligar abre o passo a passo do QR code; desligar pede o código atual para confirmar -->
+            <button type="button" class="switch-2fa" role="switch" [attr.aria-checked]="!!doisFatoresAtivo()"
+                [disabled]="doisFatoresAtivo() === null"
+                [attr.aria-label]="doisFatoresAtivo() ? 'Desativar verificação em duas etapas' : 'Ativar verificação em duas etapas'"
+                [attr.title]="doisFatoresAtivo() ? 'Desativar' : 'Ativar'"
+                (click)="modais.abrirDoisFatores(doisFatoresAtivo() ? 'desativar' : 'ativar')">
+                <span class="switch-trilho"><span class="switch-bolinha"></span></span>
+            </button>
         </div>
     </section>
 

@@ -38,6 +38,23 @@ public class CategoriaController {
         return service.listar(pageRequest);
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<CategoriaDetalhes> obterDetalhes(@PathVariable UUID id){
+        return ResponseEntity.ok(service.obterDetalhes(id));
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<Void> atualizar(@PathVariable UUID id, @RequestBody @Valid CategoriaForm dados){
+        service.atualizar(id, dados);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deletar(@PathVariable UUID id){
+        service.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PatchMapping("{id}/status")
     public ResponseEntity<Void> mudarStatus(@PathVariable UUID id){
         service.mudarStatus(id);

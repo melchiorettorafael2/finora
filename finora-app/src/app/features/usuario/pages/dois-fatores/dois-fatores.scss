@@ -1,52 +1,76 @@
 @use '../../../../shared/styles/botoes';
 
-.pagina {
+/* Card único do modal, como nos formulários de cadastro */
+.dois-fatores {
     display: grid;
-    gap: 16px;
-    max-width: 760px;
-}
+    gap: 20px;
 
-.link-voltar {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    width: fit-content;
-    padding: 0;
-    border: none;
-    background: none;
-    font: inherit;
-    font-size: 13px;
-    color: var(--text-muted);
-    text-decoration: none;
-    cursor: pointer;
-    transition: color var(--transition);
-
-    &:hover {
-        color: var(--text-strong);
+    .form-actions {
+        margin-top: 4px;
     }
 }
 
-/* Escudo fica verde quando o 2FA está ativo */
-.form-header-icon.ativo {
-    color: var(--brand-green);
-    background-color: rgba(52, 211, 163, 0.12);
-    border-color: rgba(52, 211, 163, 0.3);
+/* Faixa de situação no topo do card */
+.status-faixa {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid color-mix(in srgb, var(--warning) 40%, transparent);
+    border-radius: 10px;
+    background-color: var(--warning-bg);
+
+    &.ativa {
+        border-color: color-mix(in srgb, var(--success) 40%, transparent);
+        background-color: var(--success-bg);
+
+        .status-icone {
+            color: var(--success);
+            background-color: color-mix(in srgb, var(--success) 18%, transparent);
+        }
+    }
+
+    .badge {
+        flex-shrink: 0;
+    }
 }
 
-.status-badge {
-    margin-left: auto;
+.status-icone {
+    width: 38px;
+    height: 38px;
     flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    font-size: 16px;
+    color: var(--warning);
+    background-color: color-mix(in srgb, var(--warning) 18%, transparent);
+}
+
+.status-textos {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    strong {
+        font-size: 14px;
+        color: var(--text-strong);
+    }
+
+    span {
+        font-size: 13px;
+        color: var(--text-muted);
+    }
 }
 
 .estado-mensagem {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
-    padding: 32px;
+    gap: 10px;
+    padding: 24px;
     color: var(--text-muted);
     font-size: 14px;
 }
@@ -89,6 +113,11 @@
 .passo {
     display: flex;
     gap: 16px;
+
+    & + & {
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+    }
 }
 
 .passo-numero {
@@ -244,7 +273,7 @@
 
     .form-group {
         max-width: 260px;
-        margin-bottom: 14px;
+        margin-bottom: 0;
     }
 }
 
@@ -266,38 +295,19 @@
     }
 }
 
-.acoes-codigo {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
+/* ===== Ativa: troca de celular ===== */
+.desativar-form {
+    margin-top: 0;
 
-/* ===== Ativa ===== */
-.ativo-mensagem {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-
-    > i {
-        font-size: 26px;
-        color: var(--success);
-    }
-
-    strong {
-        display: block;
+    h3 {
         margin-bottom: 4px;
         font-size: 15px;
+        font-weight: 600;
         color: var(--text-strong);
     }
-}
-
-.desativar-form {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
 
     > .form-subtitle {
-        margin-bottom: 12px;
+        margin-bottom: 14px;
     }
 }
 
@@ -343,5 +353,19 @@
 @media (prefers-reduced-motion: reduce) {
     .form-entrada {
         animation: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .status-faixa {
+        flex-wrap: wrap;
+    }
+
+    .dois-fatores .form-actions {
+        flex-wrap: wrap-reverse;
+
+        .btn {
+            flex: 1 1 auto;
+        }
     }
 }

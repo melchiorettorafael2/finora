@@ -63,28 +63,29 @@
 @mixin tema-claro {
     color-scheme: light;
 
-    /* Claro moderno e minimalista: fundo ardósia suave, superfícies limpas que se
-       destacam dele com sombras discretas, e cores de destaque vivas (azul, esmeralda) */
-    --bg-app: #dce2ea;          /* fundo da página (ganha um brilho azul/verde da marca) */
-    --bg-surface: #e3ebf8;      /* moldura dos cards (azulada) */
-    --bg-elevated: #dbe6f6;     /* cabeçalho de tabela (azulado) */
-    --bg-table: #fbfcfe;        /* painel interno dos cards e tabelas */
-    --bg-input: #e8edf3;        /* campos e trilho das barras */
-    --bg-hover: #eef4fd;
-    --bg-active: #dfe9f9;
+    /* Claro "suave": cinza-azulado em vez de branco, para não ofuscar.
+       Sem nenhuma superfície branca; a hierarquia vem dos tons (página < moldura < painel)
+       e o texto continua bem escuro para manter a leitura */
+    --bg-app: #9eaabb;          /* fundo da página */
+    --bg-surface: #aeb9c8;      /* moldura dos cards e modais */
+    --bg-elevated: #a1aec0;     /* cabeçalho de tabela */
+    --bg-table: #bcc5d1;        /* painel interno dos cards e tabelas (o mais claro) */
+    --bg-input: #adb8c7;        /* campos e trilho das barras */
+    --bg-hover: #c4ccd7;
+    --bg-active: #a7b4c5;
 
-    --border: #cfdcf0;
-    --border-subtle: #dfe7f3;
-    --border-hover: #9fb0c4;
-    --linha: rgba(15, 23, 42, 0.08);
-    --grade-grafico: rgba(15, 23, 42, 0.06);
-    --superficie-sutil: rgba(15, 23, 42, 0.03);
-    --superficie-sutil-hover: rgba(15, 23, 42, 0.06);
+    --border: #8e9db2;
+    --border-subtle: #9dabbd;
+    --border-hover: #6a7c95;
+    --linha: rgba(15, 23, 42, 0.12);
+    --grade-grafico: rgba(15, 23, 42, 0.10);
+    --superficie-sutil: rgba(15, 23, 42, 0.05);
+    --superficie-sutil-hover: rgba(15, 23, 42, 0.10);
 
-    --text: #273449;
-    --text-strong: #0b1324;
-    --text-muted: #5b6982;
-    --text-soft: #4f5d75;
+    --text: #172131;
+    --text-strong: #070e1a;
+    --text-muted: #33405a;
+    --text-soft: #2c3850;
     --link: #2563eb;
 
     --accent: #2563eb;
@@ -103,10 +104,10 @@
     --texto-azul: #2563eb;
     --texto-amarelo: #b45309;
 
-    --btn-secundario: #dbe6f6;
-    --btn-secundario-hover: #c9daf2;
+    --btn-secundario: #a6b5c9;
+    --btn-secundario-hover: #97a8bf;
 
-    --shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 6px 16px rgba(15, 23, 42, 0.06);
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.10), 0 6px 16px rgba(15, 23, 42, 0.10);
 }
 
 :root {
@@ -141,13 +142,23 @@
     @include tema-claro;
 
     background:
-        radial-gradient(55% 45% at 100% 0%, rgba(37, 99, 235, 0.10), transparent 70%),
-        radial-gradient(50% 45% at 15% 100%, rgba(5, 150, 105, 0.08), transparent 70%),
+        radial-gradient(55% 45% at 100% 0%, rgba(37, 99, 235, 0.08), transparent 70%),
+        radial-gradient(50% 45% at 15% 100%, rgba(5, 150, 105, 0.06), transparent 70%),
         var(--bg-app);
 
+    /* Menu, header e rodapé ficam no azul-noite da marca nos dois temas */
     .sidebar,
-    .header {
+    .header,
+    .app-footer {
         @include tema-escuro;
+    }
+
+    .app-footer {
+        background:
+            radial-gradient(40% 160% at 85% 100%, rgba(52, 211, 163, 0.10), transparent 70%),
+            radial-gradient(40% 160% at 15% 0%, rgba(58, 138, 224, 0.14), transparent 70%),
+            linear-gradient(90deg, var(--brand-night) 0%, #101a29 60%, #0f1724 100%);
+        border-top-color: rgba(149, 190, 224, 0.13);
     }
 }
 
@@ -198,7 +209,7 @@ body {
 /* ========================= */
 
 /* Menu sempre minimizado (só ícones, 60px) e fixo à esquerda. Ao passar o mouse
-   (ou navegar com Tab pelo teclado), expande para 240px e a página se ajusta junto, sem ser coberta.
+   (ou navegar com Tab pelo teclado), expande para 200px e a página se ajusta junto, sem ser coberta.
    Degradê partindo do --brand-night (fundo do logo), com brilhos sutis no azul e no verde. */
 .sidebar {
     position: fixed;
@@ -226,14 +237,14 @@ body {
        e com :focus-within o menu ficava aberto depois de trocar de página */
     .sidebar:hover,
     .sidebar:has(:focus-visible) {
-        width: 240px;
+        width: 200px;
     }
 
     /* A página acompanha o menu: a margem cresce junto (mesma duração da largura),
        então o menu aberto empurra o conteúdo em vez de cobri-lo */
     .sidebar:hover + .main-content,
     .sidebar:has(:focus-visible) + .main-content {
-        margin-left: 240px;
+        margin-left: 200px;
     }
 
     .sidebar:hover .menu-item span,
@@ -252,11 +263,11 @@ body {
     flex-shrink: 0;
     overflow: hidden;
     height: 56px; /* mesma altura do header */
-    background-color: var(--brand-night);
     border-bottom: 1px solid rgba(149, 190, 224, 0.13);
 }
 
-/* finora-logo-sidebar@2x/@3x.png: recorte do finora-logo.png em 240x56 (tamanho exato, sem escalar).
+/* finora-logo-menu@2x/@3x.png: recorte do finora-logo.png em 240x56 (tamanho exato, sem escalar),
+   com o fundo removido (transparente): o degradê do menu aparece por trás, sem emenda.
    Largura fixa (não acompanha a barra): fechada, a barra de 60px mostra só o hexágono;
    aberta, aparece o logo inteiro. */
 .logo-img {
@@ -270,10 +281,6 @@ body {
        87px da imagem = 50px da barra; o resto (240 - 87 = 153px) fica escondido */
     clip-path: inset(0 153px 0 0);
     transition: clip-path 0.2s ease;
-    /* A imagem termina em 203px da barra: esfuma a borda direita para não aparecer
-       a emenda entre o fundo do PNG e o fundo da barra aberta */
-    -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent 100%);
-    mask-image: linear-gradient(90deg, #000 82%, transparent 100%);
 }
 
 .sidebar-menu {
@@ -313,13 +320,30 @@ body {
     transition: color var(--transition);
 }
 
-/* Configurações é um <button> (abre modal): mesmo visual dos links do menu */
+/* Configurações é um <button> (abre modal): mesmo visual dos links do menu.
+   Só a família da fonte é herdada: "font: inherit" trocava também o tamanho (ficava maior que os links) */
 button.menu-item {
     width: 100%;
     border: none;
     background: transparent;
-    font: inherit;
+    font-family: inherit;
     text-align: left;
+}
+
+/* "Sair": logo abaixo de Configurações, com hover vermelho */
+.sidebar .menu-sair:hover {
+    background: rgba(241, 76, 76, 0.14);
+    color: #ff8a8a;
+}
+
+.sidebar .menu-sair:hover i {
+    color: #ff8a8a;
+}
+
+/* Com Configurações (ou o 2FA) aberta, o menu fica acima do fundo escurecido do modal:
+   o item "Configurações" aparece destacado e nítido, e o menu continua clicável */
+.area-configuracoes .sidebar {
+    z-index: 1600;
 }
 
 .menu-item:hover {
@@ -534,9 +558,9 @@ button.menu-item {
     transition: background-color var(--transition);
 }
 
-/* Tema claro: linhas alternadas em azul bem claro, para a tabela não ficar toda branca */
+/* Tema claro: linhas alternadas um tom abaixo do painel */
 .tema-claro .datatable tbody tr:nth-child(even) {
-    background-color: #f2f6fd;
+    background-color: #b3bdca;
 }
 
 .datatable tbody tr:hover,

@@ -14,10 +14,8 @@ export class AuthResponse{
     tipo!: string;
     expiraEm!: number;
     nome!: string;
-    // 2FA obrigatório: login/cadastro vêm sem token de acesso, só com o desafio
+    // Só com o 2FA ativo (opcional, em Configurações): o login vem sem token de acesso, só com o desafio
     doisFatoresPendente?: boolean;
-    // true no primeiro acesso: precisa escanear o QR code antes de digitar o código
-    configuracaoDoisFatoresPendente?: boolean;
     tokenDesafio?: string;
 }
 

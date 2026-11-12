@@ -12,7 +12,6 @@ import { Observable, tap } from 'rxjs';
 import { LoginForm } from '../dados-auth';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
-import { ConfiguracaoDoisFatores } from '../../features/usuario/models/dados-usuario';
 
 interface JwtPayload {
   //sub: string;
@@ -30,7 +29,6 @@ export class AuthService {
   private readonly token_key = 'token_sessao';
   private readonly nome_key = 'nome_usuario_sessao';
   private readonly desafio_key = 'desafio_2fa';
-  private readonly desafio_modo_key = 'desafio_2fa_modo';
   private logoyutTimer?: ReturnType<typeof setTimeout>;
 
   // Reativo para o header refletir a troca de nome feita nas configurações
@@ -41,9 +39,9 @@ export class AuthService {
   router = inject(Router);
   baseUrl = 'http://localhost:8080/auth';
 
-  // O 2FA é obrigatório: login e cadastro devolvem doisFatoresPendente + tokenDesafio, sem
-  // token de acesso. A sessão só é salva depois do código do Google Authenticator
-  // (verificarDoisFatores, ou ativarDoisFatoresNoLogin no primeiro acesso)
+  // O 2FA é opcional (ativado em Configurações). Sem ele, login e cadastro já trazem o token de acesso.
+  // Com ele, o login devolve doisFatoresPendente + tokenDesafio e a sessão só é salva depois
+  // do código do Google Authenticator (verificarDoisFatores)
   login(dados: LoginForm) : Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}/signin`, dados)
            .pipe(tap(response => this.tratarRespostaDeEntrada(response)));
@@ -56,7 +54,7 @@ export class AuthService {
 
   private tratarRespostaDeEntrada(response: AuthResponse): void {
     if (response.doisFatoresPendente && response.tokenDesafio) {
-      this.iniciarDesafioDoisFatores(response.tokenDesafio, !!response.configuracaoDoisFatoresPendente);
+      this.iniciarDesafioDoisFatores(response.tokenDesafio);
     } else {
       this.salvarSessao(response);
     }
@@ -65,17 +63,6 @@ export class AuthService {
   /** Usuário que já tem o app configurado: envia o código. */
   verificarDoisFatores(dados: VerificacaoDoisFatoresForm) : Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}/2fa/verificar`, dados)
-           .pipe(tap(response => this.salvarSessao(response)));
-  }
-
-  /** Primeiro acesso: gera o QR code do Google Authenticator. */
-  configurarDoisFatoresNoLogin(tokenDesafio: string) : Observable<ConfiguracaoDoisFatores> {
-    return this.http.post<ConfiguracaoDoisFatores>(`${this.baseUrl}/2fa/configurar`, { tokenDesafio });
-  }
-
-  /** Primeiro acesso: confirma o código do app, ativa o 2FA e inicia a sessão. */
-  ativarDoisFatoresNoLogin(dados: VerificacaoDoisFatoresForm) : Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.baseUrl}/2fa/ativar`, dados)
            .pipe(tap(response => this.salvarSessao(response)));
   }
 
@@ -91,16 +78,10 @@ export class AuthService {
 
   // ===== Desafio de 2FA pendente (entre a senha e o código do Google Authenticator) =====
   // Fica no sessionStorage: sobrevive a um F5 na tela de verificação, mas some ao fechar a aba.
-  // O token não dá acesso à API (só serve em /auth/2fa/*) e expira em 5 min (15 no primeiro acesso).
+  // O token não dá acesso à API (só serve em /auth/2fa/*) e expira em 5 min.
 
-  iniciarDesafioDoisFatores(tokenDesafio: string, configuracaoPendente: boolean): void {
+  iniciarDesafioDoisFatores(tokenDesafio: string): void {
     sessionStorage.setItem(this.desafio_key, tokenDesafio);
-    sessionStorage.setItem(this.desafio_modo_key, configuracaoPendente ? 'configuracao' : 'codigo');
-  }
-
-  /** 'configuracao' no primeiro acesso (precisa escanear o QR code); 'codigo' se o app já está configurado. */
-  getModoDesafioDoisFatores(): 'codigo' | 'configuracao' {
-    return sessionStorage.getItem(this.desafio_modo_key) === 'configuracao' ? 'configuracao' : 'codigo';
   }
 
   /** Token do desafio pendente, ou null se não houver ou se já tiver expirado. */
@@ -123,7 +104,7 @@ export class AuthService {
 
   limparDesafioDoisFatores(): void {
     sessionStorage.removeItem(this.desafio_key);
-    sessionStorage.removeItem(this.desafio_modo_key);
+    sessionStorage.removeItem('desafio_2fa_modo'); // chave de versões anteriores
   }
 
   salvarSessao(response: AuthResponse) {

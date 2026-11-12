@@ -5,9 +5,11 @@ import { DadosCategoriaForm, DetalhesCategoria } from '../../models/dados-catego
 import { ValidationErroResponse } from '../../../../shared/models/validation-error-models';
 import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
+import { ICONES_CATEGORIA, ICONE_CATEGORIA_PADRAO } from '../../models/icones-categoria';
 
 interface CadastroCategoriaForm{
   nome: FormControl<string>;
+  icone: FormControl<string>;
 }
 
 /** Formulário de categoria, aberto em modal pela listagem. */
@@ -28,11 +30,13 @@ export class CadastroCategoria implements OnInit {
   form!: FormGroup<CadastroCategoriaForm>;
   service = inject(CategoriaService);
   toast = inject(ToastrService);
+  readonly icones = ICONES_CATEGORIA;
 
 
   ngOnInit(): void {
     this.form = new FormGroup<CadastroCategoriaForm>({
       nome: new FormControl('', { nonNullable: true, validators: Validators.required }),
+      icone: new FormControl(ICONE_CATEGORIA_PADRAO, { nonNullable: true }),
     });
 
     this.carregarDadosParaEdicao();
@@ -47,7 +51,8 @@ export class CadastroCategoria implements OnInit {
     this.service.obterPorId(id).subscribe({
       next: (categoria) => {
         this.form.patchValue({
-          nome: categoria.nome
+          nome: categoria.nome,
+          icone: categoria.icone || ICONE_CATEGORIA_PADRAO,
         });
       },
       error: (error) => {
@@ -55,6 +60,10 @@ export class CadastroCategoria implements OnInit {
         console.error(error);
       }
     });
+  }
+
+  escolherIcone(classe: string): void {
+    this.form.controls.icone.setValue(classe);
   }
 
   isFormInvalid() : boolean {

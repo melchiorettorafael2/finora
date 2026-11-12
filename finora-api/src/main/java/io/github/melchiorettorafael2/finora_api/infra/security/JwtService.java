@@ -28,8 +28,6 @@ public class JwtService {
     // trocar pelo token de acesso em /auth/2fa/verificar, nunca para acessar a API
     private static final String ESCOPO_DESAFIO_2FA = "2fa";
     public static final long EXPIRACAO_DESAFIO_SEGUNDOS = 300;
-    // Primeiro acesso: tempo para instalar o app e escanear o QR code
-    public static final long EXPIRACAO_DESAFIO_CONFIGURACAO_SEGUNDOS = 900;
 
     // "Esqueci minha senha": só serve em /auth/senha/redefinir, nunca para acessar a API
     private static final String ESCOPO_REDEFINICAO_SENHA = "senha";

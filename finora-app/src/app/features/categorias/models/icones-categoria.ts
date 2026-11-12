@@ -1,0 +1,36 @@
+/** Ícone das categorias criadas antes da escolha de ícone (e valor inicial do formulário) */
+export const ICONE_CATEGORIA_PADRAO = 'fa-tag';
+
+/** Ícones do Font Awesome oferecidos no cadastro de categoria */
+export const ICONES_CATEGORIA: { classe: string; nome: string }[] = [
+  { classe: 'fa-tag', nome: 'Etiqueta' },
+  { classe: 'fa-utensils', nome: 'Alimentação' },
+  { classe: 'fa-cart-shopping', nome: 'Mercado' },
+  { classe: 'fa-mug-hot', nome: 'Café' },
+  { classe: 'fa-house', nome: 'Moradia' },
+  { classe: 'fa-bolt', nome: 'Energia' },
+  { classe: 'fa-wifi', nome: 'Internet' },
+  { classe: 'fa-mobile-screen', nome: 'Celular' },
+  { classe: 'fa-car', nome: 'Carro' },
+  { classe: 'fa-gas-pump', nome: 'Combustível' },
+  { classe: 'fa-bus', nome: 'Transporte' },
+  { classe: 'fa-plane', nome: 'Viagem' },
+  { classe: 'fa-heart-pulse', nome: 'Saúde' },
+  { classe: 'fa-pills', nome: 'Farmácia' },
+  { classe: 'fa-dumbbell', nome: 'Academia' },
+  { classe: 'fa-graduation-cap', nome: 'Educação' },
+  { classe: 'fa-book', nome: 'Livros' },
+  { classe: 'fa-gamepad', nome: 'Jogos' },
+  { classe: 'fa-film', nome: 'Lazer' },
+  { classe: 'fa-shirt', nome: 'Roupas' },
+  { classe: 'fa-gift', nome: 'Presentes' },
+  { classe: 'fa-paw', nome: 'Pets' },
+  { classe: 'fa-baby', nome: 'Filhos' },
+  { classe: 'fa-receipt', nome: 'Contas' },
+  { classe: 'fa-credit-card', nome: 'Cartão' },
+  { classe: 'fa-building-columns', nome: 'Banco' },
+  { classe: 'fa-sack-dollar', nome: 'Salário' },
+  { classe: 'fa-briefcase', nome: 'Trabalho' },
+  { classe: 'fa-chart-line', nome: 'Investimentos' },
+  { classe: 'fa-piggy-bank', nome: 'Poupança' },
+];

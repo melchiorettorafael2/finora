@@ -18,6 +18,9 @@ public interface LancamentoRepository extends JpaRepository<LancamentoEntity, UU
 
     Optional<LancamentoEntity> findByIdAndUsuarioId(UUID id, UUID usuarioId);
 
+    // Categoria com lançamentos não pode ser excluída (perderia o histórico)
+    boolean existsByCategoriaIdAndUsuarioId(UUID categoriaId, UUID usuarioId);
+
     //JPQL
     @Query("""
         select coalesce(sum(l.valor), 0)

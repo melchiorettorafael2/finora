@@ -20,6 +20,10 @@ public class CategoriaEntity {
     @Column(name = "nome", nullable = false, length = 100)
     private String nome;
 
+    // Classe do Font Awesome escolhida pelo usuário (ex.: "fa-utensils"). Anulável: categorias antigas usam o ícone padrão
+    @Column(name = "icone", length = 50)
+    private String icone;
+
     @Column(name = "ativo")
     private Boolean ativo = true;
 

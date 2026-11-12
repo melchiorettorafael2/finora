@@ -2,7 +2,7 @@
     <div class="form-group">
         <label for="nome">Nome da Categoria <span class="required">*</span></label>
         <div class="input-icon">
-            <i class="fa-solid fa-tag"></i>
+            <i class="fa-solid" [class]="'fa-solid ' + form.controls.icone.value"></i>
             <input formControlName="nome" type="text" id="nome" name="nome" placeholder="Ex: Alimentação" />
         </div>
         @if(form.controls.nome.hasError('required') && form.controls.nome.touched){
@@ -16,6 +16,21 @@
             </span>
         }
     </div>
+
+    <fieldset class="form-group icones-campo">
+        <legend>Ícone</legend>
+        <div class="icones-grade" role="radiogroup" aria-label="Ícone da categoria">
+            @for (icone of icones; track icone.classe) {
+                <button type="button" class="icone-opcao" role="radio"
+                    [class.selecionado]="form.controls.icone.value === icone.classe"
+                    [attr.aria-checked]="form.controls.icone.value === icone.classe"
+                    [attr.title]="icone.nome" [attr.aria-label]="icone.nome"
+                    (click)="escolherIcone(icone.classe)">
+                    <i class="fa-solid" [class]="'fa-solid ' + icone.classe"></i>
+                </button>
+            }
+        </div>
+    </fieldset>
 
     <div class="form-actions">
         <button type="button" class="btn btn-secondary" (click)="cancelado.emit()">Cancelar</button>

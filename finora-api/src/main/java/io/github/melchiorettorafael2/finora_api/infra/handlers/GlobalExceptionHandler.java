@@ -1,6 +1,7 @@
 package io.github.melchiorettorafael2.finora_api.infra.handlers;
 
 import io.github.melchiorettorafael2.finora_api.common.exceptions.RegistroNaoEncontradoException;
+import io.github.melchiorettorafael2.finora_api.common.exceptions.RegraNegocioException;
 import io.github.melchiorettorafael2.finora_api.common.exceptions.UnauthorizedException;
 import io.github.melchiorettorafael2.finora_api.common.exceptions.ValidationException;
 import io.github.melchiorettorafael2.finora_api.common.validation.CampoInvalido;
@@ -74,6 +75,20 @@ public class GlobalExceptionHandler {
                 .body(Map.of(
                         "timestamp", LocalDateTime.now(),
                         "status", HttpStatus.NOT_FOUND.value(),
+                        "error", e.getMessage(),
+                        "message", e.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(RegraNegocioException.class)
+    public ResponseEntity<?> handleRegraNegocioException(RegraNegocioException e){
+
+        var status = HttpStatus.CONFLICT;
+
+        return ResponseEntity.status(status)
+                .body(Map.of(
+                        "timestamp", LocalDateTime.now(),
+                        "status", status.value(),
                         "error", e.getMessage(),
                         "message", e.getMessage()
                 ));

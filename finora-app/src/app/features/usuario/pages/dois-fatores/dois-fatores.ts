@@ -1,10 +1,8 @@
 import { Component, ElementRef, Injector, OnDestroy, OnInit, afterNextRender, computed, inject, signal, viewChild } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { toDataURL } from 'qrcode';
-import { Header } from '../../../../common/components/header/header';
 import { ModaisService } from '../../../../common/services/modais-service';
 import { ConfiguracaoDoisFatores } from '../../models/dados-usuario';
 import { DoisFatoresService } from '../../services/dois-fatores-service';
@@ -13,7 +11,7 @@ type Estado = 'carregando' | 'inativo' | 'configurando' | 'ativo' | 'erro';
 
 @Component({
   selector: 'app-dois-fatores',
-  imports: [ReactiveFormsModule, NgTemplateOutlet, Header],
+  imports: [ReactiveFormsModule, NgTemplateOutlet],
   templateUrl: './dois-fatores.html',
   styleUrl: './dois-fatores.scss',
 })
@@ -21,7 +19,6 @@ export class DoisFatores implements OnInit, OnDestroy {
   private service = inject(DoisFatoresService);
   private toast = inject(ToastrService);
   private injector = inject(Injector);
-  private router = inject(Router);
   private modais = inject(ModaisService);
 
   estado = signal<Estado>('carregando');
@@ -60,12 +57,26 @@ export class DoisFatores implements OnInit, OnDestroy {
   carregarStatus(): void {
     this.estado.set('carregando');
     this.service.status().subscribe({
-      next: status => this.estado.set(status.ativo ? 'ativo' : 'inativo'),
+      next: status => {
+        this.estado.set(status.ativo ? 'ativo' : 'inativo');
+        this.executarAcaoPedida(status.ativo);
+      },
       error: erro => {
         this.estado.set('erro');
         console.error(erro);
       },
     });
+  }
+
+  // Aberto pelo switch de Configurações: já começa a ativação ou a desativação
+  private executarAcaoPedida(ativo: boolean): void {
+    const acao = this.modais.acaoDoisFatores();
+    this.modais.acaoDoisFatores.set(null);
+    if (acao === 'ativar' && !ativo) {
+      this.iniciarConfiguracao();
+    } else if (acao === 'desativar' && ativo) {
+      this.abrirDesativacao();
+    }
   }
 
   // ===== Ativação =====
@@ -164,7 +175,7 @@ export class DoisFatores implements OnInit, OnDestroy {
         this.confirmandoDesativacao.set(false);
         this.limparCodigo();
         this.estado.set('inativo');
-        this.toast.success('Aplicativo desconectado. Configure o novo celular abaixo ou no próximo login.', 'Sucesso');
+        this.toast.success('Verificação em duas etapas desativada. O login volta a pedir só a senha.', 'Sucesso');
       },
       error: erro => {
         this.processando.set(false);
@@ -184,9 +195,9 @@ export class DoisFatores implements OnInit, OnDestroy {
     this.erroCodigo.set(null);
   }
 
-  // Configurações é um modal: volta para o Dashboard já com ele aberto
+  // Este conteúdo fica num modal aberto a partir de Configurações: volta para aquele modal
   voltarParaConfiguracoes(): void {
-    this.router.navigate(['/paginas/dashboard']).then(() => this.modais.abrirConfiguracoes());
+    this.modais.voltarParaConfiguracoes();
   }
 
   private codigoValido(): boolean {

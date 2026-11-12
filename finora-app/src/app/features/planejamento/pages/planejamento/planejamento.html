@@ -10,10 +10,10 @@
                 <i class="fa-solid fa-bullseye"></i>
                 Nova meta
             </button>
-            <a class="btn btn-primary" routerLink="/paginas/planejamento/orcamento">
+            <button type="button" class="btn btn-primary" (click)="novoOrcamento()">
                 <i class="fa-solid fa-sliders"></i>
                 Definir orçamento
-            </a>
+            </button>
         </div>
     </div>
 
@@ -87,7 +87,7 @@
                             @for (orcamento of p.orcamentos; track orcamento.id) {
                                 <div class="orcamento-row">
                                     <div class="orcamento-topo">
-                                        <span class="orcamento-nome"><i class="fa-solid fa-tag"></i> {{ orcamento.categoria }}</span>
+                                        <span class="orcamento-nome"><i class="fa-solid" [ngClass]="orcamento.icone || 'fa-tag'"></i> {{ orcamento.categoria }}</span>
                                         <div class="orcamento-acoes">
                                             <span class="badge"
                                                 [ngClass]="{
@@ -130,7 +130,7 @@
                         <div class="empty-state">
                             <i class="fa-solid fa-list-check"></i>
                             <span>Nenhum orçamento definido ainda</span>
-                            <a class="btn btn-secondary" routerLink="/paginas/planejamento/orcamento">Definir orçamento</a>
+                            <button type="button" class="btn btn-secondary" (click)="novoOrcamento()">Definir orçamento</button>
                         </div>
                     }
                 </div>
@@ -190,6 +190,16 @@
         </section>
     }
 </main>
+
+<!-- Definir / alterar orçamento em modal -->
+@if (modalOrcamento(); as modal) {
+    <app-modal [titulo]="modal.categoriaId ? 'Alterar orçamento' : 'Definir orçamento'"
+        subtitulo="Limite de gastos por mês para a categoria. Se ela já tiver um limite, ele será atualizado."
+        icone="fa-sliders" (fechar)="modalOrcamento.set(null)">
+        <app-cadastro-orcamento [categoriaId]="modal.categoriaId" [limite]="modal.limite"
+            (salvo)="aoSalvarOrcamento()" (cancelado)="modalOrcamento.set(null)" />
+    </app-modal>
+}
 
 <!-- Cadastro / edição de meta em modal -->
 @if (modalMeta(); as modal) {

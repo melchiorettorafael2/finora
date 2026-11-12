@@ -28,17 +28,12 @@ public class AuthController {
         return service.autenticar(form);
     }
 
-    // Segunda etapa do login com 2FA: troca o token de desafio + código pelo token de acesso
+    // Segunda etapa do login (só para quem ativou o 2FA em Configurações): troca o token de desafio + código pelo token de acesso
     @PostMapping("/2fa/verificar")
     public AuthResponse verificarDoisFatores(@RequestBody @Valid VerificacaoDoisFatoresForm form){
         return service.verificarDoisFatores(form);
     }
 
-    // Primeiro acesso (2FA obrigatório): gera o QR code do Google Authenticator
-    @PostMapping("/2fa/configurar")
-    public ConfiguracaoDoisFatores configurarDoisFatores(@RequestBody @Valid TokenDesafioForm form){
-        return service.configurarDoisFatores(form);
-    }
 
     // "Esqueci minha senha", 1ª etapa: nome/email + código do Google Authenticator
     @PostMapping("/senha/verificar")
@@ -53,10 +48,5 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
-    // Primeiro acesso: confirma o código do app, ativa o 2FA e entrega o token de acesso
-    @PostMapping("/2fa/ativar")
-    public AuthResponse ativarDoisFatores(@RequestBody @Valid VerificacaoDoisFatoresForm form){
-        return service.ativarDoisFatores(form);
-    }
 
 }

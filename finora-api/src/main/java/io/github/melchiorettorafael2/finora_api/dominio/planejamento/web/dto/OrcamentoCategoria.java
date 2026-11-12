@@ -6,6 +6,7 @@ public record OrcamentoCategoria(
         String id,
         String categoriaId,
         String categoria,
+        String icone,
         BigDecimal limite,
         BigDecimal gasto
 ) {

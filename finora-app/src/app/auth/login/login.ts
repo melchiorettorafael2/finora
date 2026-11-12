@@ -66,12 +66,7 @@ export class Login implements OnInit {
       const dadosCadastro = this.form.value as CadastroUsuarioForm;
       this.authService.cadastrar(dadosCadastro).subscribe({
         next: (response) => {
-          // 2FA obrigatório: a conta nova configura o Google Authenticator antes de entrar
-          if (response.doisFatoresPendente) {
-            this.toast.success('Cadastro realizado! Agora configure o Google Authenticator.', 'Sucesso');
-            this.router.navigate(['/verificacao']);
-            return;
-          }
+          // Conta nova entra direto (a verificação em duas etapas é opcional, em Configurações)
           this.onAuthSuccess(response);
           this.toast.success('Cadastro realizado com sucesso!', 'Sucesso');
         },
@@ -85,7 +80,7 @@ export class Login implements OnInit {
     const dadosLogin = this.form.value as LoginForm;
     this.authService.login(dadosLogin).subscribe({
       next: (response) => {
-        // 2FA obrigatório: segue para a tela do Google Authenticator (código ou QR code)
+        // Quem ativou o 2FA segue para a tela do código do Google Authenticator
         if (response.doisFatoresPendente) {
           this.router.navigate(['/verificacao']);
           return;

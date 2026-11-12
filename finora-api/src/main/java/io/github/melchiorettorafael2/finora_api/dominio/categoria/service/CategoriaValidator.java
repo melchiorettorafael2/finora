@@ -8,6 +8,8 @@ import io.github.melchiorettorafael2.finora_api.infra.security.UsuarioLogado;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class CategoriaValidator {
 
@@ -18,11 +20,18 @@ public class CategoriaValidator {
     private UsuarioLogado usuarioLogado;
 
     public ValidationResult validar(CategoriaForm nova) {
+        return validar(nova, null);
+    }
+
+    /** @param id categoria em edição (null no cadastro) */
+    public ValidationResult validar(CategoriaForm nova, UUID id) {
 
         var result = ValidationResult.novo();
 
         // Nome único entre as categorias do próprio usuário
-        var existeCategoriaCadastrada = repository.existsByNomeAndUsuarioId(nova.nome(), usuarioLogado.id());
+        var existeCategoriaCadastrada = id == null
+                ? repository.existsByNomeAndUsuarioId(nova.nome(), usuarioLogado.id())
+                : repository.existsByNomeAndUsuarioIdAndIdNot(nova.nome(), usuarioLogado.id(), id);
 
         if(existeCategoriaCadastrada){
             result.add(new CampoInvalido("nome","Já existe uma Categoria cadastrada com esse nome!"));

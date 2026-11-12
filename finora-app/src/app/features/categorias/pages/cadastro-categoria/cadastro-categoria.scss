@@ -1,0 +1,53 @@
+/* Seletor de ícone: grade de botões; o escolhido fica destacado e aparece no campo do nome */
+.icones-campo {
+    border: none;
+    padding: 0;
+    margin: 0;
+
+    legend {
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-strong);
+    }
+}
+
+.icones-grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 8px;
+}
+
+.icone-opcao {
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background-color: var(--bg-input);
+    color: var(--text-muted);
+    font-size: 15px;
+    cursor: pointer;
+    transition: color var(--transition), border-color var(--transition), background-color var(--transition), transform 0.08s ease;
+
+    &:hover {
+        color: var(--text-strong);
+        border-color: var(--border-hover);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(58, 138, 224, 0.35);
+    }
+
+    &.selecionado {
+        color: #ffffff;
+        border-color: transparent;
+        background: linear-gradient(135deg, #2563eb, #0ea5a4);
+        box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
+    }
+}

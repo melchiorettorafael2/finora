@@ -1,6 +1,6 @@
-import { Component, HostListener, OnInit, inject, signal} from '@angular/core';
+import { Component, HostListener, inject, signal} from '@angular/core';
 import { CartaoService } from '../../services/cartao-service';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, switchMap } from 'rxjs';
 import { DetalhesCartao } from '../../models/dados-cartao';
 import { PageResult } from '../../../../shared/models/page-result';
 import { CommonModule } from '@angular/common';
@@ -18,26 +18,25 @@ import { CadastroCartao } from '../cadastro-cartao/cadastro-cartao';
   templateUrl: './listagem-cartoes.html',
   styleUrl: './listagem-cartoes.scss',
 })
-export class ListagemCartoes implements OnInit {
+export class ListagemCartoes {
 
   service = inject(CartaoService);
   router = inject(Router);
   toast = inject(ToastrService);
-  listagem$!: Observable<PageResult<DetalhesCartao>>; 
   paginaAtual = 0;
   tamanhoPagina = 10;
+  // Um observable só, recarregado pelo subject: trocar a instância de listagem$ a cada recarga
+  // (após excluir/desativar) disparava ExpressionChangedAfterItHasBeenChecked no async pipe
+  private recarregar$ = new BehaviorSubject<void>(undefined);
+  listagem$ = this.recarregar$.pipe(switchMap(() => this.service.listar(this.paginaAtual, this.tamanhoPagina)));
   menuAberto: string | null = null;
   menuPosicao = { top: 0, left: 0 };
   cartaoParaExcluir: DetalhesCartao | null = null;
   // Modal de cadastro/edição: null = fechado; id null = cartão novo
   modalCartao = signal<{ id: string | null } | null>(null);
 
-  ngOnInit(): void {
-    this.listarCartoes();
-  }
-  
   listarCartoes(){
-    this.listagem$ = this.service.listar(this.paginaAtual, this.tamanhoPagina);
+    this.recarregar$.next();
   }
 
   navegar(pagina: number){  

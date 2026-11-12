@@ -19,7 +19,6 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ModaisService } from '../../../../common/services/modais-service';
 import { ValidationErroResponse } from '../../../../shared/models/validation-error-models';
@@ -48,7 +47,7 @@ const senhasIguais: ValidatorFn = (grupo: AbstractControl): ValidationErrors | n
 
 @Component({
   selector: 'app-configuracoes',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule],
   templateUrl: './configuracoes.html',
   styleUrl: './configuracoes.scss',
 })

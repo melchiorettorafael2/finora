@@ -1,6 +1,9 @@
 package io.github.melchiorettorafael2.finora_api.dominio.categoria.service;
 
 import io.github.melchiorettorafael2.finora_api.common.exceptions.RegistroNaoEncontradoException;
+import io.github.melchiorettorafael2.finora_api.common.exceptions.RegraNegocioException;
+import io.github.melchiorettorafael2.finora_api.dominio.lancamento.repository.LancamentoRepository;
+import io.github.melchiorettorafael2.finora_api.dominio.planejamento.repository.OrcamentoRepository;
 import io.github.melchiorettorafael2.finora_api.common.validation.ValidationResult;
 import io.github.melchiorettorafael2.finora_api.dominio.categoria.repository.CategoriaRepository;
 import io.github.melchiorettorafael2.finora_api.dominio.categoria.web.dto.CategoriaDetalhes;
@@ -34,6 +37,12 @@ public class CategoriaService {
     @Autowired
     private UsuarioLogado usuarioLogado;
 
+    @Autowired
+    private LancamentoRepository lancamentoRepository;
+
+    @Autowired
+    private OrcamentoRepository orcamentoRepository;
+
 
     public CategoriaDetalhes criar(CategoriaForm nova) {
         ValidationResult result = validator.validar(nova);
@@ -49,6 +58,36 @@ public class CategoriaService {
         return mapper.toDetalhes(entity);
     }
 
+    public CategoriaDetalhes obterDetalhes(UUID id) {
+        return mapper.toDetalhes(buscarDoUsuario(id));
+    }
+
+    @Transactional
+    public void atualizar(UUID id, CategoriaForm dados) {
+        var entity = buscarDoUsuario(id);
+        ValidationResult result = validator.validar(dados, id);
+
+        if(result.isInvalido()){
+            throw new ValidationException(result.getCamposInvalidos());
+        }
+
+        mapper.update(entity, dados);
+    }
+
+    @Transactional
+    public void deletar(UUID id) {
+        var categoria = buscarDoUsuario(id);
+
+        // Com lançamentos, excluir apagaria o histórico: a saída é desativar
+        if (lancamentoRepository.existsByCategoriaIdAndUsuarioId(id, usuarioLogado.id())) {
+            throw new RegraNegocioException("Esta categoria tem lançamentos. Desative-a para escondê-la sem perder o histórico.");
+        }
+
+        // O orçamento da categoria (se houver) deixa de fazer sentido e sai junto
+        orcamentoRepository.findByCategoriaIdAndUsuarioId(id, usuarioLogado.id()).ifPresent(orcamentoRepository::delete);
+        repository.delete(categoria);
+    }
+
     public Page<CategoriaDetalhes> listar(PageRequest pageRequest) {
         return repository
                 .findAllByUsuarioId(usuarioLogado.id(), pageRequest)
@@ -57,8 +96,7 @@ public class CategoriaService {
 
     @Transactional
     public void mudarStatus(UUID id) {
-        // Categoria de outro usuário responde como inexistente (404)
-        var categoria = repository.findByIdAndUsuarioId(id, usuarioLogado.id()).orElseThrow(RegistroNaoEncontradoException::new);
+        var categoria = buscarDoUsuario(id);
 
         categoria.setAtivo(!categoria.getAtivo());
         repository.save(categoria);
@@ -66,5 +104,10 @@ public class CategoriaService {
 
     public List<CategoriaDetalhes> listarAtivas() {
         return repository.findByAtivoTrueAndUsuarioId(usuarioLogado.id()).stream().map(mapper::toDetalhes).toList();
+    }
+
+    // Categoria de outro usuário responde como inexistente (404)
+    private CategoriaEntity buscarDoUsuario(UUID id) {
+        return repository.findByIdAndUsuarioId(id, usuarioLogado.id()).orElseThrow(RegistroNaoEncontradoException::new);
     }
 }

@@ -1,4 +1,4 @@
-<main class="auth-page" [class.pagina-configuracao]="modo() === 'configuracao'">
+<main class="auth-page">
     <!-- Brilhos e grade decorativos no fundo, nas cores do logo -->
     <div class="auth-bg" aria-hidden="true">
         <span class="glow glow-blue"></span>
@@ -6,123 +6,44 @@
         <span class="grid"></span>
     </div>
 
-    <section class="auth-panel" [class.painel-configuracao]="modo() === 'configuracao'">
+    <section class="auth-panel">
         <div class="brand">
             <div class="brand-logo">
                 <img class="brand-icon" src="finora-logo.svg" alt="">
                 <img class="brand-name" src="finora-wordmark@2x.png" srcset="finora-wordmark@2x.png 2x, finora-wordmark@3x.png 3x" alt="Finora" />
             </div>
             <span class="brand-tagline"><span class="brand-tagline-text">Sistema de Gestão Financeira</span></span>
-            <span class="brand-subtitle">
-                {{ modo() === 'configuracao' ? 'Configure o Google Authenticator' : 'Verificação em duas etapas' }}
-            </span>
+            <span class="brand-subtitle">Verificação em duas etapas</span>
         </div>
 
-        @if (modo() === 'configuracao') {
-            <!-- ===== Primeiro acesso: duas colunas (passos + código | QR code) para caber sem rolagem ===== -->
-            <form class="auth-form setup-grid field-enter" (submit)="$event.preventDefault(); verificar()">
-                <div class="setup-texto">
-                    <p class="setup-intro">
-                        O Finora exige um código do <strong>Google Authenticator</strong> a cada login. Leva menos de um minuto.
-                    </p>
+        <!-- O código do Google Authenticator (para quem ativou o 2FA em Configurações) -->
+        <form class="auth-form etapa-codigo field-enter" (submit)="$event.preventDefault(); verificar()">
+            <div class="codigo-icone" aria-hidden="true">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <p class="codigo-instrucao">
+                Abra o <strong>Google Authenticator</strong> no seu celular e digite o código de 6 dígitos da conta <strong>Finora</strong>.
+            </p>
 
-                    <ol class="passos-setup">
-                        <li>
-                            <span class="passo-num">1</span>
-                            <div>
-                                <strong>Instale o app</strong>
-                                <div class="lojas">
-                                    <a [href]="linkPlayStore" target="_blank" rel="noopener noreferrer">
-                                        <i class="fa-brands fa-google-play"></i> Google Play
-                                    </a>
-                                    <a [href]="linkAppStore" target="_blank" rel="noopener noreferrer">
-                                        <i class="fa-brands fa-apple"></i> App Store
-                                    </a>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <span class="passo-num">2</span>
-                            <div>
-                                <strong>Escaneie o QR code</strong>
-                                <span class="passo-dica">No app, toque em <b>+</b> e em <b>Ler código QR</b>.</span>
-                            </div>
-                        </li>
-                        <li>
-                            <span class="passo-num">3</span>
-                            <div>
-                                <strong>Digite o código do app</strong>
-                            </div>
-                        </li>
-                    </ol>
+            <ng-container *ngTemplateOutlet="campoCodigo"></ng-container>
 
-                    <ng-container *ngTemplateOutlet="campoCodigo"></ng-container>
-                </div>
-
-                <div class="setup-qr">
-                    <div class="qr-code" [class.carregando]="carregandoQrCode()">
-                        @if (carregandoQrCode()) {
-                            <i class="fa-solid fa-spinner fa-spin"></i>
-                        } @else if (qrCodeUrl(); as qr) {
-                            <img [src]="qr" width="180" height="180" alt="QR code para adicionar a conta Finora no Google Authenticator" />
-                        } @else if (!configuracao()) {
-                            <button type="button" class="btn-voltar" (click)="gerarQrCode()">
-                                <i class="fa-solid fa-rotate-right"></i> Gerar QR code
-                            </button>
-                        } @else {
-                            <span class="qr-indisponivel">QR code indisponível. Use a chave abaixo.</span>
-                        }
-                    </div>
-
-                    @if (configuracao(); as config) {
-                        <details class="chave-manual">
-                            <summary>Não consegue escanear?</summary>
-                            <p>Em <b>Inserir chave de configuração</b>, use o nome <b>{{ config.emissor }}</b> e a chave:</p>
-                            <div class="chave-valor">
-                                <code>{{ chaveFormatada() }}</code>
-                                <button type="button" class="btn-copiar" (click)="copiarChave()"
-                                    [attr.aria-label]="chaveCopiada() ? 'Chave copiada' : 'Copiar chave'">
-                                    <i class="fa-solid" [class.fa-copy]="!chaveCopiada()" [class.fa-check]="chaveCopiada()"></i>
-                                </button>
-                            </div>
-                        </details>
-                    }
-                </div>
-
-                <button type="button" class="btn-voltar setup-voltar" [hidden]="autenticado()" (click)="voltarParaLogin()">
-                    <i class="fa-solid fa-arrow-left"></i> Voltar para o login
-                </button>
-            </form>
-        } @else {
-            <!-- ===== App já configurado: só o código ===== -->
-            <form class="auth-form etapa-codigo field-enter" (submit)="$event.preventDefault(); verificar()">
-                <div class="codigo-icone" aria-hidden="true">
-                    <i class="fa-solid fa-shield-halved"></i>
-                </div>
-                <p class="codigo-instrucao">
-                    Abra o <strong>Google Authenticator</strong> no seu celular e digite o código de 6 dígitos da conta <strong>Finora</strong>.
-                </p>
-
-                <ng-container *ngTemplateOutlet="campoCodigo"></ng-container>
-
-                <button type="button" class="btn-voltar" [hidden]="autenticado()" (click)="voltarParaLogin()">
-                    <i class="fa-solid fa-arrow-left"></i> Voltar para o login
-                </button>
-            </form>
-        }
+            <button type="button" class="btn-voltar" [hidden]="autenticado()" (click)="voltarParaLogin()">
+                <i class="fa-solid fa-arrow-left"></i> Voltar para o login
+            </button>
+        </form>
     </section>
 
     <footer class="auth-footer">© {{ anoAtual }} Finora · Sistema de Gestão Financeira</footer>
 </main>
 
-<!-- Campo do código + botão principal, usados nos dois modos -->
+<!-- Campo do código + botão principal -->
 <ng-template #campoCodigo>
     @if (autenticado()) {
         <!-- Confirmação exibida durante a pausa antes de abrir o Dashboard -->
         <div class="autenticado" role="status">
             <i class="fa-solid fa-circle-check"></i>
             <div>
-                <strong>{{ modo() === 'configuracao' ? 'Google Authenticator configurado!' : 'Código confirmado!' }}</strong>
+                <strong>Código confirmado!</strong>
                 <span>Abrindo o Dashboard<span class="reticencias" aria-hidden="true"></span></span>
             </div>
             <span class="barra-progresso" aria-hidden="true"></span>
@@ -142,11 +63,7 @@
     </div>
 
     <button type="submit" class="btn-submit" [disabled]="verificando() || codigoControl.invalid">
-        @if (modo() === 'configuracao') {
-            {{ verificando() ? 'Ativando...' : 'Ativar e entrar' }}
-        } @else {
-            {{ verificando() ? 'Verificando...' : 'Verificar' }}
-        }
+        {{ verificando() ? 'Verificando...' : 'Verificar' }}
         <i class="fa-solid fa-arrow-right"></i>
     </button>
     }

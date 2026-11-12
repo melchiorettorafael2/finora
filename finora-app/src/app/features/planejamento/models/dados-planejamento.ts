@@ -3,6 +3,7 @@ export interface OrcamentoCategoria {
     id: string;
     categoriaId: string;
     categoria: string;
+    icone: string | null; // ícone escolhido na categoria (null nas antigas)
     limite: number;
     gasto: number;
 }

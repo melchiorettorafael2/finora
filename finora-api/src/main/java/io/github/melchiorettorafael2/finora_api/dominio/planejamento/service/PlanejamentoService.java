@@ -44,6 +44,7 @@ public class PlanejamentoService {
                         o.getId().toString(),
                         o.getCategoria().getId().toString(),
                         o.getCategoria().getNome(),
+                        o.getCategoria().getIcone(),
                         o.getLimite(),
                         gastoPorCategoria.getOrDefault(o.getCategoria().getId(), BigDecimal.ZERO)))
                 .toList();

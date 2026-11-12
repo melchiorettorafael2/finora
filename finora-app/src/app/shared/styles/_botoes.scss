@@ -102,3 +102,19 @@
         box-shadow: 0 0 0 3px rgba(241, 76, 76, 0.3);
     }
 }
+
+/* Confirmação destrutiva (trocar de celular): vermelho sólido */
+.btn-danger {
+    background-color: var(--danger);
+    border-color: var(--danger);
+    color: #ffffff;
+
+    &:hover:not(:disabled) {
+        filter: brightness(1.08);
+        box-shadow: 0 4px 14px rgba(241, 76, 76, 0.35);
+    }
+
+    &:focus-visible {
+        box-shadow: 0 0 0 3px rgba(241, 76, 76, 0.3);
+    }
+}

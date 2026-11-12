@@ -8,8 +8,9 @@ export const USUARIO_ROUTES: Routes = [
         pathMatch: 'full'
     },
     {
-        // Carregada sob demanda: assim a lib de QR code fica fora do bundle inicial
+        // A verificação em duas etapas também virou modal (aberto por Configurações)
         path: 'configuracoes/dois-fatores',
-        loadComponent: () => import('./pages/dois-fatores/dois-fatores').then(m => m.DoisFatores)
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
     }
 ];

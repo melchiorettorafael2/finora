@@ -2,8 +2,8 @@
 
 <main class="content">
     <div class="card-full">
-        <button class="btn btn-primary" (click)="modalCategoriaAberto.set(true)">
-            <i class="fa-solid fa-plus"></i> 
+        <button class="btn btn-primary" (click)="modalCategoria.set({ id: null })">
+            <i class="fa-solid fa-plus"></i>
             Nova Categoria
         </button>
         <div class="table-card">
@@ -19,22 +19,47 @@
                     <tbody>
                       @for (categoria of listagem.content; track categoria.id) {
                         <tr>
-                          <td>{{ categoria.nome }}</td>
+                          <td>
+                            <span class="categoria-nome">
+                              <span class="categoria-icone" [class.inativa]="!categoria.ativo">
+                                <i class="fa-solid" [ngClass]="categoria.icone || iconePadrao"></i>
+                              </span>
+                              {{ categoria.nome }}
+                            </span>
+                          </td>
                           <td>
                             <span class="badge" [ngClass]="categoria.ativo ? 'badge-success' : 'badge-danger'">
                               {{ categoria.ativo ? 'ATIVA' : 'INATIVA' }}
                             </span>
-                  
                           </td>
                           <td class="text-center">
-                              <button class="icon-btn" 
-                              [ngClass]="categoria.ativo ? 'danger' : 'success'" 
-                              [attr.title]="categoria.ativo ? 'Desativar' : 'Ativar'" 
-                              (click)="mudarStatus(categoria.id)">
-                                <i class="fa-solid" 
-                                [ngClass]="categoria.ativo ? 'fa-ban' : 'fa-check'">
-                                </i>
+                            <button class="icon-btn" title="Ações" (click)="alternarMenu($event, categoria.id)">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
                             </button>
+
+                            @if (menuAberto() === categoria.id) {
+                              <div class="acoes-menu"
+                                   [style.top.px]="menuPosicao().top"
+                                   [style.left.px]="menuPosicao().left"
+                                   (click)="$event.stopPropagation()">
+                                <button class="acoes-menu-item success" (click)="prepararEdicao(categoria.id)">
+                                    <i class="fa-solid fa-pen"></i>
+                                    Editar
+                                </button>
+
+                                <button class="acoes-menu-item"
+                                        [ngClass]="categoria.ativo ? 'danger' : 'success'"
+                                        (click)="mudarStatus(categoria.id)">
+                                    <i class="fa-solid" [ngClass]="categoria.ativo ? 'fa-ban' : 'fa-check'"></i>
+                                    {{ categoria.ativo ? 'Desativar' : 'Ativar' }}
+                                </button>
+
+                                <button class="acoes-menu-item danger" (click)="excluir(categoria)">
+                                    <i class="fa-solid fa-trash"></i>
+                                    Excluir
+                                </button>
+                              </div>
+                            }
                           </td>
                         </tr>
                       }
@@ -61,8 +86,7 @@
                                 [disabled]="listagem.last"
                                 (click)="navegarProximo(listagem);">
                             <i class="fa-solid fa-chevron-right"></i>
-                        </button> 
-                
+                        </button>
                     </div>
                 </div>
             }
@@ -70,10 +94,23 @@
     </div>
 </main>
 
-<!-- Cadastro de categoria em modal -->
-@if (modalCategoriaAberto()) {
-    <app-modal titulo="Nova categoria" subtitulo="Preencha os dados para cadastrar uma nova categoria."
-        icone="fa-tags" (fechar)="modalCategoriaAberto.set(false)">
-        <app-cadastro-categoria (salvo)="aoSalvarCategoria()" (cancelado)="modalCategoriaAberto.set(false)" />
+<!-- Cadastro / edição de categoria em modal -->
+@if (modalCategoria(); as modal) {
+    <app-modal [titulo]="modal.id ? 'Editar categoria' : 'Nova categoria'"
+        [subtitulo]="modal.id ? 'Altere o nome ou o ícone e salve.' : 'Dê um nome e escolha um ícone para a categoria.'"
+        icone="fa-tags" (fechar)="modalCategoria.set(null)">
+        <app-cadastro-categoria [idCategoria]="modal.id" (salvo)="aoSalvarCategoria()" (cancelado)="modalCategoria.set(null)" />
     </app-modal>
+}
+
+@if (categoriaParaExcluir(); as categoriaExcluir) {
+    <app-confirm-dialog
+        titulo="Excluir categoria"
+        mensagem="Deseja excluir a categoria selecionada?"
+        [destaque]="categoriaExcluir.nome"
+        aviso="O orçamento dela também será removido. Categorias com lançamentos não podem ser excluídas: desative-as."
+        textoConfirmar="Excluir"
+        (confirmar)="confirmarExclusao()"
+        (cancelar)="cancelarExclusao()">
+    </app-confirm-dialog>
 }

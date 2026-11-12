@@ -1,7 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, EMPTY, Observable, catchError, combineLatest, map, startWith, switchMap } from 'rxjs';
 import { Header } from '../../../../common/components/header/header';
@@ -9,6 +8,7 @@ import { MonthPicker } from '../../../../common/components/month-picker/month-pi
 import { ConfirmDialog } from '../../../../common/components/confirm-dialog/confirm-dialog';
 import { Modal } from '../../../../common/components/modal/modal';
 import { CadastroMeta } from '../cadastro-meta/cadastro-meta';
+import { CadastroOrcamento } from '../cadastro-orcamento/cadastro-orcamento';
 import { PlanejamentoService } from '../../services/planejamento-service';
 import { MetaEconomia, OrcamentoCategoria, Planejamento } from '../../models/dados-planejamento';
 
@@ -48,14 +48,13 @@ const LIMITE_ALERTA = 85;
 
 @Component({
   selector: 'app-planejamento',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, Header, MonthPicker, ConfirmDialog, Modal, CadastroMeta],
+  imports: [CommonModule, ReactiveFormsModule, Header, MonthPicker, ConfirmDialog, Modal, CadastroMeta, CadastroOrcamento],
   templateUrl: './planejamento.html',
   styleUrl: './planejamento.scss',
 })
 export class PlanejamentoPage {
 
   private service = inject(PlanejamentoService);
-  private router = inject(Router);
   private toast = inject(ToastrService);
 
   mes = new FormControl(this.mesAtual(), { nonNullable: true });
@@ -96,10 +95,20 @@ export class PlanejamentoPage {
     meta: 'meta',
   };
 
+  // Modal de orçamento: null = fechado; categoriaId null = orçamento novo
+  modalOrcamento = signal<{ categoriaId: string | null; limite: number | null } | null>(null);
+
+  novoOrcamento() {
+    this.modalOrcamento.set({ categoriaId: null, limite: null });
+  }
+
   editarOrcamento(orcamento: OrcamentoCategoria) {
-    this.router.navigate(['/paginas/planejamento/orcamento'], {
-      queryParams: { categoriaId: orcamento.categoriaId, limite: orcamento.limite },
-    });
+    this.modalOrcamento.set({ categoriaId: orcamento.categoriaId, limite: orcamento.limite });
+  }
+
+  aoSalvarOrcamento() {
+    this.modalOrcamento.set(null);
+    this.recarregar$.next();
   }
 
   pedirExclusao(tipo: ItemExclusao['tipo'], id: string, nome: string) {

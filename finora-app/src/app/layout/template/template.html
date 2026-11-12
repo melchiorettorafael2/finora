@@ -1,13 +1,16 @@
-<div class="app-container" [class.tema-claro]="preferencias.tema() === 'claro'">
+<div class="app-container" [class.tema-claro]="preferencias.tema() === 'claro'"
+    [class.area-configuracoes]="modais.areaConfiguracoes()">
     <!-- Menu sempre minimizado; expande ao passar o mouse (ver .sidebar no styles.scss) -->
     <aside class="sidebar">
         <div class="sidebar-logo">
-            <img class="logo-img" src="finora-logo-sidebar@2x.png" srcset="finora-logo-sidebar@2x.png 2x, finora-logo-sidebar@3x.png 3x" alt="Finora" />
+            <img class="logo-img" src="finora-logo-menu@2x.png" srcset="finora-logo-menu@2x.png 2x, finora-logo-menu@3x.png 3x" alt="Finora" />
         </div>
         <nav class="sidebar-menu">
             @for (item of itensMenu; track item.rota) {
-                <a class="menu-item" [routerLink]="item.rota" routerLinkActive="active"
+                <!-- Com Configurações aberta, só ela fica destacada no menu -->
+                <a class="menu-item" [routerLink]="item.rota" routerLinkActive #rota="routerLinkActive"
                     [routerLinkActiveOptions]="{ exact: item.exato }"
+                    [class.active]="rota.isActive && !modais.areaConfiguracoes()"
                     [attr.aria-label]="item.rotulo">
                     <i class="fa-solid" [ngClass]="item.icone"></i>
                     <span>{{ item.rotulo }}</span>
@@ -15,10 +18,16 @@
             }
 
             <!-- Configurações abre em modal, por cima da página atual -->
-            <button type="button" class="menu-item" [class.active]="modais.configuracoesAberta()"
+            <button type="button" class="menu-item" [class.active]="modais.areaConfiguracoes()"
                 aria-label="Configurações" (click)="modais.abrirConfiguracoes()">
                 <i class="fa-solid fa-gear"></i>
                 <span>Configurações</span>
+            </button>
+
+            <!-- Sair logo abaixo de Configurações -->
+            <button type="button" class="menu-item menu-sair" aria-label="Sair" (click)="sair()">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Sair</span>
             </button>
         </nav>
     </aside>
@@ -41,6 +50,18 @@
         <app-modal titulo="Configurações" subtitulo="Seu perfil e a segurança da conta."
             icone="fa-gear" largura="media" (fechar)="modais.fecharConfiguracoes()">
             <app-configuracoes />
+        </app-modal>
+    }
+
+    @if (modais.doisFatoresAberta()) {
+        <app-modal titulo="Verificação em duas etapas" subtitulo="Proteja sua conta com um código do Google Authenticator além da senha."
+            icone="fa-shield-halved" largura="media" (fechar)="modais.fecharDoisFatores()">
+            <!-- @defer: a biblioteca de QR code só é baixada quando este modal abre -->
+            @defer {
+                <app-dois-fatores />
+            } @loading (minimum 200ms) {
+                <p class="modal-carregando"><i class="fa-solid fa-spinner fa-spin"></i> Carregando...</p>
+            }
         </app-modal>
     }
 </div>

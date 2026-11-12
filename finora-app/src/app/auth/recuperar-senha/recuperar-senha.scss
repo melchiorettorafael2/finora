@@ -149,3 +149,11 @@ a.btn-voltar {
         color: var(--text-muted);
     }
 }
+
+/* Recuperação depende do Google Authenticator (2FA é opcional) */
+.instrucao-obs {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    opacity: 0.85;
+}

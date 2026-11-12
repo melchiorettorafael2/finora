@@ -1,59 +1,43 @@
-<app-header titulo="Planejamento"></app-header>
-
-<main class="content">
-    <div class="card">
-        <div class="form-header">
-            <div class="form-header-icon">
-                <i class="fa-solid fa-sliders"></i>
-            </div>
-            <div>
-                <h2>{{ editando ? 'Alterar orçamento' : 'Definir orçamento' }}</h2>
-                <p class="form-subtitle">Limite de gastos por mês para a categoria. Se ela já tiver um limite, ele será atualizado.</p>
-            </div>
+<form [formGroup]="form" (ngSubmit)="salvar()" class="form form-card form-modal">
+    <div class="form-group">
+        <label for="orcamento-categoriaId">Categoria <span class="required">*</span></label>
+        <div class="input-icon">
+            <i class="fa-solid fa-tags"></i>
+            <select id="orcamento-categoriaId" formControlName="categoriaId">
+                <option value="">Selecione a categoria</option>
+                @for (categoria of categorias(); track categoria.id) {
+                    <option [value]="categoria.id">{{ categoria.nome }}</option>
+                }
+            </select>
         </div>
-
-        <form [formGroup]="form" (ngSubmit)="salvar()" class="form form-card">
-            <div class="form-group">
-                <label for="categoriaId">Categoria <span class="required">*</span></label>
-                <div class="input-icon">
-                    <i class="fa-solid fa-tags"></i>
-                    <select id="categoriaId" formControlName="categoriaId">
-                        <option value="">Selecione a categoria</option>
-                        @for (categoria of categorias(); track categoria.id) {
-                            <option [value]="categoria.id">{{ categoria.nome }}</option>
-                        }
-                    </select>
-                </div>
-                @if (form.controls.categoriaId.touched && form.controls.categoriaId.hasError('required')) {
-                    <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> A categoria é obrigatória.</span>
-                }
-                @if (form.controls.categoriaId.touched && form.controls.categoriaId.hasError('apiError')) {
-                    <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> {{ form.controls.categoriaId.errors?.['apiError'] }}</span>
-                }
-            </div>
-
-            <div class="form-group">
-                <label for="limite">Limite mensal <span class="required">*</span></label>
-                <div class="input-icon">
-                    <i class="fa-solid fa-money-check-dollar"></i>
-                    <input id="limite" formControlName="limite" type="text" mask="separator.2"
-                        thousandSeparator="." decimalMarker="," placeholder="R$" />
-                </div>
-                @if (form.controls.limite.touched && form.controls.limite.hasError('required')) {
-                    <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> O limite é obrigatório.</span>
-                }
-                @if (form.controls.limite.touched && form.controls.limite.hasError('apiError')) {
-                    <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> {{ form.controls.limite.errors?.['apiError'] }}</span>
-                }
-            </div>
-
-            <div class="form-actions">
-                <button type="button" class="btn btn-secondary" routerLink="/paginas/planejamento">Cancelar</button>
-                <button type="submit" class="btn btn-primary" [disabled]="salvando()">
-                    <i class="fa-solid fa-check"></i>
-                    Salvar
-                </button>
-            </div>
-        </form>
+        @if (form.controls.categoriaId.touched && form.controls.categoriaId.hasError('required')) {
+            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> A categoria é obrigatória.</span>
+        }
+        @if (form.controls.categoriaId.touched && form.controls.categoriaId.hasError('apiError')) {
+            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> {{ form.controls.categoriaId.errors?.['apiError'] }}</span>
+        }
     </div>
-</main>
+
+    <div class="form-group">
+        <label for="orcamento-limite">Limite mensal <span class="required">*</span></label>
+        <div class="input-icon">
+            <i class="fa-solid fa-money-check-dollar"></i>
+            <input id="orcamento-limite" formControlName="limite" type="text" mask="separator.2"
+                thousandSeparator="." decimalMarker="," placeholder="R$" />
+        </div>
+        @if (form.controls.limite.touched && form.controls.limite.hasError('required')) {
+            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> O limite é obrigatório.</span>
+        }
+        @if (form.controls.limite.touched && form.controls.limite.hasError('apiError')) {
+            <span class="form-hint form-hint-error"><i class="fa-solid fa-circle-exclamation"></i> {{ form.controls.limite.errors?.['apiError'] }}</span>
+        }
+    </div>
+
+    <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="cancelado.emit()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="salvando()">
+            <i class="fa-solid fa-check"></i>
+            Salvar
+        </button>
+    </div>
+</form>

@@ -54,3 +54,12 @@
         display: none;
     }
 }
+
+/* Enquanto o modal do 2FA carrega (ele é baixado sob demanda) */
+.modal-carregando {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 24px 4px;
+    color: var(--text-muted);
+}
