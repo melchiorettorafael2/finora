@@ -33,10 +33,11 @@ scp "${SSH_OPTS[@]}" -q "$PASTA/.site.tgz" "$PASTA/docker-compose.yml" "$PASTA/C
 rm -f "$PASTA/.site.tgz"
 
 echo "== Subindo no servidor"
-ssh "${SSH_OPTS[@]}" "$DESTINO" bash -s -- "$SITE_HOST" <<'REMOTO_SCRIPT'
+ssh "${SSH_OPTS[@]}" "$DESTINO" bash -s -- "$SITE_HOST" "$IP" <<'REMOTO_SCRIPT'
 set -euo pipefail
 cd /opt/finora
 SITE_HOST="$1"
+SITE_IP="$2"
 
 # .env só é criado na primeira vez: segredo do JWT aleatório; SMTP fica em branco (link vai para o log)
 if [ ! -f .env ]; then
@@ -55,6 +56,8 @@ APP_JWT_SECRET=$(openssl rand -base64 48 | tr -d '\n')
 EOF
   echo "   .env criado"
 fi
+# IP do servidor (redireciona http://IP para o endereço com HTTPS); adicionado se faltar
+grep -q '^SITE_IP=' .env || echo "SITE_IP=$SITE_IP" >> .env
 
 # Atualiza o conteúdo das pastas no lugar (os containers montam as pastas, não os arquivos)
 find site -mindepth 1 -delete && tar -C site -xzf .site.tgz && rm .site.tgz

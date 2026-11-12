@@ -1,7 +1,7 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgClass } from '@angular/common';
-import { NavigationStart, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { PreferenciasService } from '../../common/services/preferencias-service';
 import { ModaisService } from '../../common/services/modais-service';
@@ -22,6 +22,9 @@ interface ItemMenu {
   imports: [RouterOutlet, RouterLink, RouterLinkActive, NgClass, Modal, Configuracoes, DoisFatores],
   templateUrl: './template.html',
   styleUrl: './template.scss',
+  host: {
+    '(document:keydown.escape)': 'maisAberto.set(false)',
+  },
 })
 export class Template {
   preferencias = inject(PreferenciasService);
@@ -30,15 +33,27 @@ export class Template {
 
   anoAtual = new Date().getFullYear();
 
+  private router = inject(Router);
+  // URL atual, para destacar "Mais" na barra do celular quando a página está dentro dele
+  private urlAtual = signal(this.router.url);
+  // Painel "Mais" do celular (desliza de baixo)
+  maisAberto = signal(false);
+
   constructor() {
+    const destroyRef = inject(DestroyRef);
     // Com Configurações aberta o menu continua clicável: ir para outra página fecha esses modais
-    inject(Router).events.pipe(
+    this.router.events.pipe(
       filter(evento => evento instanceof NavigationStart),
-      takeUntilDestroyed(inject(DestroyRef)),
+      takeUntilDestroyed(destroyRef),
     ).subscribe(() => {
       this.modais.fecharConfiguracoes();
       this.modais.fecharDoisFatores();
+      this.maisAberto.set(false);
     });
+    this.router.events.pipe(
+      filter((evento): evento is NavigationEnd => evento instanceof NavigationEnd),
+      takeUntilDestroyed(destroyRef),
+    ).subscribe(evento => this.urlAtual.set(evento.urlAfterRedirects));
   }
 
   // Configurações não é rota: abre em modal (botão separado no template)
@@ -51,7 +66,22 @@ export class Template {
     { rota: '/paginas/relatorios', icone: 'fa-file-lines', rotulo: 'Relatórios', exato: false },
   ];
 
+  // ===== Celular: barra inferior com as 4 telas mais usadas + "Mais" =====
+  private readonly rotasBarra = ['/paginas/dashboard', '/paginas/listagem-lancamentos', '/paginas/planejamento', '/paginas/relatorios'];
+  itensBarra = this.itensMenu.filter(item => this.rotasBarra.includes(item.rota));
+  itensMais = this.itensMenu.filter(item => !this.rotasBarra.includes(item.rota));
+
+  // "Mais" fica destacado quando a tela atual (ou Configurações) está dentro dele
+  maisAtivo = computed(() => this.maisAberto() || this.modais.areaConfiguracoes()
+    || this.itensMais.some(item => this.urlAtual().startsWith(item.rota)));
+
+  abrirConfiguracoesDoMais(): void {
+    this.maisAberto.set(false);
+    this.modais.abrirConfiguracoes();
+  }
+
   sair(): void {
+    this.maisAberto.set(false);
     this.modais.fecharConfiguracoes();
     this.modais.fecharDoisFatores();
     this.authService.logout();

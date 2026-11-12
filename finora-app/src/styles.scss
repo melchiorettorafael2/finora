@@ -149,7 +149,9 @@
     /* Menu, header e rodapé ficam no azul-noite da marca nos dois temas */
     .sidebar,
     .header,
-    .app-footer {
+    .app-footer,
+    .nav-mobile,
+    .sheet {
         @include tema-escuro;
     }
 
@@ -869,14 +871,15 @@ button.menu-item {
 
 @media (max-width: 768px) {
 
-    /* No celular a barra lateral fica sempre só com os ícones (sem expandir) */
-    .sidebar span {
+    /* No celular o menu lateral dá lugar à barra inferior (.nav-mobile, no template.scss):
+       o conteúdo usa a largura toda e ganha espaço embaixo para a barra não cobrir nada */
+    .sidebar {
         display: none;
     }
 
-    .menu-item {
-        justify-content: center;
-        padding: 14px 0;
+    .main-content {
+        margin-left: 0;
+        padding-bottom: calc(64px + env(safe-area-inset-bottom));
     }
 
     .content {

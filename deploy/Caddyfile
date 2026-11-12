@@ -22,3 +22,9 @@
 		-Server
 	}
 }
+
+# Quem digita só o IP (http://34.235.101.139) vai para o endereço com HTTPS válido.
+# HTTPS direto no IP não tem como funcionar: o certificado é emitido para o nome, não para o IP.
+http://{$SITE_IP} {
+	redir https://{$SITE_HOST}{uri} permanent
+}

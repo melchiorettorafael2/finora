@@ -46,6 +46,50 @@
         </footer>
     </main>
 
+    <!-- ===== Celular: barra inferior (o menu lateral some em telas até 768px) ===== -->
+    <nav class="nav-mobile" aria-label="Navegação principal">
+        @for (item of itensBarra; track item.rota) {
+            <a class="nav-mobile-item" [routerLink]="item.rota" routerLinkActive #rotaMobile="routerLinkActive"
+                [routerLinkActiveOptions]="{ exact: item.exato }"
+                [class.active]="rotaMobile.isActive && !maisAtivo()"
+                [attr.aria-current]="rotaMobile.isActive && !maisAtivo() ? 'page' : null">
+                <i class="fa-solid" [ngClass]="item.icone"></i>
+                <span>{{ item.rotulo }}</span>
+            </a>
+        }
+        <button type="button" class="nav-mobile-item" [class.active]="maisAtivo()"
+            aria-haspopup="dialog" [attr.aria-expanded]="maisAberto()" (click)="maisAberto.set(!maisAberto())">
+            <i class="fa-solid fa-ellipsis"></i>
+            <span>Mais</span>
+        </button>
+    </nav>
+
+    <!-- Painel "Mais": desliza de baixo; fecha ao tocar fora, no Esc ou ao navegar -->
+    @if (maisAberto()) {
+        <div class="sheet-fundo" (click)="maisAberto.set(false)">
+            <div class="sheet" role="dialog" aria-label="Mais opções" (click)="$event.stopPropagation()">
+                <span class="sheet-alca" aria-hidden="true"></span>
+                @for (item of itensMais; track item.rota) {
+                    <a class="sheet-item" [routerLink]="item.rota" routerLinkActive="active"
+                        [routerLinkActiveOptions]="{ exact: item.exato }">
+                        <i class="fa-solid" [ngClass]="item.icone"></i>
+                        <span>{{ item.rotulo }}</span>
+                        <i class="fa-solid fa-chevron-right sheet-seta"></i>
+                    </a>
+                }
+                <button type="button" class="sheet-item" (click)="abrirConfiguracoesDoMais()">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Configurações</span>
+                    <i class="fa-solid fa-chevron-right sheet-seta"></i>
+                </button>
+                <button type="button" class="sheet-item sheet-sair" (click)="sair()">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Sair</span>
+                </button>
+            </div>
+        </div>
+    }
+
     @if (modais.configuracoesAberta()) {
         <app-modal titulo="Configurações" subtitulo="Perfil e segurança."
             icone="fa-gear" largura="media" (fechar)="modais.fecharConfiguracoes()">
