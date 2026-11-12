@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { DetalhesCategoria } from '../features/categorias/models/dados-categoria';
 import { DetalhesCartao } from '../features/cartoes/models/dados-cartao';
 import { PageResult } from '../shared/models/page-result';
+import { environment } from '../../environments/environment';
 
 
 
@@ -15,7 +16,7 @@ import { PageResult } from '../shared/models/page-result';
 export class LancamentoService {
 
   http = inject(HttpClient);
-  baseUrl = 'http://localhost:8080/lancamentos';
+  baseUrl = `${environment.apiUrl}/lancamentos`;
   
 
   criar(dados: DadosLancamentoForm) : Observable<DetalhesLancamento> {

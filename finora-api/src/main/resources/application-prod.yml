@@ -1,0 +1,18 @@
+# Perfil de produção (SPRING_PROFILES_ACTIVE=prod), usado no servidor da AWS.
+# Os segredos vêm de variáveis de ambiente (arquivo .env no servidor, fora do Git):
+#   APP_JWT_SECRET, APP_FRONT_URL e MAIL_* (ver application.yml)
+spring:
+  datasource:
+    # Volume do Docker: o banco sobrevive a deploys e reinícios
+    url: jdbc:h2:file:/data/finora-db
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+  h2:
+    console:
+      enabled: false
+app:
+  migracao:
+    dono-dados-antigos: ""

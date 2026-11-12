@@ -1,0 +1,36 @@
+# Finora no servidor (EC2): Caddy na frente (HTTPS automático + front Angular) e a API Java atrás.
+# Fica em /opt/finora no servidor, junto com:
+#   .env              segredos e endereço (criado pelo deploy.sh na primeira vez; nunca vai para o Git)
+#   api/finora-api.jar
+#   site/             build do Angular
+#   data/             banco H2
+services:
+  api:
+    image: eclipse-temurin:25-jre
+    restart: unless-stopped
+    command: ["java", "-Xms128m", "-Xmx384m", "-jar", "/app/finora-api.jar"]
+    env_file: .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    volumes:
+      - ./api:/app:ro
+      - ./data:/data
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file: .env
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./site:/srv:ro
+      - caddy_data:/data      # certificados do Let's Encrypt
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

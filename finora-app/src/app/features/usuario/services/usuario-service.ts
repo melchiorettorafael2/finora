@@ -4,6 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { AuthService } from '../../../auth/auth-service/auth-service';
 import { AuthResponse } from '../../../auth/dados-auth';
 import { AlterarSenhaForm, DadosUsuarioForm, DetalhesUsuario } from '../models/dados-usuario';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,7 @@ import { AlterarSenhaForm, DadosUsuarioForm, DetalhesUsuario } from '../models/d
 export class UsuarioService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
-  baseUrl = 'http://localhost:8080/usuarios/me';
+  baseUrl = `${environment.apiUrl}/usuarios/me`;
 
   // A foto exige o header Authorization, então não dá para usar a URL direto no <img>:
   // baixa como blob e expõe uma object URL compartilhada entre o header e a página

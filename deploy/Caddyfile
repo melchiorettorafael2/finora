@@ -1,0 +1,24 @@
+# SITE_HOST vem do .env (ex.: 3-91-10-20.sslip.io ou o seu domínio).
+# O Caddy pede e renova o certificado HTTPS sozinho (Let's Encrypt).
+{$SITE_HOST} {
+	encode gzip
+
+	# API: o front chama /api/... e o Caddy repassa sem o prefixo (/api/auth/signin -> api:8080/auth/signin)
+	handle_path /api/* {
+		reverse_proxy api:8080
+	}
+
+	# Front Angular: rotas como /paginas/dashboard caem no index.html
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+}

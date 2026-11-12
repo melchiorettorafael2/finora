@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ConfiguracaoDoisFatores, StatusDoisFatores } from '../models/dados-usuario';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DoisFatoresService {
   private http = inject(HttpClient);
-  baseUrl = 'http://localhost:8080/usuarios/me/2fa';
+  baseUrl = `${environment.apiUrl}/usuarios/me/2fa`;
 
   status(): Observable<StatusDoisFatores> {
     return this.http.get<StatusDoisFatores>(this.baseUrl);

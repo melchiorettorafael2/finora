@@ -10,6 +10,7 @@ import { Observable, tap } from 'rxjs';
 import { LoginForm } from '../dados-auth';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 interface JwtPayload {
   //sub: string;
@@ -35,7 +36,7 @@ export class AuthService {
 
   http = inject(HttpClient);
   router = inject(Router);
-  baseUrl = 'http://localhost:8080/auth';
+  baseUrl = `${environment.apiUrl}/auth`;
 
   // O 2FA é opcional (ativado em Configurações). Sem ele, login e cadastro já trazem o token de acesso.
   // Com ele, o login devolve doisFatoresPendente + tokenDesafio e a sessão só é salva depois

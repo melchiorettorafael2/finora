@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import {DadosCategoriaForm, DetalhesCategoria} from '../models/dados-categoria';
 import { Observable } from 'rxjs';
 import { PageResult } from '../../../shared/models/page-result';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoriaService {
   http = inject(HttpClient);
-  baseUrl = 'http://localhost:8080/categorias';
+  baseUrl = `${environment.apiUrl}/categorias`;
 
   criar(dados: DadosCategoriaForm) : Observable<DetalhesCategoria> {
     return this.http.post<DetalhesCategoria>(this.baseUrl, dados);

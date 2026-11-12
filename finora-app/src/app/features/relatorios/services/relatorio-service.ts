@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PeriodoRelatorio, Relatorio } from '../models/dados-relatorio';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,7 @@ import { PeriodoRelatorio, Relatorio } from '../models/dados-relatorio';
 export class RelatorioService {
 
   http = inject(HttpClient);
-  baseUrl = 'http://localhost:8080/relatorios';
+  baseUrl = `${environment.apiUrl}/relatorios`;
 
   obterRelatorio(periodo: PeriodoRelatorio): Observable<Relatorio> {
     return this.http.get<Relatorio>(this.baseUrl, { params: new HttpParams().set('meses', periodo) });

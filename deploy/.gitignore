@@ -1,0 +1,4 @@
+# Dados da instância (IP, caminho da chave) e arquivos temporários do deploy
+.servidor
+.site.tgz
+*.pem

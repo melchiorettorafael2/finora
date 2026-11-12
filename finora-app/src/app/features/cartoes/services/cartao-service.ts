@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import {DadosCartaoForm, DetalhesCartao} from '../models/dados-cartao';
 import { Observable } from 'rxjs';
 import { PageResult } from '../../../shared/models/page-result';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartaoService {
   http = inject(HttpClient);
-  baseUrl = 'http://localhost:8080/cartoes';
+  baseUrl = `${environment.apiUrl}/cartoes`;
 
   criar(dados: DadosCartaoForm) : Observable<DetalhesCartao> {
     return this.http.post<DetalhesCartao>(this.baseUrl, dados);

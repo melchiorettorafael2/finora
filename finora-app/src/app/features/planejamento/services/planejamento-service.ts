@@ -8,6 +8,7 @@ import {
   OrcamentoForm,
   Planejamento,
 } from '../models/dados-planejamento';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ import {
 export class PlanejamentoService {
 
   http = inject(HttpClient);
-  baseUrl = 'http://localhost:8080/planejamento';
+  baseUrl = `${environment.apiUrl}/planejamento`;
 
   obterPlanejamento(mes: string): Observable<Planejamento> {
     return this.http.get<Planejamento>(this.baseUrl, { params: new HttpParams().set('mes', mes) });
