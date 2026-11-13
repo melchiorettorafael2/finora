@@ -7,6 +7,7 @@ public record UsuarioDetalhes(
         String nome,
         String email,
         boolean possuiFoto,
-        boolean doisFatoresAtivo
+        boolean doisFatoresAtivo,
+        boolean demo
 ) {
 }

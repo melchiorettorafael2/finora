@@ -243,3 +243,29 @@
         transition: none;
     }
 }
+
+/* ===== Aviso da conta de demonstração ===== */
+.aviso-demo {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    border: 1px solid color-mix(in srgb, var(--warning) 45%, transparent);
+    border-radius: 10px;
+    background-color: var(--warning-bg);
+    font-size: 13px;
+    color: var(--text);
+
+    > i {
+        margin-top: 2px;
+        font-size: 16px;
+        color: var(--warning);
+    }
+
+    strong {
+        display: block;
+        margin-bottom: 2px;
+        color: var(--text-strong);
+    }
+}

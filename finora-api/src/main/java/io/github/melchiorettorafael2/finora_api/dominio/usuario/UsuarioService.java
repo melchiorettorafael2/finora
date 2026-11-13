@@ -6,6 +6,7 @@ import io.github.melchiorettorafael2.finora_api.common.validation.CampoInvalido;
 import io.github.melchiorettorafael2.finora_api.common.validation.ValidationResult;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.model.FotoUsuarioEntity;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.model.UsuarioEntity;
+import io.github.melchiorettorafael2.finora_api.infra.demo.ContaDemo;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.repository.FotoUsuarioRepository;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.repository.UsuarioRepository;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.AlterarSenhaForm;
@@ -43,6 +44,9 @@ public class UsuarioService {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
+    @Autowired
+    private ContaDemo contaDemo;
+
     public UsuarioDetalhes obterDetalhes(UUID usuarioId) {
         UsuarioEntity usuario = buscar(usuarioId);
         return new UsuarioDetalhes(
@@ -50,7 +54,8 @@ public class UsuarioService {
                 usuario.getNome(),
                 usuario.getLogin(),
                 fotoRepository.existsById(usuarioId),
-                usuario.possuiDoisFatoresAtivo()
+                usuario.possuiDoisFatoresAtivo(),
+                contaDemo.ehDemo(usuario)
         );
     }
 

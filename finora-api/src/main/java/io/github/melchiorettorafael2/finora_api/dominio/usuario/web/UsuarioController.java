@@ -1,6 +1,7 @@
 package io.github.melchiorettorafael2.finora_api.dominio.usuario.web;
 
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.UsuarioService;
+import io.github.melchiorettorafael2.finora_api.infra.demo.ContaDemo;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.model.UsuarioEntity;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.AlterarSenhaForm;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.AuthResponse;
@@ -22,6 +23,10 @@ public class UsuarioController {
     @Autowired
     private UsuarioService service;
 
+    // Conta demo pública: perfil, senha e foto ficam bloqueados (ver ContaDemo)
+    @Autowired
+    private ContaDemo contaDemo;
+
     @GetMapping
     public UsuarioDetalhes obter(@RequestAttribute("usuario") UsuarioEntity usuario) {
         return service.obterDetalhes(usuario.getId());
@@ -30,12 +35,14 @@ public class UsuarioController {
     @PutMapping
     public AuthResponse atualizar(@RequestAttribute("usuario") UsuarioEntity usuario,
                                   @RequestBody @Valid UsuarioAtualizacaoForm form) {
+        contaDemo.bloquear(usuario);
         return service.atualizarDados(usuario.getId(), form);
     }
 
     @PatchMapping("senha")
     public ResponseEntity<Void> alterarSenha(@RequestAttribute("usuario") UsuarioEntity usuario,
                                              @RequestBody @Valid AlterarSenhaForm form) {
+        contaDemo.bloquear(usuario);
         service.alterarSenha(usuario.getId(), form);
         return ResponseEntity.noContent().build();
     }
@@ -54,12 +61,14 @@ public class UsuarioController {
     @PutMapping(value = "foto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> salvarFoto(@RequestAttribute("usuario") UsuarioEntity usuario,
                                            @RequestParam("foto") MultipartFile foto) {
+        contaDemo.bloquear(usuario);
         service.salvarFoto(usuario.getId(), foto);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("foto")
     public ResponseEntity<Void> removerFoto(@RequestAttribute("usuario") UsuarioEntity usuario) {
+        contaDemo.bloquear(usuario);
         service.removerFoto(usuario.getId());
         return ResponseEntity.noContent().build();
     }

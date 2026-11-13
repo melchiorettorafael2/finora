@@ -83,6 +83,8 @@ export class Configuracoes implements OnInit, OnDestroy {
 
   // null enquanto carrega
   doisFatoresAtivo = signal<boolean | null>(null);
+  // Conta de demonstração: a API bloqueia perfil, senha, foto e 2FA; aqui só avisamos e desabilitamos
+  demo = signal(false);
 
   carregando = signal(true);
   salvandoDados = signal(false);
@@ -106,6 +108,7 @@ export class Configuracoes implements OnInit, OnDestroy {
     this.service.obterDados().subscribe({
       next: usuario => {
         this.doisFatoresAtivo.set(usuario.doisFatoresAtivo);
+        this.demo.set(!!usuario.demo);
         this.dadosOriginais = { nome: usuario.nome, email: usuario.email };
         this.dadosForm.reset(this.dadosOriginais);
         this.carregando.set(false);
@@ -324,6 +327,10 @@ export class Configuracoes implements OnInit, OnDestroy {
         }
         this.toast.error(ci.erro, 'Erro');
       });
+      return;
+    }
+    if (erro.status === 409 && erro.error?.message) {
+      this.toast.error(erro.error.message, 'Erro');
       return;
     }
     this.toast.error('Algo deu errado. Tente de novo.', 'Erro');

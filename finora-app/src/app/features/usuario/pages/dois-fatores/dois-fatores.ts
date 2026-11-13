@@ -229,6 +229,10 @@ export class DoisFatores implements OnInit, OnDestroy {
   }
 
   private tratarErro(erro: any): void {
+    if (erro.status === 409 && erro.error?.message) {
+      this.toast.error(erro.error.message, 'Erro');
+      return;
+    }
     if (erro.status === 422 && erro.error?.camposInvalidos?.length) {
       this.erroCodigo.set(erro.error.camposInvalidos[0].erro);
       this.codigoControl.reset();

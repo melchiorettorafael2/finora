@@ -14,7 +14,8 @@ services:
       SPRING_PROFILES_ACTIVE: prod
     # Só no localhost do servidor (nunca exposta na internet): usada pelo túnel SSH do console do H2
     ports:
-      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:8080:8080"   # API (console do H2 pelo túnel)
+      - "127.0.0.1:9092:9092"   # servidor TCP do H2 (DBeaver pelo túnel)
     volumes:
       - ./api:/app:ro
       - ./data:/data

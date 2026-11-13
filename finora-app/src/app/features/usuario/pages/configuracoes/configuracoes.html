@@ -1,3 +1,13 @@
+@if (demo()) {
+    <div class="aviso-demo" role="note">
+        <i class="fa-solid fa-flask"></i>
+        <div>
+            <strong>Conta de demonstração</strong>
+            <span>Perfil, senha, foto e verificação em duas etapas ficam bloqueados. O resto pode testar à vontade: os dados voltam ao original todo dia.</span>
+        </div>
+    </div>
+}
+
 <div class="config-grid">
 
     <!-- Coluna Perfil: foto e dados pessoais -->
@@ -54,12 +64,12 @@
                             {{ salvandoFoto() ? 'Salvando...' : 'Salvar foto' }}
                         </button>
                     } @else {
-                        <button type="button" class="btn btn-secondary" (click)="inputFoto.click()" [disabled]="salvandoFoto()">
+                        <button type="button" class="btn btn-secondary" (click)="inputFoto.click()" [disabled]="salvandoFoto() || demo()">
                             <i class="fa-solid fa-upload"></i>
                             {{ fotoAtual() ? 'Trocar foto' : 'Escolher foto' }}
                         </button>
                         @if (fotoAtual()) {
-                            <button type="button" class="btn btn-danger-outline" (click)="removerFoto()" [disabled]="salvandoFoto()">
+                            <button type="button" class="btn btn-danger-outline" (click)="removerFoto()" [disabled]="salvandoFoto() || demo()">
                                 <i class="fa-solid fa-trash"></i> Remover
                             </button>
                         }
@@ -80,7 +90,7 @@
                 <p class="form-subtitle">Você entra com o nome ou o email.</p>
             </div>
             @if (!editandoDados()) {
-                <button type="button" class="btn btn-editar" (click)="editarDados()" [disabled]="carregando()">
+                <button type="button" class="btn btn-editar" (click)="editarDados()" [disabled]="carregando() || demo()">
                     <i class="fa-solid fa-pen"></i> Editar
                 </button>
             }
@@ -153,7 +163,7 @@
             </div>
             <!-- Ligar abre o passo a passo do QR code; desligar pede o código atual para confirmar -->
             <button type="button" class="switch-2fa" role="switch" [attr.aria-checked]="!!doisFatoresAtivo()"
-                [disabled]="doisFatoresAtivo() === null"
+                [disabled]="doisFatoresAtivo() === null || demo()"
                 [attr.aria-label]="doisFatoresAtivo() ? 'Desativar verificação em duas etapas' : 'Ativar verificação em duas etapas'"
                 [attr.title]="doisFatoresAtivo() ? 'Desativar' : 'Ativar'"
                 (click)="modais.abrirDoisFatores(doisFatoresAtivo() ? 'desativar' : 'ativar')">
@@ -173,7 +183,7 @@
                 <p class="form-subtitle">Informe a senha atual para trocar.</p>
             </div>
             @if (!editandoSenha()) {
-                <button type="button" class="btn btn-editar" (click)="editarSenha()">
+                <button type="button" class="btn btn-editar" (click)="editarSenha()" [disabled]="demo()">
                     <i class="fa-solid fa-key"></i> Alterar
                 </button>
             }

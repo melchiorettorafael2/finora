@@ -4,6 +4,7 @@ export interface DetalhesUsuario {
     email: string;
     possuiFoto: boolean;
     doisFatoresAtivo: boolean;
+    demo?: boolean; // conta de demonstração pública: perfil, senha, foto e 2FA bloqueados
 }
 
 export interface StatusDoisFatores {

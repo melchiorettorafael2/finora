@@ -12,6 +12,7 @@ import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.Verifica
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.RedefinirSenhaForm;
 import io.github.melchiorettorafael2.finora_api.dominio.usuario.web.dto.SolicitarRedefinicaoSenhaForm;
 import io.github.melchiorettorafael2.finora_api.infra.email.EmailService;
+import io.github.melchiorettorafael2.finora_api.infra.demo.ContaDemo;
 import io.github.melchiorettorafael2.finora_api.infra.security.JwtService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -45,6 +46,9 @@ public class AuthService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private ContaDemo contaDemo;
 
     // Endereço do front que abre a tela de nova senha (o link do e-mail aponta para lá)
     @Value("${app.front-url}")
@@ -114,6 +118,9 @@ public class AuthService {
      * Só para emails cadastrados: outro endereço recebe erro de validação e nenhum e-mail sai.
      */
     public void solicitarRedefinicaoSenha(SolicitarRedefinicaoSenhaForm form){
+        if (contaDemo.ehDemo(form.email())) {
+            throw new ValidationException(List.of(new CampoInvalido("email", ContaDemo.MENSAGEM)));
+        }
         UsuarioEntity usuario = usuarioRepository.findByLogin(form.email().trim())
                 .orElseThrow(() -> new ValidationException(List.of(
                         new CampoInvalido("email", "Nenhuma conta com esse email."))));

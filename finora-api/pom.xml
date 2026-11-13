@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
+			<!-- escopo padrão (compile): a API usa org.h2.tools.Server para o acesso do DBeaver (H2TcpServerConfig) -->
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

@@ -20,5 +20,12 @@ spring:
         # Pelo túnel a requisição chega do gateway do Docker, não de 127.0.0.1
         web-allow-others: ${H2_CONSOLE:false}
 app:
+  demo:
+    # Conta de demonstração pública (ContaDemo/DemoService): vazio desliga
+    login: ${DEMO_LOGIN:}
+    senha: ${DEMO_SENHA:}
+  h2:
+    # Servidor TCP do H2 para o DBeaver (H2TcpServerConfig), ligado junto com o console
+    tcp: ${H2_CONSOLE:false}
   migracao:
     dono-dados-antigos: ""
