@@ -103,27 +103,39 @@
     }
 }
 
-/* ===== Passos da configuração ===== */
+/* ===== Passos da configuração: linha do tempo vertical ===== */
 .passos {
     display: grid;
-    gap: 14px;
     list-style: none;
 }
 
 .passo {
-    display: flex;
-    gap: 16px;
+    position: relative;
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    column-gap: 14px;
+    padding-bottom: 24px;
 
-    & + & {
-        padding-top: 16px;
-        border-top: 1px solid var(--border);
+    /* trilho ligando um número ao próximo */
+    &:not(:last-child)::before {
+        content: "";
+        position: absolute;
+        left: 14px;
+        top: 36px;
+        bottom: 6px;
+        width: 2px;
+        border-radius: 1px;
+        background-color: var(--border);
+    }
+
+    &:last-child {
+        padding-bottom: 0;
     }
 }
 
 .passo-numero {
     width: 30px;
     height: 30px;
-    flex-shrink: 0;
     display: grid;
     place-items: center;
     border-radius: 50%;
@@ -134,11 +146,11 @@
 }
 
 .passo-conteudo {
-    flex: 1;
     min-width: 0;
+    padding-top: 4px;
 
     h3 {
-        margin: 4px 0 4px;
+        margin: 0 0 2px;
         font-size: 15px;
         font-weight: 600;
         color: var(--text-strong);
@@ -152,37 +164,45 @@
 .lojas {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 14px;
+    gap: 8px;
+    margin-top: 12px;
 
     .btn {
+        height: 34px;
+        padding: 0 14px;
+        font-size: 13px;
         text-decoration: none;
     }
 }
 
-.qr-area {
+/* QR code em destaque, com a alternativa da chave logo abaixo */
+.qr-bloco {
     display: flex;
-    align-items: flex-start;
-    gap: 24px;
-    margin-top: 16px;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-top: 12px;
+    padding: 18px 16px 14px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    background-color: var(--superficie-sutil);
 }
 
 /* Fundo branco: alguns leitores não reconhecem QR code claro sobre escuro */
 .qr-code {
-    width: 236px;
-    height: 236px;
-    flex-shrink: 0;
+    width: 196px;
+    height: 196px;
     display: grid;
     place-items: center;
     padding: 8px;
     border-radius: 12px;
     background-color: #ffffff;
-    box-shadow: 0 0 0 1px var(--border), 0 6px 20px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 0 1px var(--border), 0 6px 18px rgba(0, 0, 0, 0.25);
 
     img {
         display: block;
-        width: 220px;
-        height: 220px;
+        width: 180px;
+        height: 180px;
         image-rendering: pixelated;
     }
 }
@@ -195,33 +215,34 @@
 }
 
 .chave-manual {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 0;
-}
-
-.chave-titulo {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-strong);
-}
-
-.chave-dados {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 8px 14px;
-    margin-top: 10px;
+    width: 100%;
+    max-width: 400px;
     font-size: 13px;
 
-    dt {
-        color: var(--text-muted);
+    summary {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        list-style: none;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--link);
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 
-    dd {
-        color: var(--text-strong);
-        min-width: 0;
-        overflow-wrap: anywhere;
+    p {
+        margin: 10px 0 8px;
+        text-align: center;
+        line-height: 1.5;
+        color: var(--text-muted);
     }
 }
 
@@ -231,26 +252,30 @@
     gap: 8px;
 
     code {
-        padding: 4px 8px;
-        border-radius: 6px;
-        background-color: var(--bg-elevated);
+        flex: 1;
+        min-width: 0;
+        padding: 8px 10px;
         border: 1px solid var(--border);
+        border-radius: 8px;
+        background-color: var(--bg-input);
         font-family: 'Cascadia Code', 'Consolas', monospace;
-        font-size: 13px;
-        letter-spacing: 0.5px;
-        color: var(--brand-cyan);
+        font-size: 13.5px;
+        letter-spacing: 0.6px;
+        text-align: center;
+        overflow-wrap: anywhere;
+        color: var(--text-strong);
         user-select: all;
     }
 }
 
 .btn-copiar {
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     flex-shrink: 0;
     display: grid;
     place-items: center;
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     background-color: transparent;
     color: var(--text-muted);
     cursor: pointer;
@@ -292,6 +317,11 @@
 
     &.invalido {
         border-color: var(--danger);
+    }
+
+    /* o erro aqui vem da mensagem do campo (classe .invalido), não do vermelho automático de campo vazio "tocado" */
+    &.ng-invalid.ng-touched:not(.invalido) {
+        border-color: var(--border);
     }
 }
 
@@ -336,15 +366,6 @@
 }
 
 @media (max-width: 768px) {
-    .qr-area {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .chave-manual {
-        align-self: stretch;
-    }
-
     .form-codigo .form-group {
         max-width: none;
     }
@@ -392,40 +413,29 @@
         font-size: 14px;
     }
 
-    /* passo: número ao lado do título e o resto ocupando a largura toda (QR centralizado) */
     .passo {
-        display: grid;
-        grid-template-columns: 28px 1fr;
+        grid-template-columns: 26px 1fr;
         column-gap: 10px;
-        align-items: center;
+        padding-bottom: 20px;
+
+        &:not(:last-child)::before {
+            left: 12px;
+            top: 32px;
+        }
     }
 
     .passo-numero {
-        width: 28px;
-        height: 28px;
+        width: 26px;
+        height: 26px;
         font-size: 13px;
     }
 
     .passo-conteudo {
-        display: contents;
-
-        h3 {
-            margin: 0;
-        }
-
-        > :not(h3) {
-            grid-column: 1 / -1;
-        }
-
-        > .form-subtitle {
-            margin-top: 6px;
-        }
+        padding-top: 2px;
     }
 
     .lojas {
         flex-wrap: nowrap;
-        gap: 8px;
-        margin-top: 10px;
 
         .btn {
             flex: 1;
@@ -433,22 +443,7 @@
         }
     }
 
-    .qr-area {
-        margin-top: 12px;
-        gap: 14px;
-    }
-
-    .qr-code {
-        width: 212px;
-        height: 212px;
-
-        img {
-            width: 196px;
-            height: 196px;
-        }
-    }
-
-    .chave-dados {
-        gap: 6px 10px;
+    .qr-bloco {
+        padding: 14px 10px 12px;
     }
 }

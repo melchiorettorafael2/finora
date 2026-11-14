@@ -62,8 +62,8 @@
                     <li class="passo">
                         <span class="passo-numero">1</span>
                         <div class="passo-conteudo">
-                            <h3>Instale o aplicativo</h3>
-                            <p class="form-subtitle">Baixe o Google Authenticator, se ainda não tiver.</p>
+                            <h3>Instale um app autenticador</h3>
+                            <p class="form-subtitle">Google Authenticator, Microsoft Authenticator ou Authy.</p>
                             <div class="lojas">
                                 <a class="btn btn-secondary" [href]="linkPlayStore" target="_blank" rel="noopener noreferrer">
                                     <i class="fa-brands fa-google-play"></i> Google Play
@@ -81,33 +81,28 @@
                             <h3>Escaneie o QR code</h3>
                             <p class="form-subtitle">No app, toque em <strong>+</strong> e depois em <strong>Ler código QR</strong>.</p>
 
-                            <div class="qr-area">
+                            <!-- QR em destaque; a chave manual só aparece se a pessoa precisar -->
+                            <div class="qr-bloco">
                                 <div class="qr-code">
                                     @if (qrCodeUrl(); as qr) {
-                                        <img [src]="qr" width="220" height="220" alt="QR code para adicionar a conta Finora no Google Authenticator" />
+                                        <img [src]="qr" width="180" height="180" alt="QR code para adicionar a conta Finora no app autenticador" />
                                     } @else {
-                                        <span class="qr-indisponivel">QR code indisponível. Use a chave ao lado.</span>
+                                        <span class="qr-indisponivel">QR code indisponível. Use a chave abaixo.</span>
                                     }
                                 </div>
 
-                                <div class="chave-manual">
-                                    <span class="chave-titulo">Não consegue escanear?</span>
-                                    <span class="form-subtitle">Escolha <strong>Inserir chave de configuração</strong> e use:</span>
-                                    <dl class="chave-dados">
-                                        <dt>Conta</dt>
-                                        <dd>{{ config.emissor }} ({{ config.conta }})</dd>
-                                        <dt>Chave</dt>
-                                        <dd class="chave-valor">
-                                            <code>{{ chaveFormatada() }}</code>
-                                            <button type="button" class="btn-copiar" (click)="copiarChave()"
-                                                [attr.aria-label]="chaveCopiada() ? 'Chave copiada' : 'Copiar chave'">
-                                                <i class="fa-solid" [class.fa-copy]="!chaveCopiada()" [class.fa-check]="chaveCopiada()"></i>
-                                            </button>
-                                        </dd>
-                                        <dt>Tipo</dt>
-                                        <dd>Baseada no horário</dd>
-                                    </dl>
-                                </div>
+                                <details class="chave-manual" [open]="!qrCodeUrl()">
+                                    <summary><i class="fa-solid fa-keyboard"></i> Não consegue escanear? Use a chave</summary>
+                                    <p>No app, escolha <strong>Inserir chave de configuração</strong>, use o nome <strong>{{ config.emissor }}</strong> e esta chave:</p>
+                                    <div class="chave-valor">
+                                        <code>{{ chaveFormatada() }}</code>
+                                        <button type="button" class="btn-copiar" (click)="copiarChave()"
+                                            [attr.aria-label]="chaveCopiada() ? 'Chave copiada' : 'Copiar chave'"
+                                            [attr.title]="chaveCopiada() ? 'Copiada!' : 'Copiar chave'">
+                                            <i class="fa-solid" [class.fa-copy]="!chaveCopiada()" [class.fa-check]="chaveCopiada()"></i>
+                                        </button>
+                                    </div>
+                                </details>
                             </div>
                         </div>
                     </li>
@@ -115,8 +110,8 @@
                     <li class="passo">
                         <span class="passo-numero">3</span>
                         <div class="passo-conteudo">
-                            <h3>Confirme o código</h3>
-                            <p class="form-subtitle">Digite o código de 6 dígitos do app.</p>
+                            <h3>Digite o código do app</h3>
+                            <p class="form-subtitle">São 6 dígitos que mudam a cada 30 segundos.</p>
 
                             <!-- O botão "Ativar" fica no rodapé e envia este form (atributo form) -->
                             <form id="form-codigo-2fa" class="form-codigo" (submit)="$event.preventDefault(); ativar()">
