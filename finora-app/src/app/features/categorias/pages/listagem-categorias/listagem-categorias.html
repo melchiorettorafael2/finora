@@ -19,7 +19,7 @@
                     <tbody>
                       @for (categoria of listagem.content; track categoria.id) {
                         <tr>
-                          <td>
+                          <td data-label="Categoria">
                             <span class="categoria-nome">
                               <span class="categoria-icone" [class.inativa]="!categoria.ativo">
                                 <i class="fa-solid" [ngClass]="categoria.icone || iconePadrao"></i>
@@ -27,7 +27,7 @@
                               {{ categoria.nome }}
                             </span>
                           </td>
-                          <td>
+                          <td data-label="Status">
                             <span class="badge" [ngClass]="categoria.ativo ? 'badge-success' : 'badge-danger'">
                               {{ categoria.ativo ? 'ATIVA' : 'INATIVA' }}
                             </span>

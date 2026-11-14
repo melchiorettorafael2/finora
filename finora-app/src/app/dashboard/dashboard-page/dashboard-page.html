@@ -1,14 +1,16 @@
 <app-header titulo="Dashboard"></app-header>
 
 <main class="content">
-    <div class="toolbar">
+    <!-- toolbar-compacta: no celular o mês e o botão ficam na mesma linha -->
+    <div class="toolbar toolbar-compacta">
         <div class="toolbar-filtros">
             <app-month-picker inputId="mes-dashboard" [formControl]="mes" />
         </div>
         <div class="toolbar-acoes">
-            <button type="button" class="btn btn-primary" (click)="modalLancamentoAberto.set(true)">
+            <button type="button" class="btn btn-primary" (click)="modalLancamentoAberto.set(true)"
+                aria-label="Novo lançamento">
                 <i class="fa-solid fa-plus"></i>
-                Novo lançamento
+                <span>Novo<span class="rotulo-desktop"> lançamento</span></span>
             </button>
         </div>
     </div>

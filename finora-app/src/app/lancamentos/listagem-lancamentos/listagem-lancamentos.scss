@@ -26,3 +26,14 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Valor colorido pelo tipo: receita em verde, despesa em vermelho */
+.datatable td.valor-receita {
+    color: var(--success);
+    font-weight: 600;
+}
+
+.datatable td.valor-despesa {
+    color: var(--danger);
+    font-weight: 600;
+}

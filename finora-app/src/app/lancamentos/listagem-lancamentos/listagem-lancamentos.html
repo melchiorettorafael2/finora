@@ -65,11 +65,11 @@
                     <tbody>
                       @for (lancamento of listagem.content; track lancamento.id) {
                         <tr>
-                          <td>{{ lancamento.data | date: 'dd/MM/yyyy' }}</td>
-                          <td>{{ lancamento.categoriaNome }}</td>
-                          <td>{{ lancamento.tipo === 'RECEITA' ? 'Receita' : 'Despesa' }}</td>
-                          <td>{{ lancamento.descricao }}</td>
-                          <td>{{ lancamento.valor | currency: 'BRL' }}</td>
+                          <td data-label="Data">{{ lancamento.data | date: 'dd/MM/yyyy' }}</td>
+                          <td data-label="Categoria">{{ lancamento.categoriaNome }}</td>
+                          <td data-label="Tipo">{{ lancamento.tipo === 'RECEITA' ? 'Receita' : 'Despesa' }}</td>
+                          <td data-label="Descrição">{{ lancamento.descricao }}</td>
+                          <td data-label="Valor" [class.valor-receita]="lancamento.tipo === 'RECEITA'" [class.valor-despesa]="lancamento.tipo !== 'RECEITA'">{{ lancamento.valor | currency: 'BRL' }}</td>
    
                           <td class="text-center">
                             <button class="icon-btn danger" title="Excluir" (click)="deletar(lancamento.id, listagem)">

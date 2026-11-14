@@ -66,48 +66,48 @@
     /* Claro "suave": cinza-azulado em vez de branco, para não ofuscar.
        Sem nenhuma superfície branca; a hierarquia vem dos tons (página < moldura < painel)
        e o texto continua bem escuro para manter a leitura */
-    --bg-app: #9eaabb;          /* fundo da página */
-    --bg-surface: #aeb9c8;      /* moldura dos cards e modais */
-    --bg-elevated: #a1aec0;     /* cabeçalho de tabela */
-    --bg-table: #bcc5d1;        /* painel interno dos cards e tabelas (o mais claro) */
-    --bg-input: #adb8c7;        /* campos e trilho das barras */
-    --bg-hover: #c4ccd7;
-    --bg-active: #a7b4c5;
+    --bg-app: #9cadc4;          /* fundo da página (azul-ardósia) */
+    --bg-surface: #b0bed1;      /* moldura dos cards e modais */
+    --bg-elevated: #a2b3c9;     /* cabeçalho de tabela */
+    --bg-table: #c3cfde;        /* painel interno dos cards e tabelas (o mais claro) */
+    --bg-input: #b4c2d4;        /* campos e trilho das barras */
+    --bg-hover: #cdd7e4;
+    --bg-active: #a8b8ce;
 
-    --border: #8e9db2;
-    --border-subtle: #9dabbd;
-    --border-hover: #6a7c95;
+    --border: #8496b0;
+    --border-subtle: #97a7be;
+    --border-hover: #5f7493;
     --linha: rgba(15, 23, 42, 0.12);
     --grade-grafico: rgba(15, 23, 42, 0.10);
     --superficie-sutil: rgba(15, 23, 42, 0.05);
     --superficie-sutil-hover: rgba(15, 23, 42, 0.10);
 
-    --text: #172131;
+    --text: #121c2e;
     --text-strong: #070e1a;
-    --text-muted: #33405a;
+    --text-muted: #2f3e58;
     --text-soft: #2c3850;
-    --link: #2563eb;
+    --link: #1d4ed8;
 
-    --accent: #2563eb;
-    --accent-btn: #2563eb;
-    --accent-btn-hover: #1d4ed8;
-    --focus: #2563eb;
-    --success: #059669;          /* esmeralda */
-    --success-bg: rgba(5, 150, 105, 0.12);
-    --warning: #c27803;          /* âmbar */
+    --accent: #1d4ed8;
+    --accent-btn: #1d4ed8;
+    --accent-btn-hover: #1e40af;
+    --focus: #1d4ed8;
+    --success: #047857;          /* esmeralda (mais firme para o fundo médio) */
+    --success-bg: rgba(4, 120, 87, 0.14);
+    --warning: #a85d00;          /* âmbar */
     --warning-bg: rgba(217, 119, 6, 0.14);
-    --danger: #dc2626;
-    --danger-bg: rgba(220, 38, 38, 0.10);
-    --teal: #0f766e;             /* títulos dos painéis */
+    --danger: #c81e1e;
+    --danger-bg: rgba(200, 30, 30, 0.12);
+    --teal: #0b5f59;             /* títulos dos painéis */
 
-    --texto-verde: #059669;
-    --texto-azul: #2563eb;
+    --texto-verde: #047857;
+    --texto-azul: #1d4ed8;
     --texto-amarelo: #b45309;
 
-    --btn-secundario: #a6b5c9;
-    --btn-secundario-hover: #97a8bf;
+    --btn-secundario: #a5b6cc;
+    --btn-secundario-hover: #95a8c1;
 
-    --shadow: 0 1px 2px rgba(15, 23, 42, 0.10), 0 6px 16px rgba(15, 23, 42, 0.10);
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.12), 0 8px 20px rgba(30, 50, 90, 0.14);
 }
 
 :root {
@@ -231,6 +231,15 @@ body {
     display: flex;
     flex-direction: column;
     transition: width 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Desktop: reserva sempre o espaço da barra de rolagem. Sem isso, quando os dados chegam e a página
+   passa a rolar (Planejamento, Relatórios), a largura diminui e o header "pula".
+   No celular a barra é sobreposta ao conteúdo, então não precisa (e no Safari reservava uma faixa vazia). */
+@media (min-width: 769px) {
+    .main-content {
+        scrollbar-gutter: stable;
+    }
 }
 
 /* Só expande em telas com mouse (no celular continua a barra de ícones) */
@@ -407,9 +416,6 @@ button.menu-item {
     flex-direction: column;
     min-width: 0;
     overflow-y: auto;
-    /* Reserva sempre o espaço da barra de rolagem: sem isso, quando os dados chegam e a página
-       passa a rolar (Planejamento, Relatórios), a largura diminui e o header "pula" */
-    scrollbar-gutter: stable;
     /* Espaço da barra lateral fixa; cresce junto quando ela abre (ver o hover da .sidebar) */
     margin-left: 60px;
     transition: margin-left 0.2s ease;
@@ -565,7 +571,7 @@ button.menu-item {
 
 /* Tema claro: linhas alternadas um tom abaixo do painel */
 .tema-claro .datatable tbody tr:nth-child(even) {
-    background-color: #b3bdca;
+    background-color: #b9c6d7;
 }
 
 .datatable tbody tr:hover,
@@ -723,6 +729,8 @@ button.menu-item {
 .form-group select,
 .form-group textarea {
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
     height: 42px;
     padding: 0 12px;
     border-radius: var(--radius);
@@ -886,6 +894,55 @@ button.menu-item {
         padding: 16px;
     }
 
+    /* ===== Formulários no celular ===== */
+    /* 16px: abaixo disso o iPhone dá zoom ao tocar no campo e a página "vaza" para os lados */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .form-group textarea {
+        height: auto;
+        min-height: 76px;
+    }
+
+    .form-group {
+        margin-bottom: 14px;
+    }
+
+    /* Safari (iOS) ignora a largura do campo de data e o deixa mais largo que os outros */
+    .form-group input[type="date"] {
+        -webkit-appearance: none;
+        appearance: none;
+        display: block;
+        line-height: 38px;
+    }
+
+    .form-group input[type="date"]::-webkit-date-and-time-value {
+        text-align: left;
+        margin: 0;
+    }
+
+    .form-card {
+        padding: 16px;
+    }
+
+    /* Botões do formulário quebram linha e dividem a largura, em vez de sair do card */
+    .form-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 18px;
+        padding-top: 16px;
+    }
+
+    .form-actions > button,
+    .form-actions > a {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+
     /* Tabela vira lista de cards */
     .datatable thead {
         display: none;
@@ -900,11 +957,11 @@ button.menu-item {
     }
 
     .datatable tr {
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         background-color: var(--bg-elevated);
         border: 1px solid var(--border-subtle);
         border-radius: var(--radius-lg);
-        padding: 12px 15px;
+        padding: 6px 14px;
     }
 
     .datatable tbody tr:hover {
@@ -922,37 +979,46 @@ button.menu-item {
         border: none;
     }
 
-    /* Cada célula vira uma linha do card, com o conteúdo centralizado
+    /* Cada célula vira uma linha do cartão: rótulo (data-label) à esquerda, valor à direita
        (tbody td: precisa ganhar da borda por célula da versão de computador) */
     .datatable tbody td {
         border: none;
-        padding: 6px 0;
+        border-bottom: 1px dashed var(--border-subtle);
+        padding: 8px 0;
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
-        gap: 8px;
-        text-align: center;
+        gap: 12px;
+        text-align: right;
         font-size: 14px;
+        font-weight: 500;
+        color: var(--text-strong);
+        overflow-wrap: anywhere;
     }
 
-    /* Rótulo só onde a célula tiver data-label (sem ele, o espaço vazio empurrava o valor para a direita) */
     .datatable td[data-label]::before {
         content: attr(data-label);
+        flex-shrink: 0;
         font-weight: 600;
         color: var(--text-muted);
-        font-size: 12px;
+        font-size: 11.5px;
+        letter-spacing: 0.3px;
         text-transform: uppercase;
+        text-align: left;
     }
 
-    .datatable td.text-center {
-        justify-content: center;
-    }
-
-    /* Ações (última célula) separadas do conteúdo por uma linha */
+    /* Ações (última célula): à direita, sem rótulo */
     .datatable tbody td:last-child {
-        margin-top: 6px;
-        padding-top: 10px;
-        border-top: 1px solid var(--border-subtle);
+        justify-content: flex-end;
+        border-bottom: none;
+        padding: 6px 0 4px;
+    }
+
+    /* Linha "Nenhum registro encontrado" */
+    .datatable tbody td[colspan] {
+        justify-content: center;
+        text-align: center;
+        color: var(--text-muted);
     }
 
     .icon-btn {

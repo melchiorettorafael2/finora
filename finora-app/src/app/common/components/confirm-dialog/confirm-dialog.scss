@@ -15,17 +15,17 @@
 }
 
 :host-context(.tema-claro) .dialog-overlay {
-    --dlg-fundo: #bcc5d1;
-    --dlg-borda: #8e9db2;
-    --dlg-destaque: #aeb9c8;
+    --dlg-fundo: #c3cfde;
+    --dlg-borda: #8496b0;
+    --dlg-destaque: #b0bed1;
     --dlg-titulo: #0f172a;
     --dlg-texto: #334155;
     --dlg-texto-suave: #3b4860;
     --dlg-icone: #d43535;
     --dlg-aviso: #a12a2a;
-    --dlg-botao: #a6b5c9;
-    --dlg-botao-borda: #8e9db2;
-    --dlg-botao-hover: #97a8bf;
+    --dlg-botao: #a5b6cc;
+    --dlg-botao-borda: #8496b0;
+    --dlg-botao-hover: #95a8c1;
     --dlg-sombra: 0 20px 50px rgba(15, 23, 42, 0.25);
     background-color: rgba(15, 23, 42, 0.45);
 }

@@ -369,3 +369,86 @@
         }
     }
 }
+
+/* ===== Celular: modal do 2FA mais enxuto ===== */
+@media (max-width: 600px) {
+    .dois-fatores {
+        gap: 16px;
+    }
+
+    /* o texto da faixa já diz se está ativa ou não: o selo só repetia */
+    .status-faixa {
+        padding: 10px 12px;
+        gap: 10px;
+
+        .badge {
+            display: none;
+        }
+    }
+
+    .status-icone {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    /* passo: número ao lado do título e o resto ocupando a largura toda (QR centralizado) */
+    .passo {
+        display: grid;
+        grid-template-columns: 28px 1fr;
+        column-gap: 10px;
+        align-items: center;
+    }
+
+    .passo-numero {
+        width: 28px;
+        height: 28px;
+        font-size: 13px;
+    }
+
+    .passo-conteudo {
+        display: contents;
+
+        h3 {
+            margin: 0;
+        }
+
+        > :not(h3) {
+            grid-column: 1 / -1;
+        }
+
+        > .form-subtitle {
+            margin-top: 6px;
+        }
+    }
+
+    .lojas {
+        flex-wrap: nowrap;
+        gap: 8px;
+        margin-top: 10px;
+
+        .btn {
+            flex: 1;
+            padding: 0 10px;
+        }
+    }
+
+    .qr-area {
+        margin-top: 12px;
+        gap: 14px;
+    }
+
+    .qr-code {
+        width: 212px;
+        height: 212px;
+
+        img {
+            width: 196px;
+            height: 196px;
+        }
+    }
+
+    .chave-dados {
+        gap: 6px 10px;
+    }
+}

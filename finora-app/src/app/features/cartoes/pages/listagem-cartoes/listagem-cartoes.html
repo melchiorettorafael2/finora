@@ -20,9 +20,9 @@
                     <tbody>
                       @for (cartao of listagem.content; track cartao.id) {
                         <tr>
-                          <td>{{ cartao.nome }}</td>
-                          <td>{{ cartao.bandeira }}</td>
-                          <td>
+                          <td data-label="Cartão">{{ cartao.nome }}</td>
+                          <td data-label="Bandeira">{{ cartao.bandeira }}</td>
+                          <td data-label="Status">
                             <span class="badge" [ngClass]="cartao.ativo ? 'badge-success' : 'badge-danger'">
                               {{ cartao.ativo ? 'ATIVO' : 'INATIVO' }}
                             </span>
