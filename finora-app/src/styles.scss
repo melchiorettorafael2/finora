@@ -1082,4 +1082,67 @@ button.menu-item {
     .content {
         padding: 0;
     }
+
+    /* !important: as regras de celular (max-width: 768px) também valem no papel, porque a folha
+       tem menos de 768px de largura CSS — sem isso a barra inferior saía impressa no PDF */
+    .main-content {
+        padding-bottom: 0 !important;
+    }
+
+    .nav-mobile,
+    .sheet-fundo,
+    .app-footer {
+        display: none !important;
+    }
+}
+
+/* ========================= */
+/* == CRÉDITO DE AUTORIA === */
+/* ========================= */
+
+/* Selo "Developed by" dos rodapés (login, recuperação de senha, 2FA e telas internas):
+   pílula discreta com o degradê da marca, para o nome do autor ganhar destaque */
+.credito-dev {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 13px 5px 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(79, 208, 222, 0.28);
+    background: linear-gradient(90deg, rgba(58, 138, 224, 0.12), rgba(52, 211, 163, 0.12));
+    box-shadow: 0 0 18px rgba(52, 211, 163, 0.08);
+    color: var(--brand-muted);
+    font-size: 12px;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+
+    i {
+        font-size: 11px;
+        color: var(--brand-cyan);
+    }
+
+    strong {
+        font-size: 13px;
+        font-weight: 700;
+        background: linear-gradient(90deg, var(--brand-cyan), var(--brand-green));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+}
+
+/* Tema claro: tons mais escuros para o nome ler bem no fundo claro */
+.tema-claro .credito-dev {
+    border-color: rgba(13, 138, 127, 0.3);
+    background: linear-gradient(90deg, rgba(29, 111, 196, 0.08), rgba(13, 138, 127, 0.08));
+    box-shadow: none;
+    color: var(--text-muted);
+
+    i {
+        color: #0d8a7f;
+    }
+
+    strong {
+        background-image: linear-gradient(90deg, #1d6fc4, #0d8a7f);
+    }
 }

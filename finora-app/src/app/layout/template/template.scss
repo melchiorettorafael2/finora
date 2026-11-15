@@ -33,13 +33,8 @@
     }
 }
 
-.footer-autor {
-    font-size: 12px;
-
-    strong {
-        color: var(--teal);
-        font-weight: 600;
-    }
+.app-footer .credito-dev {
+    margin-top: 6px;
 }
 
 @media (max-width: 600px) {
@@ -48,14 +43,7 @@
     }
 }
 
-/* Não sai no PDF do relatório */
-@media print {
-    .nav-mobile,
-    .sheet-fundo,
-    .app-footer {
-        display: none;
-    }
-}
+/* No PDF do relatório a barra, o painel "Mais" e o rodapé são escondidos no styles.scss (@media print) */
 
 /* Enquanto o modal do 2FA carrega (ele é baixado sob demanda) */
 .modal-carregando {

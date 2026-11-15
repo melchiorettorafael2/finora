@@ -1,20 +1,23 @@
 @use '../../../../shared/styles/botoes';
 @use '../../../../shared/styles/paineis';
 
-/* ===== Cabeçalho da impressão / PDF (escondido na tela, só existe no papel) =====
+/* ===== Cabeçalho e rodapé da impressão / PDF (escondidos na tela, só existem no papel) =====
    Faixa azul-escura igual ao header do sistema; o resto da folha é branco.
-   Cores fixas (não as variáveis), porque no papel as variáveis viram a paleta clara. */
-.cabecalho-impressao {
+   Cores fixas (não as variáveis), porque no papel as variáveis viram a paleta clara.
+   Fundo só com cores opacas: o Safari do iPhone imprime degradês translúcidos como uma
+   mancha de cor sólida por cima do texto. */
+.cabecalho-impressao,
+.rodape-impressao {
     display: none;
     align-items: center;
+    border-radius: 14px;
+    background: linear-gradient(90deg, #0e1622 0%, #101a29 55%, #12223a 82%, #11302f 100%);
+}
+
+.cabecalho-impressao {
     gap: 24px;
     margin-bottom: 18px;
     padding: 16px 22px;
-    border-radius: 14px;
-    background:
-        radial-gradient(45% 140% at 100% 50%, rgba(52, 211, 163, 0.16), transparent 70%),
-        radial-gradient(40% 160% at 75% 0%, rgba(58, 138, 224, 0.22), transparent 70%),
-        linear-gradient(90deg, #0e1622 0%, #101a29 60%, #13203a 100%);
 }
 
 .cabecalho-marca {
@@ -44,6 +47,7 @@
     display: flex;
     flex-direction: column;
     gap: 3px;
+    min-width: 0;
     padding-left: 24px;
     border-left: 1px solid rgba(149, 190, 224, 0.25);
 
@@ -51,11 +55,13 @@
         color: #5ed4c8;
         font-size: 19px;
         font-weight: 600;
+        white-space: nowrap;
     }
 
     span {
         color: #9aacc3;
         font-size: 13px;
+        white-space: nowrap;
     }
 }
 
@@ -65,8 +71,10 @@
     flex-direction: column;
     align-items: flex-end;
     gap: 4px;
+    flex-shrink: 0;
     color: #c4d0e0;
     font-size: 12.5px;
+    white-space: nowrap;
 
     i {
         margin-right: 5px;
@@ -74,7 +82,128 @@
     }
 }
 
-/* ===== Impressão / PDF: mesmo layout da página, em tema claro ===== */
+/* Rodapé: marca à esquerda e o crédito de autoria em destaque à direita */
+.rodape-impressao {
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 18px;
+    padding: 12px 22px;
+    color: #9aacc3;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.rodape-marca {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    img {
+        display: block;
+        width: 22px;
+        height: 22px;
+    }
+
+    strong {
+        color: #f4f8ff;
+        font-weight: 700;
+    }
+}
+
+/* Selo do autor: mesma pílula do rodapé do sistema, em cores opacas para o papel */
+.rodape-autor {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 14px 5px 12px;
+    border-radius: 999px;
+    border: 1px solid #2c5a63;
+    background-color: #142a33;
+    color: #c4d0e0;
+
+    i {
+        font-size: 11px;
+        color: #4fd0de;
+    }
+
+    strong {
+        color: #4fd6b4;
+        font-size: 13.5px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+    }
+}
+
+/* ===== Ranking de categorias ===== */
+.ranking {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.ranking-row {
+    display: flex;
+    gap: 14px;
+}
+
+.ranking-posicao {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--teal);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ranking-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.ranking-topo,
+.ranking-rodape {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-variant-numeric: tabular-nums;
+}
+
+.ranking-nome {
+    color: var(--text-strong);
+    font-weight: 600;
+}
+
+.ranking-topo strong {
+    color: var(--text-strong);
+}
+
+.ranking-rodape {
+    color: var(--text-muted);
+    font-size: 12.5px;
+}
+
+@media (max-width: 768px) {
+    .chart-header {
+        flex-wrap: wrap;
+    }
+
+    .legenda {
+        margin-left: 0;
+    }
+}
+
+/* ===== Impressão / PDF: mesmo layout da página, em tema claro =====
+   Fica no fim do arquivo de propósito: a folha tem menos de 768px de largura CSS
+   (e no iPhone a impressão usa a largura do celular), então as regras de celular também
+   valem no papel. Vindo depois, estas ganham e o PDF sai igual no celular e no computador. */
 @media print {
     // Paleta clara só para o papel: os cards e painéis usam estas variáveis
     :host {
@@ -149,8 +278,42 @@
         display: none;
     }
 
-    .cabecalho-impressao {
+    .cabecalho-impressao,
+    .rodape-impressao {
         display: flex;
+    }
+
+    // Layout fixo do papel, independente da largura da tela que mandou imprimir
+    .metricas-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    // vw na impressão = largura da folha: no A4 do computador fica no tamanho da tela,
+    // e na folha mais estreita do iPhone diminui para as 4 colunas caberem
+    .metric-body {
+        padding: 14px clamp(10px, 1.6vw, 20px) 12px;
+    }
+
+    .metric-label {
+        font-size: clamp(11.5px, 1.4vw, 15px);
+    }
+
+    .metric-value {
+        font-size: clamp(15px, 2.6vw, 28px);
+        white-space: nowrap;
+    }
+
+    .paineis-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-header {
+        flex-wrap: nowrap;
+    }
+
+    .legenda {
+        margin-left: auto;
     }
 
     // O ranking de categorias abre a segunda página
@@ -161,74 +324,9 @@
     // Não corta card nem painel no meio entre uma página e outra
     .metric-card,
     .chart-panel,
-    .cabecalho-impressao {
+    .cabecalho-impressao,
+    .rodape-impressao {
         break-inside: avoid;
         box-shadow: none;
-    }
-}
-
-/* ===== Ranking de categorias ===== */
-.ranking {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
-
-.ranking-row {
-    display: flex;
-    gap: 14px;
-}
-
-.ranking-posicao {
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-    display: grid;
-    place-items: center;
-    border-radius: 8px;
-    background-color: var(--bg-elevated);
-    border: 1px solid var(--border);
-    color: var(--teal);
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.ranking-info {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-}
-
-.ranking-topo,
-.ranking-rodape {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    font-variant-numeric: tabular-nums;
-}
-
-.ranking-nome {
-    color: var(--text-strong);
-    font-weight: 600;
-}
-
-.ranking-topo strong {
-    color: var(--text-strong);
-}
-
-.ranking-rodape {
-    color: var(--text-muted);
-    font-size: 12.5px;
-}
-
-@media (max-width: 768px) {
-    .chart-header {
-        flex-wrap: wrap;
-    }
-
-    .legenda {
-        margin-left: 0;
     }
 }
